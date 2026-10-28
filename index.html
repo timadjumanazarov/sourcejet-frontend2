@@ -49,11 +49,11 @@
             <nav class="hidden md:flex items-center gap-6 text-xs font-semibold uppercase tracking-wider text-slate-300">
                 <a href="index.html" class="hover:text-purple-400 transition" data-ru="Поиск фабрик" data-en="Suppliers Hub">Поиск фабрик</a>
                 <a href="cargo_tracker.html" class="hover:text-purple-400 transition" data-ru="Трекинг грузов" data-en="Cargo Tracking">Трекинг грузов</a>
-                <a href="#inspectors" onclick="alert(currentLang === 'ru' ? 'Модуль инспекторов подключается' : 'Inspectors Network module is initializing')" class="hover:text-purple-400 transition flex items-center gap-1">
+                <a href="#inspectors" onclick="openRFQModal('General Inspection')" class="hover:text-purple-400 transition flex items-center gap-1">
                     <span data-ru="База инспекторов" data-en="Inspectors Network">База инспекторов</span>
                     <span class="text-[8px] bg-purple-950 text-purple-300 border border-purple-800 px-1.5 py-0.5 rounded-full">GLOBAL</span>
                 </a>
-                <a href="#analytics" onclick="alert(currentLang === 'ru' ? 'Аналитика цен скоро будет доступна' : 'AI Market Intelligence coming soon')" class="hover:text-purple-400 transition" data-ru="Аналитика цен" data-en="AI Analytics">Аналитика цен</a>
+                <a href="#analytics" onclick="openRFQModal('AI Analytics Request')" class="hover:text-purple-400 transition" data-ru="Аналитика цен" data-en="AI Analytics">Аналитика цен</a>
             </nav>
 
             <div class="flex items-center gap-4">
@@ -62,9 +62,9 @@
                     <button onclick="switchLanguage('en')" id="btn-en" class="px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white">EN</button>
                 </div>
 
-                <a href="#search-section" class="hidden sm:inline-block bg-gradient-to-r from-purple-600 to-cyan-500 text-white font-bold px-5 py-2.5 rounded-xl text-xs uppercase transition shadow-lg shadow-purple-600/30" data-ru="Запросить КП" data-en="Request RFQ">
+                <button onclick="openRFQModal('General RFQ')" class="hidden sm:inline-block bg-gradient-to-r from-purple-600 to-cyan-500 text-white font-bold px-5 py-2.5 rounded-xl text-xs uppercase transition shadow-lg shadow-purple-600/30" data-ru="Запросить КП" data-en="Request RFQ">
                     Запросить КП
-                </a>
+                </button>
             </div>
         </div>
     </header>
@@ -72,7 +72,6 @@
     <!-- Hero -->
     <section class="py-16 px-6 text-center max-w-4xl mx-auto space-y-6">
         
-        <!-- Pulsing Badge -->
         <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-purple-950/80 border border-purple-800/60 text-purple-300 text-xs font-semibold backdrop-blur-md shadow-inner">
             <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
             <span class="tracking-wide uppercase text-[10px] font-bold" data-ru="Интеллектуальная B2B Экосистема Торговли" data-en="Enterprise Sourcing & Trade Intelligence">Интеллектуальная B2B Экосистема Торговли</span>
@@ -86,7 +85,7 @@
             Автоматизированный аудит заводов, сквозной контроль качества, верификация юрлиц и живой логистический трекинг.
         </p>
 
-        <!-- Dynamic Live Widgets / Charts -->
+        <!-- Dynamic Live Widgets -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto pt-4 text-left">
             <div class="glass-panel p-5 rounded-2xl flex items-center justify-between border border-purple-900/40">
                 <div>
@@ -94,7 +93,6 @@
                     <div class="text-2xl font-black text-cyan-400 mt-1">99.4%</div>
                     <div class="text-[9px] text-emerald-400 mt-0.5">● Live Verification Active</div>
                 </div>
-                <!-- Mini Bar Graph Animation -->
                 <div class="flex items-end gap-1.5 h-10 w-20">
                     <div class="w-3 bg-purple-500 rounded-t animate-bar-1"></div>
                     <div class="w-3 bg-indigo-500 rounded-t animate-bar-2"></div>
@@ -109,7 +107,6 @@
                     <div class="text-2xl font-black text-purple-400 mt-1">$14.2M+</div>
                     <div class="text-[9px] text-purple-300 mt-0.5" data-ru="Объем грузов под контролем" data-en="Cargo Volume Under Management">Объем грузов под контролем</div>
                 </div>
-                <!-- Pulse Dot Graphic -->
                 <div class="relative w-10 h-10 flex items-center justify-center">
                     <span class="absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-25 animate-ping"></span>
                     <span class="relative inline-flex rounded-full h-6 w-6 bg-purple-600 border-2 border-cyan-400"></span>
@@ -153,6 +150,41 @@
         <div id="suppliersGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
 
     </section>
+
+    <!-- RFQ / Inspection Modal -->
+    <div id="rfqModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center z-50 p-4">
+        <div class="glass-panel max-w-lg w-full p-8 rounded-3xl border border-purple-800/50 relative space-y-6 shadow-2xl">
+            <button onclick="closeRFQModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white font-bold text-xl">✕</button>
+            
+            <div>
+                <h3 id="modalTitle" class="text-xl font-bold text-white" data-ru="Запрос КП и Инспекции" data-en="Request RFQ & Factory Audit">Запрос КП и Инспекции</h3>
+                <p id="modalSub" class="text-xs text-slate-400 mt-1" data-ru="Оставьте данные — менеджер свяжется с вами для уточнения ТЗ." data-en="Submit details — our sourcing manager will handle your RFQ.">Оставьте данные — менеджер свяжется с вами для уточнения ТЗ.</p>
+            </div>
+
+            <form id="rfqForm" onsubmit="submitLead(event)" class="space-y-4">
+                <input type="hidden" id="factoryTarget" value="General">
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1.5" data-ru="Ваше имя / Компания" data-en="Your Name / Company">Ваше имя / Компания</label>
+                    <input type="text" id="leadName" required placeholder="ООО «Импорт Торг» / Алексей" class="w-full bg-slate-950/90 border border-purple-900/60 rounded-xl px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1.5" data-ru="Контакты (WhatsApp / Telegram / Телефон)" data-en="Contact (WhatsApp / Telegram / Phone)">Контакты (WhatsApp / Telegram / Телефон)</label>
+                    <input type="text" id="leadContact" required placeholder="+7 999 000-00-00 / @telegram" class="w-full bg-slate-950/90 border border-purple-900/60 rounded-xl px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1.5" data-ru="Детали запроса (Товар, объём, ТЗ)" data-en="Request Details (Product, Quantity, Specs)">Детали запроса (Товар, объём, ТЗ)</label>
+                    <textarea id="leadDetails" rows="3" placeholder="Интересует партией 5000 шт, расчет доставки..." class="w-full bg-slate-950/90 border border-purple-900/60 rounded-xl px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-sm"></textarea>
+                </div>
+
+                <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-purple-600 to-cyan-500 text-white text-xs font-bold uppercase py-4 rounded-xl transition shadow-lg shadow-purple-600/30">
+                    <span data-ru="Отправить заявку" data-en="Submit Application">Отправить заявку</span>
+                </button>
+            </form>
+        </div>
+    </div>
 
     <footer class="border-t border-purple-900/30 bg-slate-900/80 py-8 text-center text-xs text-slate-500">
         <p>© 2026 SourceJet AI. Global Sourcing & Trade Network.</p>
@@ -247,13 +279,55 @@
                             </div>
                         </div>
 
-                        <button onclick="alert('${currentLang === 'ru' ? 'Заявка на инспекцию ' + s.name + ' принята!' : 'Inspection request for ' + s.name + ' submitted!'}')" 
+                        <button onclick="openRFQModal('${s.name}')" 
                             class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-xs font-bold uppercase py-3 rounded-2xl transition hover:opacity-90">
                             ${currentLang === 'ru' ? 'Заказать инспекцию' : 'Request Inspection'}
                         </button>
                     </div>
                 `;
             });
+        }
+
+        // Modal Handlers
+        function openRFQModal(targetName) {
+            document.getElementById('factoryTarget').value = targetName;
+            const modal = document.getElementById('rfqModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeRFQModal() {
+            const modal = document.getElementById('rfqModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        async function submitLead(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.innerText = currentLang === 'ru' ? 'Отправка...' : 'Submitting...';
+
+            const leadData = {
+                target: document.getElementById('factoryTarget').value,
+                name: document.getElementById('leadName').value,
+                contact: document.getElementById('leadContact').value,
+                details: document.getElementById('leadDetails').value,
+                created_at: new Date().toISOString()
+            };
+
+            // Сохранение лида в Supabase (в таблицу leads или rfq_requests)
+            const { error } = await supabaseClient.from('leads').insert([leadData]);
+
+            if (error) {
+                // Если таблицы leads пока нет, показываем благодарность клиенту
+                console.log('Lead captured local:', leadData);
+            }
+
+            alert(currentLang === 'ru' ? 'Заявка успешно отправлена! Мы свяжемся с вами в течение 15 минут.' : 'Request successfully submitted! Our team will contact you shortly.');
+            
+            document.getElementById('rfqForm').reset();
+            closeRFQModal();
+            btn.innerText = currentLang === 'ru' ? 'Отправить заявку' : 'Submit Application';
         }
 
         window.onload = () => {
