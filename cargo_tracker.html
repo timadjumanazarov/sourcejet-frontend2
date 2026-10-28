@@ -123,23 +123,4 @@
         }
 
         const SUPABASE_URL = 'https://ozpskokidbhqtoeykyzf.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_Zpkfm-iDWB7WuHrAp1jDtQ_1w_QU8s0';
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        function quickTrack(code) {
-            document.getElementById('trackInput').value = code;
-            searchShipment(code);
-        }
-
-        function handleSearch(e) {
-            e.preventDefault();
-            const code = document.getElementById('trackInput').value.trim();
-            if (code) searchShipment(code);
-        }
-
-        async function searchShipment(code) {
-            const container = document.getElementById('shipmentResult');
-            const btn = document.getElementById('searchBtn');
-
-            btn.innerText = currentLang === 'ru' ? 'Поиск...' : 'Searching...';
-            container.classList.remove('hidden
+        const SUPABASE_ANON_KEY = 'sb_publishable
