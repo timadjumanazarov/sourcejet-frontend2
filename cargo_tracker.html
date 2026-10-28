@@ -1,75 +1,119 @@
 <!DOCTYPE html>
-<html lang="ru" class="dark">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cargo Tracking System — SourceJet AI</title>
+    <title>SourceJet - Трекинг грузов</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
+    <!-- Подключаем официальную библиотеку Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen">
-    <header class="p-6 border-b border-slate-800 flex justify-between items-center max-w-7xl mx-auto">
-        <a href="index.html" class="text-indigo-400 font-bold flex items-center gap-2">
-            ← На главную SourceJet AI
-        </a>
-        <span class="text-sm text-slate-400 font-mono">Live Cargo Tracker API v1.0</span>
-    </header>
+<body class="bg-slate-950 text-white min-h-screen flex flex-col items-center justify-center p-4">
 
-    <main class="max-w-4xl mx-auto px-6 py-12">
-        <h1 class="text-3xl font-black mb-2">Отслеживание груза в реальном времени</h1>
-        <p class="text-slate-400 text-sm mb-8">Введите трек-номер контейнера, партию или номер инвойса</p>
+    <div class="max-w-md w-full bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl">
+        <h1 class="text-2xl font-bold mb-2 text-center">📦 Отслеживание груза</h1>
+        <p class="text-slate-400 text-sm mb-6 text-center">Введите трек-номер для проверки статуса (например: <code class="text-cyan-400">SJ-88492-CN</code>)</p>
 
-        <div class="flex gap-3 mb-10">
-            <input type="text" id="trackInput" value="SJ-88492-CN" class="flex-1 bg-slate-900 border border-slate-800 text-white font-mono px-5 py-3 rounded-xl focus:outline-none focus:border-indigo-500">
-            <button onclick="trackCargo()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-6 py-3 rounded-xl transition">
-                Отследить
+        <div class="flex gap-2 mb-6">
+            <input type="text" id="trackingInput" placeholder="SJ-88492-CN" value="SJ-88492-CN"
+                class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500">
+            <button onclick="trackShipment()" 
+                class="bg-cyan-600 hover:bg-cyan-500 px-5 py-2.5 rounded-xl font-medium transition">
+                Найти
             </button>
         </div>
 
-        <div id="trackingResult" class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-6">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-4">
-                <div>
-                    <span class="text-xs text-slate-500 uppercase tracking-wider block">Номер партии</span>
-                    <span class="font-mono font-bold text-lg text-white">SJ-88492-CN</span>
-                </div>
-                <span class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-xs font-bold px-3 py-1.5 rounded-full">
-                    В пути (Port of Ningbo → Almaty Hub)
-                </span>
+        <div id="resultContainer" class="hidden space-y-4 border-t border-slate-800 pt-4">
+            <div class="flex justify-between items-center">
+                <span class="text-slate-400 text-sm">Статус:</span>
+                <span id="shipmentStatus" class="px-3 py-1 bg-cyan-950 text-cyan-400 rounded-full text-xs font-semibold"></span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-slate-400 text-sm">Маршрут:</span>
+                <span id="shipmentRoute" class="text-sm font-medium"></span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-slate-400 text-sm">Текущая точка:</span>
+                <span id="shipmentLocation" class="text-sm font-medium text-cyan-300"></span>
             </div>
 
-            <!-- Timeline -->
-            <div class="space-y-6 relative before:absolute before:inset-0 before:left-3.5 before:w-0.5 before:bg-slate-800">
-                <div class="flex gap-4 relative">
-                    <div class="w-7 h-7 rounded-full bg-emerald-500 flex items-center justify-center text-xs font-bold text-slate-950 z-10">✓</div>
-                    <div>
-                        <h4 class="font-bold text-white">Партия принята на фабрике</h4>
-                        <p class="text-xs text-slate-400">Нинбо, Китай • 24 Октября, 14:30</p>
-                    </div>
-                </div>
-                <div class="flex gap-4 relative">
-                    <div class="w-7 h-7 rounded-full bg-emerald-500 flex items-center justify-center text-xs font-bold text-slate-950 z-10">✓</div>
-                    <div>
-                        <h4 class="font-bold text-white">AQL 2.5 Инспекция пройдна (Go Project)</h4>
-                        <p class="text-xs text-slate-400">Отчет инспектора #492 одобрен • 25 Октября, 09:15</p>
-                    </div>
-                </div>
-                <div class="flex gap-4 relative">
-                    <div class="w-7 h-7 rounded-full bg-indigo-500 animate-pulse flex items-center justify-center text-xs font-bold text-white z-10">●</div>
-                    <div>
-                        <h4 class="font-bold text-indigo-400">Таможенная очистка в порту Нинбо</h4>
-                        <p class="text-xs text-slate-400">Экспортная декларация оформлена • В процессе</p>
-                    </div>
+            <div class="mt-4">
+                <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">История перемещений</h3>
+                <div id="eventsList" class="space-y-3 border-l-2 border-slate-800 pl-4 ml-2">
+                    <!-- События подгрузятся динамически -->
                 </div>
             </div>
         </div>
-    </main>
+
+        <div id="errorContainer" class="hidden text-red-400 text-sm text-center bg-red-950/50 border border-red-900 p-3 rounded-xl">
+            Груз не найден. Проверьте правильность трек-номера.
+        </div>
+    </div>
 
     <script>
-        function trackCargo() {
-            const val = document.getElementById('trackInput').value;
-            alert('Запрос статуса для трека: ' + val);
+        // Инициализация Supabase клиента
+        const SUPABASE_URL = 'https://ozpskokidbhqtoeykyzf.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_Zpkfm-iDWB7WuHrAp1jDtQ_1w_QU8s0';
+        
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function trackShipment() {
+            const trackingNumber = document.getElementById('trackingInput').value.trim();
+            const resultContainer = document.getElementById('resultContainer');
+            const errorContainer = document.getElementById('errorContainer');
+            
+            resultContainer.classList.add('hidden');
+            errorContainer.classList.add('hidden');
+
+            if (!trackingNumber) return;
+
+            // 1. Ищем груз в таблице shipments
+            const { data: shipment, error } = await supabaseClient
+                .from('shipments')
+                .select('*')
+                .eq('tracking_number', trackingNumber)
+                .single();
+
+            if (error || !shipment) {
+                errorContainer.classList.remove('hidden');
+                return;
+            }
+
+            // Заполняем данные на экране
+            document.getElementById('shipmentStatus').innerText = shipment.status;
+            document.getElementById('shipmentRoute').innerText = `${shipment.origin} ➔ ${shipment.destination}`;
+            document.getElementById('shipmentLocation').innerText = shipment.current_location || 'В пути';
+
+            // 2. Загружаем историю событий для этого груза
+            const { data: events } = await supabaseClient
+                .from('shipment_events')
+                .select('*')
+                .eq('shipment_id', shipment.id)
+                .order('event_timestamp', { ascending: true });
+
+            const eventsList = document.getElementById('eventsList');
+            eventsList.innerHTML = '';
+
+            if (events && events.length > 0) {
+                events.forEach(ev => {
+                    const dateStr = new Date(ev.event_timestamp).toLocaleDateString('ru-RU', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                    eventsList.innerHTML += `
+                        <div class="relative">
+                            <div class="absolute -left-[21px] top-1 w-2.5 h-2.5 bg-cyan-500 rounded-full ring-4 ring-slate-900"></div>
+                            <p class="text-sm font-medium text-slate-200">${ev.title}</p>
+                            <p class="text-xs text-slate-500">${ev.location} • ${dateStr}</p>
+                        </div>
+                    `;
+                });
+            }
+
+            resultContainer.classList.remove('hidden');
         }
+
+        // Автоматически запускаем поиск тестового груза при открытии страницы
+        window.onload = () => {
+            trackShipment();
+        };
     </script>
 </body>
 </html>
