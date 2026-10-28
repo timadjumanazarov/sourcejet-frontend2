@@ -168,31 +168,55 @@
             container.innerHTML = html;
         }
 
-        async function claimOrder(id) {
-    try {
-        // Пробуем обновить статус в базе
-        const { error } = await supabaseClient
-            .from('inspections')
-            .update({ 
-                status: 'in_progress',
-                inspector_name: 'Китайский инспектор'
-            })
-            .eq('id', id);
+        async function loadOrders() {
+    const city = document.getElementById('inspectorCity').value;
+    const ordersContainer = document.getElementById('ordersContainer');
+    
+    ordersContainer.innerHTML = '<div class="text-center text-slate-500 py-10">Загрузка заказов...</div>';
 
-        if (error) {
-            console.warn("Supabase warning (продолжаем переход):", error.message);
-        }
-    } catch (err) {
-        console.warn("Catch warning:", err);
+    // Запрашиваем заявки, которые ищут инспектора ИЛИ уже находятся в работе
+    const { data, error } = await supabaseClient
+        .from('inspections')
+        .select('*')
+        .eq('city', city)
+        .in('status', ['searching_inspector', 'in_progress'])
+        .order('created_at', { ascending: false });
+
+    if (error || !data || data.length === 0) {
+        ordersContainer.innerHTML = `<div class="text-center text-slate-500 py-10">В городе ${city} пока нет активных или открытых заказов.</div>`;
+        return;
     }
 
-    // В ЛЮБОМ СЛУЧАЕ (успех или ошибка) сразу перенаправляем в комнату инспекции!
-    window.location.href = `inspection_room.html?id=${id}`;
-    }
-}
-
-        function openChat(id) {
-    window.location.href = `inspection_room.html?id=${id}`;
+    let html = '';
+    data.forEach(order => {
+        const isInProgress = order.status === 'in_progress';
+        html += `
+            <div class="glass-panel p-6 rounded-2xl border ${isInProgress ? 'border-amber-500/40' : 'border-purple-900/40'} flex justify-between items-center">
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="text-xs font-mono text-purple-400 font-bold">${order.country} • ${order.city}</span>
+                        <span class="text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${isInProgress ? 'bg-amber-950 text-amber-300 border border-amber-800' : 'bg-purple-950 text-purple-300 border border-purple-800'}">
+                            ${isInProgress ? 'В работе' : 'Поиск инспектора'}
+                        </span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">${order.factory_name}</h3>
+                    <p class="text-xs text-slate-400">Клиент: ${order.client_name} | Тип: ${order.inspection_type}</p>
+                </div>
+                <div>
+                    ${isInProgress ? `
+                        <button onclick="openChat('${order.id}')" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-4 py-2 rounded-xl text-xs uppercase tracking-wider transition">
+                            Перейти в комнату инспекции 💬
+                        </button>
+                    ` : `
+                        <button onclick="claimOrder('${order.id}')" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-4 py-2 rounded-xl text-xs uppercase tracking-wider transition">
+                            Принять заказ на выезд
+                        </button>
+                    `}
+                </div>
+            </div>
+        `;
+    });
+    ordersContainer.innerHTML = html;
 }
 
         document.addEventListener('DOMContentLoaded', () => {
