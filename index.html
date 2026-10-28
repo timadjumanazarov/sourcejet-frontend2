@@ -3,98 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SourceJet - B2B Sourcing Platform</title>
+    <title>SourceJet - Поиск фабрик B2B</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen">
+<body class="bg-slate-950 text-slate-100 min-h-screen p-6">
 
-    <!-- Шапка -->
-    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <span class="text-2xl">⚡</span>
-                <span class="font-bold text-xl tracking-tight text-white">SourceJet</span>
-            </div>
-            <nav class="flex gap-6 text-sm">
-                <a href="#search" class="text-slate-300 hover:text-cyan-400 font-medium">Поиск фабрик</a>
-                <a href="#tracking" class="text-slate-300 hover:text-cyan-400 font-medium">Отслеживание грузов</a>
-            </nav>
-        </div>
-    </header>
-
-    <main class="max-w-6xl mx-auto px-4 py-8 space-y-16">
-
-        <!-- Поиск фабрик -->
-        <section id="search" class="space-y-6">
+    <div class="max-w-5xl mx-auto space-y-6">
+        <!-- Шапка -->
+        <div class="flex justify-between items-center border-b border-slate-800 pb-4">
             <div>
-                <h2 class="text-3xl font-bold text-white">🏭 База верифицированных фабрик</h2>
-                <p class="text-slate-400 text-sm mt-1">Данные загружаются напрямую из Supabase</p>
+                <h1 class="text-2xl font-bold text-cyan-400">🏭 SourceJet AI Sourcing</h1>
+                <p class="text-xs text-slate-400 mt-1">База верифицированных производителей Китая</p>
             </div>
+            <a href="cargo_tracker.html" class="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-2 rounded-lg transition text-slate-300">📦 Трекинг грузов ➔</a>
+        </div>
 
-            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl space-y-3">
-                <div class="flex flex-col md:flex-row gap-3">
-                    <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Поиск по названию или городу (например: Нинбо, Иу, Электроника)..." 
-                        class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:border-cyan-500">
-                    
-                    <select id="categorySelect" onchange="applyFilters()" 
-                        class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-slate-300 focus:outline-none focus:border-cyan-500">
-                        <option value="ALL">Все категории</option>
-                        <option value="Электроника">Электроника</option>
-                        <option value="Текстиль">Текстиль</option>
-                        <option value="Упаковка">Упаковка</option>
-                    </select>
-                </div>
-
-                <div class="flex justify-between items-center text-xs text-slate-400 px-1 pt-1">
-                    <span id="resultsCount">Загрузка данных из Supabase...</span>
-                    <button onclick="resetFilters()" class="text-cyan-400 hover:underline">Сбросить фильтры</button>
-                </div>
-            </div>
-
-            <!-- Контейнер для динамических карточек -->
-            <div id="suppliersGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <!-- Статические 3 карточки удалены, теперь сюда загружаются данные из базы -->
-            </div>
-        </section>
-
-        <!-- Отслеживание грузов -->
-        <section id="tracking" class="border-t border-slate-800 pt-12">
-            <div class="max-w-xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-4">
-                <h2 class="text-xl font-bold text-center text-white">📦 Отслеживание груза</h2>
+        <!-- Поиск и фильтры -->
+        <div class="space-y-3">
+            <div class="flex flex-col md:flex-row gap-3">
+                <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Введите название или город (например: Нинбо, Иу)..." 
+                    class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:border-cyan-500 transition">
                 
-                <div class="flex gap-2">
-                    <input type="text" id="trackingInput" value="SJ-88492-CN" 
-                        class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500">
-                    <button onclick="trackShipment()" 
-                        class="bg-cyan-600 hover:bg-cyan-500 px-5 py-2.5 rounded-xl font-medium transition text-white">
-                        Найти
-                    </button>
-                </div>
-
-                <div id="resultContainer" class="hidden space-y-4 border-t border-slate-800 pt-4">
-                    <div class="flex justify-between text-sm">
-                        <span class="text-slate-400">Статус:</span>
-                        <span id="shipmentStatus" class="px-3 py-0.5 bg-cyan-950 text-cyan-400 rounded-full text-xs font-semibold"></span>
-                    </div>
-                    <div class="flex justify-between text-sm">
-                        <span class="text-slate-400">Маршрут:</span>
-                        <span id="shipmentRoute" class="font-medium text-white"></span>
-                    </div>
-                    <div class="flex justify-between text-sm">
-                        <span class="text-slate-400">Текущая точка:</span>
-                        <span id="shipmentLocation" class="font-medium text-cyan-300"></span>
-                    </div>
-                    <div id="eventsList" class="space-y-3 border-l-2 border-slate-800 pl-4 mt-2"></div>
-                </div>
-
-                <div id="errorContainer" class="hidden text-red-400 text-sm text-center bg-red-950/50 border border-red-900 p-3 rounded-xl">
-                    Груз не найден. Проверьте трек-номер.
-                </div>
+                <select id="categorySelect" onchange="applyFilters()" 
+                    class="bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-slate-300 focus:outline-none focus:border-cyan-500">
+                    <option value="ALL">Все категории</option>
+                    <option value="Электроника">Электроника</option>
+                    <option value="Текстиль">Текстиль</option>
+                    <option value="Упаковка">Упаковка</option>
+                </select>
             </div>
-        </section>
 
-    </main>
+            <div class="flex justify-between items-center text-xs text-slate-400 px-1">
+                <span id="resultsCount">Загрузка данных из Supabase...</span>
+                <button onclick="resetFilters()" class="text-cyan-400 hover:underline">Сбросить фильтры</button>
+            </div>
+        </div>
+
+        <!-- Список фабрик -->
+        <div id="suppliersGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+    </div>
 
     <script>
         const SUPABASE_URL = 'https://ozpskokidbhqtoeykyzf.supabase.co';
@@ -108,7 +56,7 @@
             const { data, error } = await supabaseClient.from('suppliers').select('*');
 
             if (error || !data) {
-                grid.innerHTML = `<p class="text-red-400 col-span-3 text-center py-6">Ошибка связи с базой данных.</p>`;
+                grid.innerHTML = `<p class="text-red-400 col-span-3 text-center py-8">Ошибка связи с базой данных.</p>`;
                 return;
             }
 
@@ -136,7 +84,7 @@
             countLabel.innerText = `Отображается заводов: ${filtered.length} из ${allSuppliers.length}`;
 
             if (filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-3 text-center py-8 text-slate-500 bg-slate-900/50 rounded-xl border border-slate-800">Заводы по данному запросу не найдены.</div>`;
+                grid.innerHTML = `<div class="col-span-3 text-center py-12 text-slate-500 bg-slate-900/50 rounded-2xl border border-slate-800">Заводы не найдены.</div>`;
                 return;
             }
 
@@ -158,7 +106,7 @@
                             </div>
                         </div>
 
-                        <button onclick="alert('Заявка на инспекцию для ${s.name} принята!')" 
+                        <button onclick="alert('Заявка на инспекцию для ${s.name} успешно отправлена!')" 
                             class="w-full bg-cyan-600/10 hover:bg-cyan-600 border border-cyan-500/30 hover:border-transparent text-cyan-400 hover:text-white text-xs py-2.5 rounded-xl font-medium transition">
                             Заказать инспекцию
                         </button>
@@ -173,58 +121,10 @@
             applyFilters();
         }
 
-        async function trackShipment() {
-            const trackingNumber = document.getElementById('trackingInput').value.trim();
-            const resultContainer = document.getElementById('resultContainer');
-            const errorContainer = document.getElementById('errorContainer');
-            
-            resultContainer.classList.add('hidden');
-            errorContainer.classList.add('hidden');
-
-            const { data: shipment, error } = await supabaseClient
-                .from('shipments')
-                .select('*')
-                .eq('tracking_number', trackingNumber)
-                .single();
-
-            if (error || !shipment) {
-                errorContainer.classList.remove('hidden');
-                return;
-            }
-
-            document.getElementById('shipmentStatus').innerText = shipment.status;
-            document.getElementById('shipmentRoute').innerText = `${shipment.origin} ➔ ${shipment.destination}`;
-            document.getElementById('shipmentLocation').innerText = shipment.current_location || 'В пути';
-
-            const { data: events } = await supabaseClient
-                .from('shipment_events')
-                .select('*')
-                .eq('shipment_id', shipment.id)
-                .order('event_timestamp', { ascending: true });
-
-            const eventsList = document.getElementById('eventsList');
-            eventsList.innerHTML = '';
-
-            if (events && events.length > 0) {
-                events.forEach(ev => {
-                    const dateStr = new Date(ev.event_timestamp).toLocaleDateString('ru-RU', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-                    eventsList.innerHTML += `
-                        <div class="relative">
-                            <div class="absolute -left-[21px] top-1 w-2.5 h-2.5 bg-cyan-500 rounded-full ring-4 ring-slate-900"></div>
-                            <p class="text-sm font-medium text-slate-200">${ev.title}</p>
-                            <p class="text-xs text-slate-500">${ev.location} • ${dateStr}</p>
-                        </div>
-                    `;
-                });
-            }
-
-            resultContainer.classList.remove('hidden');
-        }
-
-        window.onload = () => {
-            fetchSuppliers();
-            trackShipment();
-        };
+        window.onload = fetchSuppliers;
+    </script>
+</body>
+</html>
     </script>
 </body>
 </html>
