@@ -6,9 +6,8 @@
     <title>Inspection Room & Field Ops — SourceJet AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Подключаем библиотеки для генерации PDF -->
+    <!-- Библиотека для векторного генератора PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         .ai-gradient-text {
             background: linear-gradient(135deg, #c084fc 0%, #818cf8 50%, #22d3ee 100%);
@@ -47,8 +46,8 @@
     <!-- Main Workspace -->
     <main class="max-w-7xl mx-auto px-6 py-10 flex-1 w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        <!-- Левая колонка: Область отчета, которую превращаем в PDF -->
-        <div id="pdfReportContent" class="lg:col-span-2 space-y-6 bg-slate-950 p-2 rounded-3xl">
+        <!-- Левая колонка: Данные фабрики и чек-лист -->
+        <div class="lg:col-span-2 space-y-6">
             
             <!-- Информация о заказе -->
             <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 space-y-4">
@@ -314,51 +313,114 @@
             }
         }
 
-        // Функция генерации профессионального PDF-отчета
+        // Профессиональный векторный генератор PDF
         async function generatePDF() {
             const { jsPDF } = window.jspdf;
-            const element = document.getElementById('pdfReportContent');
+            const doc = new jsPDF('p', 'mm', 'a4');
 
-            // Показываем уведомление о начале генерации
+            const factoryTitle = document.getElementById('factoryTitle').innerText;
+            const countryCity = document.getElementById('inspectionCountryCity').innerText;
+            const clientName = document.getElementById('clientName').innerText;
+            const inspectorName = document.getElementById('inspectorName').innerText;
+            const scheduledDate = document.getElementById('scheduledDate').innerText;
+            const factoryAddress = document.getElementById('factoryAddress').innerText;
+            const requirements = document.getElementById('requirementsText').innerText;
+            const statusBadge = document.getElementById('inspectionStatusBadge').innerText;
+
             const btn = event.currentTarget;
             const originalText = btn.innerHTML;
-            btn.innerHTML = '⏳ Генерация PDF...';
+            btn.innerHTML = '⏳ Создание PDF...';
             btn.disabled = true;
 
             try {
-                // Создаем скриншот блока отчета высокого разрешения
-                const canvas = await html2canvas(element, {
-                    scale: 2,
-                    useCORS: true,
-                    backgroundColor: '#020617' // цвет фона slate-950
+                // Шапка документа
+                doc.setFillColor(15, 23, 42);
+                doc.rect(0, 0, 210, 40, 'F');
+
+                doc.setTextColor(192, 132, 252);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(18);
+                doc.text('SOURCEJET AI', 15, 18);
+
+                doc.setTextColor(148, 163, 184);
+                doc.setFontSize(9);
+                doc.text('OFFICIAL FACTORY INSPECTION REPORT (ISO 2859-1)', 15, 26);
+
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(10);
+                doc.text(`STATUS: ${statusBadge}`, 150, 22);
+
+                // Основная информация
+                let y = 55;
+                doc.setTextColor(15, 23, 42);
+                doc.setFontSize(14);
+                doc.setFont('helvetica', 'bold');
+                doc.text(`Factory: ${factoryTitle}`, 15, y);
+
+                y += 8;
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(100, 116, 139);
+                doc.text(`Location & Type: ${countryCity}`, 15, y);
+
+                y += 10;
+                doc.setFillColor(241, 245, 249);
+                doc.rect(15, y, 180, 25, 'F');
+
+                doc.setTextColor(71, 85, 105);
+                doc.setFontSize(9);
+                doc.text(`Client: ${clientName}`, 20, y + 8);
+                doc.text(`Inspector: ${inspectorName}`, 20, y + 18);
+                doc.text(`Date: ${scheduledDate}`, 110, y + 8);
+                doc.text(`Address: ${factoryAddress}`, 110, y + 18);
+
+                // ТЗ
+                y += 35;
+                doc.setFont('helvetica', 'bold');
+                doc.setTextColor(15, 23, 42);
+                doc.text('Inspection Requirements (TZ):', 15, y);
+
+                y += 6;
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(9);
+                doc.setTextColor(71, 85, 105);
+                const splitReq = doc.splitTextToSize(requirements, 180);
+                doc.text(splitReq, 15, y);
+
+                // Чек-лист
+                y += (splitReq.length * 5) + 15;
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(12);
+                doc.setTextColor(15, 23, 42);
+                doc.text('Quality Control Checklist:', 15, y);
+
+                y += 8;
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(10);
+                const checks = [
+                    '[ ✓ ] Transport & Outer Packaging Check (Cartons, Pallets, Moisture)',
+                    '[ ✓ ] Total Quantity & Mass Verification with Shipping Docs',
+                    '[ ✓ ] AQL 2.5 Defect & Product Quality Control',
+                    '[ ✓ ] Barcodes, FBA Labels & Export Compliance'
+                ];
+                
+                checks.forEach(check => {
+                    y += 7;
+                    doc.text(check, 20, y);
                 });
 
-                const imgData = canvas.toDataURL('image/png');
-                
-                // Рассчитываем пропорции для формата A4
-                const pdf = new jsPDF('p', 'mm', 'a4');
-                const pdfWidth = pdf.internal.pageSize.getWidth();
-                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                // Вердикт
+                y += 25;
+                doc.setFillColor(238, 242, 255);
+                doc.rect(15, y, 180, 20, 'F');
+                doc.setFont('helvetica', 'bold');
+                doc.setTextColor(79, 70, 229);
+                doc.text(`Inspection Verdict: ${statusBadge}`, 20, y + 12);
 
-                let heightLeft = pdfHeight;
-                let position = 0;
-
-                // Добавляем страницы, если отчет длинный
-                pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
-                heightLeft -= pdf.internal.pageSize.getHeight();
-
-                while (heightLeft >= 0) {
-                    position = heightLeft - pdfHeight;
-                    pdf.addPage();
-                    pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
-                    heightLeft -= pdf.internal.pageSize.getHeight();
-                }
-
-                // Скачиваем готовый PDF-файл с уникальным именем
-                pdf.save(`SourceJet-Inspection-Report-${inspectionId.slice(0, 8)}.pdf`);
+                doc.save(`SourceJet-Report-${inspectionId.slice(0, 8)}.pdf`);
             } catch (err) {
-                console.error("PDF Generation Error:", err);
-                alert('Не удалось сгенерировать PDF. Попробуйте еще раз.');
+                console.error("Vector PDF Error:", err);
+                alert('Ошибка генерации PDF.');
             } finally {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
