@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SourceJet - Поиск фабрик B2B</title>
+    <title>SourceJet - AI Sourcing Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -35,12 +35,12 @@
             </div>
 
             <div class="flex justify-between items-center text-xs text-slate-400 px-1">
-                <span id="resultsCount">Загрузка данных из Supabase...</span>
+                <span id="resultsCount">Подключение к базе данных...</span>
                 <button onclick="resetFilters()" class="text-cyan-400 hover:underline">Сбросить фильтры</button>
             </div>
         </div>
 
-        <!-- Список фабрик -->
+        <!-- Список фабрик (сюда динамически груятся карточки из базы) -->
         <div id="suppliersGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
     </div>
 
@@ -122,9 +122,6 @@
         }
 
         window.onload = fetchSuppliers;
-    </script>
-</body>
-</html>
     </script>
 </body>
 </html>
