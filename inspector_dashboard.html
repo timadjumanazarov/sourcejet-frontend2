@@ -169,24 +169,27 @@
         }
 
         async function claimOrder(id) {
-    // Больше никаких всплывающих окон с запросом имени или Гитхаба!
-    // Заказ закрепляется за инспектором автоматически.
-    const inspectorName = "Инспектор КНР"; 
+    try {
+        const { error } = await supabaseClient
+            .from('inspections')
+            .update({ 
+                status: 'in_progress',
+                inspector_name: 'Китайский инспектор'
+            })
+            .eq('id', id);
 
-    const { error } = await supabaseClient
-        .from('inspections')
-        .update({ 
-            status: 'in_progress',
-            inspector_name: inspectorName
-        })
-        .eq('id', id);
+        if (error) {
+            console.error("Supabase error:", error);
+            alert('Ошибка базы данных: ' + error.message);
+            return;
+        }
 
-    if (error) {
-        alert('Ошибка при принятии заказа: ' + error.message);
-        console.error("Supabase error:", error);
-    } else {
-        alert(currentLang === 'ru' ? 'Заказ успешно принят в работу!' : 'Task claimed successfully!');
-        loadOrders(); // Перезагружаем список, чтобы карточка перешла в статус "В работе"
+        alert(currentLang === 'ru' ? 'Заказ успешно принят!' : 'Task claimed!');
+        loadOrders();
+    } catch (err) {
+        console.error("Network error:", err);
+        // Перенаправляем на комнату инспекции напрямую, минуя ошибку GitHub
+        window.location.href = `inspection_room.html?id=${id}`;
     }
 }
 
