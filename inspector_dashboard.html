@@ -169,24 +169,26 @@
         }
 
         async function claimOrder(id) {
-            const inspectorName = prompt(currentLang === 'ru' ? 'Введите ваше имя (Инспектор):' : 'Enter your name (Inspector):');
-            if (!inspectorName) return;
+    // Больше никаких всплывающих окон с запросом имени или Гитхаба!
+    // Заказ закрепляется за инспектором автоматически.
+    const inspectorName = "Инспектор КНР"; 
 
-            const { error } = await supabaseClient
-                .from('inspections')
-                .update({ 
-                    status: 'in_progress',
-                    inspector_name: inspectorName
-                })
-                .eq('id', id);
+    const { error } = await supabaseClient
+        .from('inspections')
+        .update({ 
+            status: 'in_progress',
+            inspector_name: inspectorName
+        })
+        .eq('id', id);
 
-            if (error) {
-                alert('Ошибка: ' + error.message);
-            } else {
-                alert(currentLang === 'ru' ? 'Заказ успешно принят вами в работу!' : 'Task claimed successfully!');
-                loadOrders();
-            }
-        }
+    if (error) {
+        alert('Ошибка при принятии заказа: ' + error.message);
+        console.error("Supabase error:", error);
+    } else {
+        alert(currentLang === 'ru' ? 'Заказ успешно принят в работу!' : 'Task claimed successfully!');
+        loadOrders(); // Перезагружаем список, чтобы карточка перешла в статус "В работе"
+    }
+}
 
         function openChat(id) {
     window.location.href = `inspection_room.html?id=${id}`;
