@@ -189,8 +189,8 @@
         }
 
         function openChat(id) {
-            alert(currentLang === 'ru' ? 'Переход в чат инспекции (Шаг 3)...' : 'Opening inspection live chat...');
-        }
+    window.location.href = `inspection_room.html?id=${id}`;
+}
 
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('lang-ru').addEventListener('click', () => switchLang('ru'));
