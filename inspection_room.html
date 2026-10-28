@@ -258,8 +258,43 @@
             }
             loadInspectionData();
             loadMessages();
-            setInterval(loadMessages, 4000);
+            
+            // Включаем Supabase Realtime (WebSockets) вместо поллинга
+            setupRealtimeSubscription();
         });
+
+        // Настройка WebSocket канала Supabase Realtime
+        function setupRealtimeSubscription() {
+            supabaseClient
+                .channel(`inspection-${inspectionId}`)
+                .on(
+                    'postgres_changes',
+                    {
+                        event: 'INSERT',
+                        schema: 'public',
+                        table: 'inspection_messages',
+                        filter: `inspection_id=eq.${inspectionId}`
+                    },
+                    (payload) => {
+                        console.log('Новое сообщение через WebSocket:', payload.new);
+                        loadMessages();
+                    }
+                )
+                .on(
+                    'postgres_changes',
+                    {
+                        event: 'UPDATE',
+                        schema: 'public',
+                        table: 'inspections',
+                        filter: `id=eq.${inspectionId}`
+                    },
+                    (payload) => {
+                        console.log('Статус инспекции обновлен через WebSocket:', payload.new);
+                        loadInspectionData();
+                    }
+                )
+                .subscribe();
+        }
 
         async function loadInspectionData() {
             const { data, error } = await supabaseClient
@@ -422,7 +457,7 @@
                 alert('Ошибка отправки: ' + error.message);
             } else {
                 input.value = '';
-                loadMessages();
+                // Сообщение автоматически отобразится через WebSocket Realtime
             }
         }
 
@@ -456,7 +491,7 @@
                 statusDiv.className = 'text-xs font-mono text-emerald-400';
                 statusDiv.innerText = '✓ Файл успешно прикреплен к отчету и чату!';
                 fileInput.value = '';
-                loadMessages();
+                // Сообщение автоматически отобразится через WebSocket Realtime
             }
         }
 
@@ -473,7 +508,7 @@
                 alert('Ошибка сохранения вердикта: ' + error.message);
             } else {
                 alert('Вердикт успешно сохранен и отправлен клиенту!');
-                loadInspectionData();
+                // Статус обновится автоматически через WebSocket Realtime
             }
         }
 
@@ -537,151 +572,4 @@
                     doc.addImage(qrImgData, 'PNG', 170, 6, 32, 32);
                     doc.setFontSize(6);
                     doc.setTextColor(203, 213, 225);
-                    doc.text('SCAN TO VERIFY', 172, 41);
-                }
-
-                let y = 56;
-                doc.setTextColor(15, 23, 42);
-                doc.setFontSize(14);
-                doc.setFont('helvetica', 'bold');
-                doc.text(`FACTORY: ${factoryTitle.toUpperCase()}`, 15, y);
-
-                y += 6;
-                doc.setFontSize(9);
-                doc.setFont('helvetica', 'normal');
-                doc.setTextColor(100, 116, 139);
-                doc.text(`Scope & Region: ${countryCity}`, 15, y);
-
-                y += 8;
-                doc.setFillColor(248, 250, 252);
-                doc.setDrawColor(226, 232, 240);
-                doc.rect(15, y, 180, 36, 'FD');
-
-                doc.setTextColor(51, 65, 85);
-                doc.setFontSize(8.5);
-                doc.text(`Client Org: ${clientName}`, 20, y + 8);
-                doc.text(`Assigned Inspector: ${inspectorName}`, 20, y + 18);
-                doc.text(`Scheduled Date: ${scheduledDate}`, 110, y + 8);
-                doc.text(`Facility Address: ${factoryAddress}`, 110, y + 18);
-                
-                doc.setFont('helvetica', 'bold');
-                doc.text(`Sampled Qty: ${sampledQty} | Defects: ${defectsQty} | Container: ${containerNum}`, 20, y + 28);
-
-                y += 44;
-                doc.setFont('helvetica', 'bold');
-                doc.setFontSize(10);
-                doc.setTextColor(15, 23, 42);
-                doc.text('1. INSPECTION SPECIFICATIONS & REQS (TZ)', 15, y);
-
-                y += 6;
-                doc.setFont('helvetica', 'normal');
-                doc.setFontSize(8.5);
-                doc.setTextColor(71, 85, 105);
-                const splitReq = doc.splitTextToSize(requirements, 180);
-                doc.text(splitReq, 15, y);
-
-                y += (splitReq.length * 4.5) + 12;
-                doc.setFont('helvetica', 'bold');
-                doc.setFontSize(10);
-                doc.setTextColor(15, 23, 42);
-                doc.text('2. QUALITY AUDIT CHECKLIST (ISO 2859-1 STANDARD)', 15, y);
-
-                y += 6;
-                doc.setFont('helvetica', 'normal');
-                doc.setFontSize(8.5);
-                const checks = [
-                    '[ PASS ] Outer Packaging & Shipping Mark Verification (Cartons, Pallets, Moisture)',
-                    '[ PASS ] Quantity & Mass Reconciliation against Commercial Invoice',
-                    '[ PASS ] Critical & Minor Defect Check (AQL 2.5 Sampling Plan)',
-                    '[ PASS ] Barcode, FBA Labels & Custom Export Compliance Check'
-                ];
-                
-                checks.forEach(check => {
-                    y += 6;
-                    doc.text(check, 18, y);
-                });
-
-                y += 18;
-                const isPass = statusBadge.toUpperCase().includes('COMPLETED') || statusBadge.toUpperCase().includes('PASS');
-                
-                doc.setFillColor(isPass ? 240 : 254, isPass ? 253 : 242, isPass ? 244 : 242);
-                doc.setDrawColor(isPass ? 187 : 254, isPass ? 247 : 202, isPass ? 208 : 202);
-                doc.rect(15, y, 110, 24, 'FD');
-
-                doc.setFont('helvetica', 'bold');
-                doc.setFontSize(10);
-                doc.setTextColor(isPass ? 22 : 153, isPass ? 101 : 27, isPass ? 52 : 27);
-                doc.text(`VERDICT: ${isPass ? 'PASSED / APPROVED FOR SHIPMENT' : 'FAILED / ISSUES DETECTED'}`, 20, y + 14);
-
-                const stampX = 155;
-                const stampY = y + 12;
-                
-                doc.setDrawColor(79, 70, 229);
-                doc.setLineWidth(0.8);
-                doc.circle(stampX, stampY, 14, 'S');
-                doc.circle(stampX, stampY, 12, 'S');
-
-                doc.setFontSize(5.5);
-                doc.setTextColor(79, 70, 229);
-                doc.text('SOURCEJET AI', stampX - 9, stampY - 5);
-                doc.setFont('helvetica', 'bold');
-                doc.text('OFFICIAL SEAL', stampX - 10, stampY + 1);
-                doc.setFont('helvetica', 'normal');
-                doc.text('VERIFIED AUDIT', stampX - 10, stampY + 6);
-
-                if (mediaMessages && mediaMessages.length > 0) {
-                    doc.addPage();
-                    
-                    doc.setFillColor(15, 23, 42);
-                    doc.rect(0, 0, 210, 25, 'F');
-                    doc.setTextColor(192, 132, 252);
-                    doc.setFont('helvetica', 'bold');
-                    doc.setFontSize(14);
-                    doc.text('3. FACTORY PHOTO & MEDIA EVIDENCE', 15, 16);
-
-                    let startX = 15;
-                    let startY = 35;
-                    let imgWidth = 85;
-                    let imgHeight = 60;
-                    let col = 0;
-
-                    for (let i = 0; i < mediaMessages.length; i++) {
-                        let currentX = startX + (col * 95);
-                        let currentY = startY + (Math.floor(i / 2) * 70);
-
-                        if (currentY > 230) {
-                            doc.addPage();
-                            currentY = 35;
-                        }
-
-                        doc.setDrawColor(203, 213, 225);
-                        doc.rect(currentX, currentY, imgWidth, imgHeight, 'S');
-                        
-                        doc.setFontSize(7);
-                        doc.setTextColor(100, 116, 139);
-                        doc.text(`Evidence #${i + 1}: ${mediaMessages[i].message.slice(0, 30)}`, currentX, currentY + imgHeight + 5);
-
-                        col = col === 1 ? 0 : col + 1;
-                    }
-                }
-
-                doc.setFontSize(6.5);
-                doc.setTextColor(148, 163, 184);
-                doc.text('DISCLAIMER: This report reflects findings at the time and place of inspection only and within the limits of client instructions.', 15, 278);
-                doc.text('SourceJet AI is not liable for transport damages or latent manufacturing defects occurring after field ops intervention.', 15, 282);
-                
-                const cryptoHash = `HASH: ${inspectionId.replaceAll('-', '').toUpperCase().slice(0, 24)}-VERIFIED`;
-                doc.text(`Document Integrity: ${cryptoHash} | Generated via SourceJet Field Ops Terminal.`, 15, 288);
-
-                doc.save(`SourceJet-Report-${inspectionId.slice(0, 8)}.pdf`);
-            } catch (err) {
-                console.error("Enterprise PDF Error:", err);
-                alert('Ошибка генерации защищенного PDF.');
-            } finally {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
-        }
-    </script>
-</body>
-</html>
+                    doc.text('SCAN TO VERIFY
