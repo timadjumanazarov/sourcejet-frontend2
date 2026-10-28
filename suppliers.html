@@ -22,7 +22,7 @@
         <!-- Поиск и фильтры -->
         <div class="space-y-3">
             <div class="flex flex-col md:flex-row gap-3">
-                <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Введите название, город или категорию (например: Иу, Электроника)..." 
+                <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Введите название или город (например: Нинбо, Иу)..." 
                     class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:border-cyan-500 transition">
                 
                 <select id="categorySelect" onchange="applyFilters()" 
@@ -34,17 +34,14 @@
                 </select>
             </div>
 
-            <!-- Индикатор результатов -->
             <div class="flex justify-between items-center text-xs text-slate-400 px-1">
-                <span id="resultsCount">Загрузка данных из базы...</span>
+                <span id="resultsCount">Загрузка данных...</span>
                 <button onclick="resetFilters()" class="text-cyan-400 hover:underline">Сбросить фильтры</button>
             </div>
         </div>
 
         <!-- Список фабрик -->
-        <div id="suppliersGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Карточки подгрузятся из базы -->
-        </div>
+        <div id="suppliersGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
     </div>
 
     <script>
@@ -54,17 +51,24 @@
 
         let allSuppliers = [];
 
-        // 1. Загружаем все данные из базы один раз при старте
         async function fetchSuppliers() {
             const grid = document.getElementById('suppliersGrid');
-            grid.innerHTML = '<p class="text-slate-500 col-span-2 text-center py-8">Подключение к Supabase...</p>';
+            const countLabel = document.getElementById('resultsCount');
+            
+            grid.innerHTML = '<p class="text-slate-500 col-span-2 text-center py-8">Загрузка с базы Supabase...</p>';
 
             const { data, error } = await supabaseClient
                 .from('suppliers')
                 .select('*');
 
-            if (error || !data) {
-                grid.innerHTML = '<p class="text-red-400 col-span-2 text-center py-8">Ошибка загрузки данных из базы.</p>';
+            if (error) {
+                console.error("Ошибка Supabase:", error);
+                grid.innerHTML = `<p class="text-red-400 col-span-2 text-center py-8">Ошибка базы данных: ${error.message}</p>`;
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                grid.innerHTML = '<p class="text-yellow-400 col-span-2 text-center py-8">Таблица suppliers пуста! Добавьте тестовые строки в Supabase.</p>';
                 return;
             }
 
@@ -72,7 +76,6 @@
             applyFilters();
         }
 
-        // 2. Мгновенная фильтрация по введенному тексту и категории
         function applyFilters() {
             const search = document.getElementById('searchInput').value.trim().toLowerCase();
             const category = document.getElementById('categorySelect').value;
@@ -80,11 +83,12 @@
             const countLabel = document.getElementById('resultsCount');
 
             const filtered = allSuppliers.filter(s => {
-                const matchesCategory = (category === 'ALL') || (s.category === category);
-                const matchesSearch = !search || 
-                    s.name.toLowerCase().includes(search) || 
-                    s.location.toLowerCase().includes(search) ||
-                    s.category.toLowerCase().includes(search);
+                const sCategory = s.category ? String(s.category).trim() : '';
+                const sName = s.name ? String(s.name).toLowerCase() : '';
+                const sLocation = s.location ? String(s.location).toLowerCase() : '';
+
+                const matchesCategory = (category === 'ALL') || (sCategory === category);
+                const matchesSearch = !search || sName.includes(search) || sLocation.includes(search);
                 
                 return matchesCategory && matchesSearch;
             });
@@ -94,8 +98,7 @@
             if (filtered.length === 0) {
                 grid.innerHTML = `
                     <div class="col-span-2 text-center py-12 bg-slate-900/50 border border-slate-800 rounded-2xl">
-                        <p class="text-slate-400 font-medium">Ничего не найдено по запросу "${search}"</p>
-                        <p class="text-slate-600 text-xs mt-1">Попробуйте изменить ключевые слова или сбросить категории</p>
+                        <p class="text-slate-400 font-medium">Ничего не найдено по вашему запросу</p>
                     </div>
                 `;
                 return;
