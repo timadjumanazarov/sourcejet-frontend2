@@ -3,128 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SourceJet AI — Sourcing Platform by Go Project</title>
+    <title>SourceJet AI — Global B2B Sourcing Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         .ai-gradient-text {
-            background: linear-gradient(135deg, #a855f7 0%, #6366f1 50%, #06b6d4 100%);
+            background: linear-gradient(135deg, #c084fc 0%, #818cf8 50%, #22d3ee 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         .ai-glow {
-            box-shadow: 0 0 50px -10px rgba(168, 85, 247, 0.25);
+            box-shadow: 0 0 60px -15px rgba(168, 85, 247, 0.3);
         }
         .card-glow:hover {
-            box-shadow: 0 0 25px -5px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 0 30px -5px rgba(99, 102, 241, 0.4);
+            transform: translateY(-2px);
+        }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(168, 85, 247, 0.15);
         }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-purple-500 selection:text-white">
 
-    <!-- Верхняя шапка -->
-    <header class="border-b border-purple-900/30 bg-slate-900/70 backdrop-blur-md sticky top-0 z-50">
+    <!-- Premium Header -->
+    <header class="border-b border-purple-900/30 bg-slate-900/60 backdrop-blur-xl sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             
-            <!-- Логотип + Go Project -->
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-gradient-to-tr from-purple-600 to-indigo-500 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg shadow-purple-500/30">
+            <!-- Brand Logo -->
+            <div class="flex items-center gap-3.5">
+                <div class="w-11 h-11 bg-gradient-to-tr from-purple-600 via-indigo-600 to-cyan-400 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-xl shadow-purple-500/25">
                     ⚡
                 </div>
                 <div>
                     <div class="flex items-center gap-2">
-                        <span class="font-extrabold text-xl tracking-tight text-white">SourceJet <span class="ai-gradient-text">AI</span></span>
+                        <span class="font-black text-xl tracking-wider text-white">SourceJet <span class="ai-gradient-text">AI</span></span>
                     </div>
-                    <p class="text-[10px] text-purple-400/80 font-medium tracking-wide uppercase">Проект компании Go Project</p>
+                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase">Global Trade & Sourcing Network</p>
                 </div>
             </div>
 
-            <!-- Расширенное навигационное меню -->
-            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
-                <a href="#search-section" class="hover:text-purple-400 transition">Поиск фабрик</a>
-                <a href="cargo_tracker.html" class="hover:text-purple-400 transition">Трекинг грузов</a>
-                <a href="#inspectors" onclick="alert('Модуль «База инспекторов» в процессе подключения')" class="hover:text-purple-400 transition flex items-center gap-1.5">
-                    <span>База инспекторов</span>
-                    <span class="text-[9px] bg-purple-950 text-purple-300 border border-purple-800 px-1.5 py-0.5 rounded-full font-bold">NEW</span>
+            <!-- International Navigation -->
+            <nav class="hidden md:flex items-center gap-8 text-xs font-semibold uppercase tracking-wider text-slate-300">
+                <a href="#search-section" class="hover:text-purple-400 transition">Suppliers Hub</a>
+                <a href="cargo_tracker.html" class="hover:text-purple-400 transition">Cargo Tracking</a>
+                <a href="#inspectors" onclick="alert('Inspection Network module is initializing...')" class="hover:text-purple-400 transition flex items-center gap-1.5">
+                    <span>Inspectors Network</span>
+                    <span class="text-[8px] bg-purple-950 text-purple-300 border border-purple-800 px-1.5 py-0.5 rounded-full font-extrabold tracking-normal">GLOBAL</span>
                 </a>
-                <a href="#analytics" onclick="alert('Модуль «Аналитика цен» скоро будет доступен')" class="hover:text-purple-400 transition">Аналитика цен</a>
+                <a href="#analytics" onclick="alert('AI Market Intelligence coming soon')" class="hover:text-purple-400 transition">AI Analytics</a>
             </nav>
 
-            <!-- Кнопка действия -->
+            <!-- Action CTA -->
             <div class="flex items-center gap-3">
-                <a href="#search-section" class="bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 hover:opacity-90 text-white font-semibold px-5 py-2.5 rounded-xl text-xs transition shadow-lg shadow-purple-600/30">
-                    Найти поставщика
+                <span class="hidden lg:inline-block text-[10px] text-emerald-400 bg-emerald-950/60 border border-emerald-800/50 px-2.5 py-1 rounded-full font-mono">
+                    ● NODES ACTIVE
+                </span>
+                <a href="#search-section" class="bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 hover:opacity-95 text-white font-bold px-5 py-2.5 rounded-xl text-xs tracking-wide uppercase transition shadow-lg shadow-purple-600/30">
+                    Request RFQ
                 </a>
             </div>
         </div>
     </header>
 
-    <!-- Главный баннер (Hero Section) -->
-    <section class="relative py-20 px-6 text-center max-w-5xl mx-auto space-y-6 overflow-hidden">
-        <!-- Неоновый фоновый блик -->
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] bg-purple-600/20 blur-[120px] rounded-full -z-10 pointer-events-none"></div>
+    <!-- Hero Section (Rich International Look) -->
+    <section class="relative py-24 px-6 text-center max-w-5xl mx-auto space-y-6 overflow-hidden">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-purple-600/15 blur-[140px] rounded-full -z-10 pointer-events-none"></div>
 
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-950/60 border border-purple-800/60 text-purple-300 text-xs font-semibold backdrop-blur-sm">
-            <span class="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></span>
-            <span>Интеллектуальная B2B Экосистема</span>
+        <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-purple-950/80 border border-purple-800/60 text-purple-300 text-xs font-semibold backdrop-blur-md shadow-inner">
+            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+            <span class="tracking-wide uppercase text-[10px] font-bold">Enterprise Sourcing Intelligence</span>
         </div>
 
         <h1 class="text-4xl md:text-6xl font-black text-white tracking-tight leading-tight">
-            Поиск поставщиков и фабрик Китая <br>
-            <span class="ai-gradient-text">на базе AI-платформы</span>
+            Next-Gen AI Sourcing & Verification <br>
+            <span class="ai-gradient-text">for Global Enterprises</span>
         </h1>
 
-        <p class="text-slate-400 text-base md:text-lg max-w-3xl mx-auto font-normal">
-            Автоматизированный аудит заводов, прямой заказ инспекций качества, верификация юридических лиц и сквозной логистический трекинг от Go Project.
+        <p class="text-slate-400 text-base md:text-lg max-w-3xl mx-auto font-normal leading-relaxed">
+            Automated factory audits, smart quality inspections, enterprise-grade supplier vetting, and real-time logistics tracking across Asia.
         </p>
+
+        <!-- Quick Stats Bar -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto pt-8">
+            <div class="glass-panel p-4 rounded-2xl text-center">
+                <div class="text-xl font-black text-purple-400">100%</div>
+                <div class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold mt-1">Verified Factories</div>
+            </div>
+            <div class="glass-panel p-4 rounded-2xl text-center">
+                <div class="text-xl font-black text-indigo-400">AI-Audit</div>
+                <div class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold mt-1">Risk Assessment</div>
+            </div>
+            <div class="glass-panel p-4 rounded-2xl text-center">
+                <div class="text-xl font-black text-cyan-400">24/7</div>
+                <div class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold mt-1">Live Tracking</div>
+            </div>
+            <div class="glass-panel p-4 rounded-2xl text-center">
+                <div class="text-xl font-black text-emerald-400">ISO 9001</div>
+                <div class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold mt-1">Standards Met</div>
+            </div>
+        </div>
     </section>
 
-    <!-- Поиск и каталог фабрик -->
-    <section id="search-section" class="max-w-7xl mx-auto px-6 pb-24 space-y-8 flex-1 w-full">
+    <!-- Search & Catalog Section -->
+    <section id="search-section" class="max-w-7xl mx-auto px-6 pb-28 space-y-8 flex-1 w-full">
         
-        <!-- Панель фильтрации -->
-        <div class="bg-slate-900/80 border border-purple-900/40 p-5 rounded-2xl space-y-4 backdrop-blur-xl ai-glow">
+        <!-- Premium Filter Panel -->
+        <div class="glass-panel p-6 rounded-3xl space-y-4 ai-glow">
             <div class="flex flex-col md:flex-row gap-4">
                 <div class="relative flex-1">
                     <input type="text" id="searchInput" oninput="applyFilters()" 
-                        placeholder="Поиск по названию, городу или категории (например: Нинбо, Иу, Текстиль)..." 
-                        class="w-full bg-slate-950/80 border border-purple-900/50 rounded-xl px-5 py-4 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-sm transition">
+                        placeholder="Search by factory name, city, or category (e.g., Ningbo, Yiwu, Electronics)..." 
+                        class="w-full bg-slate-950/90 border border-purple-900/60 rounded-2xl px-5 py-4 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-sm transition">
                 </div>
                 
                 <select id="categorySelect" onchange="applyFilters()" 
-                    class="bg-slate-950/80 border border-purple-900/50 rounded-xl px-5 py-4 text-slate-300 text-sm focus:outline-none focus:border-purple-500 transition">
-                    <option value="ALL">Все категории</option>
-                    <option value="Электроника">Электроника</option>
-                    <option value="Текстиль">Текстиль</option>
-                    <option value="Упаковка">Упаковка</option>
+                    class="bg-slate-950/90 border border-purple-900/60 rounded-2xl px-5 py-4 text-slate-300 text-sm focus:outline-none focus:border-purple-500 transition font-medium">
+                    <option value="ALL">All Categories</option>
+                    <option value="Электроника">Electronics</option>
+                    <option value="Текстиль">Textiles & Apparel</option>
+                    <option value="Упаковка">Packaging & Print</option>
                 </select>
             </div>
 
-            <div class="flex justify-between items-center text-xs text-slate-400 px-1 pt-2 border-t border-purple-950">
-                <span id="resultsCount" class="text-purple-300 font-medium">Подключение к базе данных...</span>
-                <button onclick="resetFilters()" class="text-purple-400 hover:text-purple-300 font-medium transition">Сбросить фильтры</button>
+            <div class="flex justify-between items-center text-xs text-slate-400 px-1 pt-3 border-t border-purple-950/80">
+                <span id="resultsCount" class="text-purple-300 font-mono font-medium">Initializing Database Connection...</span>
+                <button onclick="resetFilters()" class="text-purple-400 hover:text-purple-300 font-semibold tracking-wide uppercase text-[10px] transition">Reset Filters</button>
             </div>
         </div>
 
-        <!-- Заголовок блока -->
-        <div class="flex justify-between items-end">
+        <!-- Section Header -->
+        <div class="flex justify-between items-end px-1">
             <div>
-                <h2 class="text-2xl font-bold text-white flex items-center gap-2">
-                    <span>Верифицированные производители</span>
-                    <span class="text-xs bg-indigo-950 text-indigo-400 border border-indigo-800 px-2.5 py-0.5 rounded-full">Live DB</span>
+                <h2 class="text-2xl font-black text-white flex items-center gap-3">
+                    <span>Verified Manufacturers Hub</span>
+                    <span class="text-[10px] font-mono bg-indigo-950 text-indigo-300 border border-indigo-800/60 px-3 py-1 rounded-full uppercase tracking-wider">SUPABASE LIVE DB</span>
                 </h2>
-                <p class="text-xs text-slate-400 mt-1">Прямой доступ к производителям с проверкой Go Project</p>
+                <p class="text-xs text-slate-400 mt-1">Direct access to vetted industrial partners with AI compliance scoring.</p>
             </div>
         </div>
 
-        <!-- Карточки фабрик -->
+        <!-- Dynamic Suppliers Grid -->
         <div id="suppliersGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
 
     </section>
 
-    <!-- Подвал -->
-    <footer class="border-t border-purple-900/30 bg-slate-900/60 py-8 text-center text-xs text-slate-500">
-        <p>© 2026 SourceJet AI. Разработано в рамках экосистемы **Go Project**.</p>
+    <!-- International Footer -->
+    <footer class="border-t border-purple-900/30 bg-slate-900/80 py-10 text-center text-xs text-slate-500 space-y-2">
+        <p class="font-bold text-slate-400 tracking-wider">SOURCEJET AI INTERNATIONAL SOURCING ECOSYSTEM</p>
+        <p>© 2026 SourceJet. All rights reserved. Global Trade Solutions.</p>
     </footer>
 
     <script>
@@ -136,82 +165,6 @@
 
         async function fetchSuppliers() {
             const grid = document.getElementById('suppliersGrid');
-            grid.innerHTML = '<div class="col-span-3 text-center py-12 text-slate-500">Загрузка базы фабрик...</div>';
+            grid.innerHTML = '<div class="col-span-3 text-center py-16 text-slate-500 font-mono text-sm">Fetching verified suppliers from database...</div>';
 
-            const { data, error } = await supabaseClient.from('suppliers').select('*');
-
-            if (error || !data) {
-                grid.innerHTML = `<div class="col-span-3 text-center py-12 text-red-400">Ошибка загрузки данных из базы Supabase</div>`;
-                return;
-            }
-
-            allSuppliers = data;
-            applyFilters();
-        }
-
-        function applyFilters() {
-            const search = document.getElementById('searchInput').value.trim().toLowerCase();
-            const category = document.getElementById('categorySelect').value;
-            const grid = document.getElementById('suppliersGrid');
-            const countLabel = document.getElementById('resultsCount');
-
-            const filtered = allSuppliers.filter(s => {
-                const sCat = s.category ? String(s.category) : '';
-                const sName = s.name ? String(s.name).toLowerCase() : '';
-                const sLoc = s.location ? String(s.location).toLowerCase() : '';
-
-                const matchesCategory = (category === 'ALL') || (sCat === category);
-                const matchesSearch = !search || sName.includes(search) || sLoc.includes(search) || sCat.toLowerCase().includes(search);
-
-                return matchesCategory && matchesSearch;
-            });
-
-            countLabel.innerText = `Найдено фабрик: ${filtered.length} из ${allSuppliers.length}`;
-
-            if (filtered.length === 0) {
-                grid.innerHTML = `
-                    <div class="col-span-3 text-center py-16 bg-slate-900/50 border border-purple-900/30 rounded-2xl">
-                        <p class="text-slate-400 font-medium">Ничего не найдено по вашему запросу</p>
-                        <p class="text-slate-600 text-xs mt-1">Попробуйте изменить ключевые слова</p>
-                    </div>
-                `;
-                return;
-            }
-
-            grid.innerHTML = '';
-            filtered.forEach(s => {
-                grid.innerHTML += `
-                    <div class="bg-slate-900/90 border border-purple-900/30 hover:border-purple-500/50 p-6 rounded-2xl flex flex-col justify-between space-y-5 transition duration-200 card-glow">
-                        <div class="space-y-4">
-                            <div class="flex justify-between items-start gap-2">
-                                <h3 class="font-bold text-lg text-white leading-snug">${s.name}</h3>
-                                ${s.verified ? '<span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800/50 px-2.5 py-0.5 rounded-full shrink-0 font-semibold tracking-wide">Verified AI</span>' : ''}
-                            </div>
-                            <p class="text-xs text-slate-400 flex items-center gap-1">📍 ${s.location}</p>
-                            
-                            <div class="space-y-2 text-xs text-slate-300 pt-3 border-t border-purple-950">
-                                <div class="flex justify-between"><span class="text-slate-500">Категория:</span> <strong class="text-purple-400">${s.category}</strong></div>
-                                <div class="flex justify-between"><span class="text-slate-500">Минимальный заказ:</span> <span class="font-medium">${s.moq}</span></div>
-                                <div class="flex justify-between"><span class="text-slate-500">Рейтинг:</span> <span class="font-medium text-amber-400">⭐ ${s.rating}</span></div>
-                            </div>
-                        </div>
-
-                        <button onclick="alert('Заявка на инспекцию фабрики ${s.name} передана в Go Project!')" 
-                            class="w-full bg-gradient-to-r from-purple-900/40 to-indigo-900/40 hover:from-purple-600 hover:to-indigo-600 border border-purple-500/30 hover:border-transparent text-purple-300 hover:text-white text-xs py-3 rounded-xl font-semibold transition duration-200">
-                            Заказать инспекцию
-                        </button>
-                    </div>
-                `;
-            });
-        }
-
-        function resetFilters() {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('categorySelect').value = 'ALL';
-            applyFilters();
-        }
-
-        window.onload = fetchSuppliers;
-    </script>
-</body>
-</html>
+            const { data, error } = await supabaseClient.from
