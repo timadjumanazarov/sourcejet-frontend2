@@ -64,7 +64,7 @@
             </div>
         </div>
 
-        <!-- Orders Grid -->
+        <!-- Orders Grid (Исправлен ID на ordersList) -->
         <div id="ordersList" class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Сюда подгружаются заказы из Supabase -->
         </div>
@@ -95,131 +95,87 @@
             loadOrders();
         }
 
+        // Единая, чистая и рабочая функция загрузки ВСЕХ заказов
         async function loadOrders() {
-            const city = document.getElementById('inspectorCity').value;
             const container = document.getElementById('ordersList');
-
-            container.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 text-xs font-mono">${currentLang === 'ru' ? 'Загрузка заявок в регионе ' + city + '...' : 'Fetching orders for ' + city + '...'}</div>`;
+            container.innerHTML = '<div class="col-span-full text-center text-slate-500 py-10">Загрузка всех заказов из базы...</div>';
 
             const { data, error } = await supabaseClient
                 .from('inspections')
                 .select('*')
-                .eq('city', city)
                 .order('created_at', { ascending: false });
 
             if (error) {
-                container.innerHTML = `<div class="col-span-full text-center py-8 text-rose-400 text-xs">Ошибка загрузки: ${error.message}</div>`;
+                container.innerHTML = `<div class="col-span-full text-center text-rose-400 py-10">Ошибка: ${error.message}</div>`;
                 return;
             }
 
             if (!data || data.length === 0) {
-                container.innerHTML = `
-                    <div class="col-span-full glass-panel p-8 text-center rounded-3xl space-y-2">
-                        <div class="text-2xl">📭</div>
-                        <div class="text-sm font-bold text-slate-300">${currentLang === 'ru' ? 'Нет активных заявок' : 'No Active Inspection Requests'}</div>
-                        <div class="text-xs text-slate-500">${currentLang === 'ru' ? 'В городе ' + city + ' пока нет доступных заказов.' : 'No orders available in ' + city + ' at the moment.'}</div>
-                    </div>
-                `;
+                container.innerHTML = `<div class="col-span-full text-center text-slate-500 py-10">В базе данных пока нет ни одной заявки. Создайте новую через форму!</div>`;
                 return;
             }
 
             let html = '';
-            data.forEach(item => {
-                const isSearching = item.status === 'searching_inspector';
-                const statusBadge = isSearching 
-                    ? `<span class="bg-amber-950 text-amber-400 border border-amber-800 text-[10px] font-bold px-2.5 py-1 rounded-full">${currentLang === 'ru' ? 'Свободный заказ' : 'Open Request'}</span>`
-                    : `<span class="bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] font-bold px-2.5 py-1 rounded-full">${currentLang === 'ru' ? 'В работе' : 'In Progress'}</span>`;
+            data.forEach(order => {
+                const isInProgress = order.status === 'in_progress';
 
                 html += `
-                    <div class="glass-panel p-6 rounded-3xl border border-purple-900/40 space-y-4 flex flex-col justify-between">
+                    <div class="glass-panel p-6 rounded-3xl border ${isInProgress ? 'border-amber-500/40' : 'border-purple-900/40'} space-y-4 flex flex-col justify-between">
                         <div class="space-y-3">
                             <div class="flex justify-between items-start gap-2">
                                 <div>
-                                    <span class="text-[10px] font-mono text-purple-400 uppercase font-bold">${item.country} • ${item.city}</span>
-                                    <h3 class="text-lg font-bold text-white mt-0.5">${item.factory_name}</h3>
+                                    <span class="text-[10px] font-mono text-purple-400 uppercase font-bold">Город: ${order.city}</span>
+                                    <h3 class="text-lg font-bold text-white mt-0.5">${order.factory_name || 'Фабрика'}</h3>
                                 </div>
-                                ${statusBadge}
+                                <span class="text-[10px] px-2.5 py-1 rounded-full font-bold uppercase ${isInProgress ? 'bg-amber-950 text-amber-300 border border-amber-800' : 'bg-purple-950 text-purple-300 border border-purple-800'}">
+                                    ${order.status || 'new'}
+                                </span>
                             </div>
 
                             <div class="space-y-1.5 text-xs text-slate-300">
-                                <p><strong>📍 Адрес:</strong> ${item.address_chinese || 'Не указан'}</p>
-                                <p><strong>📅 Дата проверки:</strong> ${item.scheduled_date || 'По договоренности'}</p>
-                                <p><strong>📋 Тип:</strong> <span class="text-cyan-400 font-bold">${item.inspection_type}</span></p>
-                                <p><strong>👤 Клиент:</strong> ${item.client_name}</p>
-                                ${item.requirements?.notes ? `<div class="bg-slate-950/80 p-3 rounded-xl text-slate-400 border border-purple-900/30 mt-2"><strong>ТЗ:</strong> ${item.requirements.notes}</div>` : ''}
+                                <p><strong>📍 Адрес:</strong> ${order.address_chinese || 'Не указан'}</p>
+                                <p><strong>📅 Дата проверки:</strong> ${order.scheduled_date || 'По договоренности'}</p>
+                                <p><strong>📋 Тип:</strong> <span class="text-cyan-400 font-bold">${order.inspection_type || 'Стандарт'}</span></p>
+                                <p><strong>👤 Клиент:</strong> ${order.client_name || 'Не указан'}</p>
+                                <p class="text-[10px] text-slate-500 font-mono">ID: ${order.id}</p>
                             </div>
                         </div>
 
                         <div class="pt-2">
-                            ${isSearching ? `
-                                <button onclick="claimOrder('${item.id}')" class="w-full bg-gradient-to-r from-purple-600 to-cyan-500 hover:opacity-90 text-white text-xs font-bold py-3 rounded-xl transition">
-                                    ${currentLang === 'ru' ? 'Принять заказ на выезд' : 'Accept Inspection Task'}
+                            ${isInProgress ? `
+                                <button onclick="openChat('${order.id}')" class="w-full bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold py-3 rounded-xl uppercase tracking-wider transition flex items-center justify-center gap-2">
+                                    💬 <span>В комнату инспекции</span>
                                 </button>
                             ` : `
-                                <button onclick="openChat('${item.id}')" class="w-full bg-slate-800 hover:bg-purple-900/60 text-white border border-purple-700/50 text-xs font-bold py-3 rounded-xl transition flex items-center justify-center gap-2">
-                                    💬 <span>${currentLang === 'ru' ? 'Открыть чат с клиентом' : 'Open Client Live Chat'}</span>
+                                <button onclick="claimOrder('${order.id}')" class="w-full bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold py-3 rounded-xl uppercase tracking-wider transition">
+                                    Принять заказ на выезд
                                 </button>
                             `}
                         </div>
                     </div>
                 `;
             });
-
             container.innerHTML = html;
         }
 
-        async function loadOrders() {
-    const ordersContainer = document.getElementById('ordersContainer');
-    ordersContainer.innerHTML = '<div class="text-center text-slate-500 py-10">Загрузка всех заказов из базы...</div>';
+        async function claimOrder(id) {
+            try {
+                await supabaseClient
+                    .from('inspections')
+                    .update({ 
+                        status: 'in_progress',
+                        inspector_name: 'Китайский инспектор'
+                    })
+                    .eq('id', id);
+            } catch (err) {
+                console.warn("Update notice:", err);
+            }
+            window.location.href = `inspection_room.html?id=${id}`;
+        }
 
-    // Запрашиваем ВСЕ заказы без каких-либо фильтров по городу
-    const { data, error } = await supabaseClient
-        .from('inspections')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-    if (error) {
-        ordersContainer.innerHTML = `<div class="text-center text-rose-400 py-10">Ошибка: ${error.message}</div>`;
-        return;
-    }
-
-    if (!data || data.length === 0) {
-        ordersContainer.innerHTML = `<div class="text-center text-slate-500 py-10">В базе данных пока нет ни одной заявки. Создайте новую через форму!</div>`;
-        return;
-    }
-
-    let html = '';
-    data.forEach(order => {
-        const isInProgress = order.status === 'in_progress';
-
-        html += `
-            <div class="glass-panel p-6 rounded-2xl border ${isInProgress ? 'border-amber-500/40' : 'border-purple-900/40'} flex justify-between items-center mb-4">
-                <div>
-                    <div class="flex items-center gap-2 mb-1">
-                        <span class="text-xs font-mono text-purple-400 font-bold">Город: ${order.city}</span>
-                        <span class="text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${isInProgress ? 'bg-amber-950 text-amber-300 border border-amber-800' : 'bg-purple-950 text-purple-300 border border-purple-800'}">
-                            ${order.status || 'new'}
-                        </span>
-                    </div>
-                    <h3 class="text-lg font-bold text-white">${order.factory_name || 'Фабрика'}</h3>
-                    <p class="text-xs text-slate-400">Клиент: ${order.client_name || 'Не указан'} | ID: ${order.id}</p>
-                </div>
-                <div>
-                    ${isInProgress ? `
-                        <button onclick="openChat('${order.id}')" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-4 py-2 rounded-xl text-xs uppercase tracking-wider transition">
-                            В комнату 💬
-                        </button>
-                    ` : `
-                        <button onclick="claimOrder('${order.id}')" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-4 py-2 rounded-xl text-xs uppercase tracking-wider transition">
-                            Принять заказ
-                        </button>
-                    `}
-                </div>
-            </div>
-        `;
-    });
-    ordersContainer.innerHTML = html;
-}
+        function openChat(id) {
+            window.location.href = `inspection_room.html?id=${id}`;
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('lang-ru').addEventListener('click', () => switchLang('ru'));
