@@ -630,7 +630,7 @@
             btn.disabled = true;
 
             try {
-                const { data: mediaMessages } = await supabaseClient
+                cconst { data: mediaMessages } = await supabaseClient
                     .from('inspection_messages')
                     .select('*')
                     .eq('inspection_id', inspectionId)
