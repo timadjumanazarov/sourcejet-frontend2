@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SourceJet AI — AI B2B Sourcing Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50: '#eef2ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .light .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen transition-colors duration-300 light:bg-slate-50 light:text-slate-900">
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-slate-800/80 px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center font-extrabold text-white text-xl shadow-lg shadow-indigo-500/20">
+                SJ
+            </div>
+            <div>
+                <span class="text-xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-indigo-300">SourceJet <span class="text-indigo-400">AI</span></span>
+                <span class="text-xs text-slate-400 block -mt-1 font-medium">Go Project Sourcing Engine</span>
+            </div>
+        </div>
+
+        <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-300">
+            <a href="#search" class="hover:text-indigo-400 transition">Поиск фабрик</a>
+            <a href="#factories" class="hover:text-indigo-400 transition">База заводов</a>
+            <a href="#analytics" class="hover:text-indigo-400 transition">Аналитика цен</a>
+            <a href="cargo_tracker.html" class="hover:text-indigo-400 transition text-indigo-400 font-bold flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1e1 1 0 011 1h2a1 1 0 001-1v-3a1 1 0 00-1-1h-1.172a2 2 0 01-1.414-.586l-1.828-1.828A2 2 0 0012.172 7H11"/></svg>
+                Трекинг грузов
+            </a>
+        </nav>
+
+        <div class="flex items-center gap-4">
+            <button onclick="toggleTheme()" class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white transition">
+                <svg id="themeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            </button>
+            <a href="#search" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm px-5 py-2.5 rounded-xl shadow-lg shadow-indigo-600/30 transition">
+                Начальный поиск
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="max-w-7xl mx-auto px-6 pt-16 pb-12 text-center">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-bold uppercase tracking-wider mb-6">
+            <span class="w-2 h-2 rounded-full bg-indigo-400 animate-ping"></span>
+            AI-Фильтрация китайских перекупщиков (AQL 2.5)
+        </div>
+        <h1 class="text-4xl md:text-6xl font-black tracking-tight max-w-4xl mx-auto leading-tight">
+            Прямой поиск фабрик в Китае без <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">посредников</span>
+        </h1>
+        <p class="text-slate-400 text-lg max-w-2xl mx-auto mt-6">
+            AI-движок проверяет 1688, реестры Qichacha, выписки уставного капитала и лицензии `生产` для отсева 100% торговых компаний.
+        </p>
+
+        <!-- Search Bar Component -->
+        <div id="search" class="mt-10 max-w-3xl mx-auto glass-panel p-3 rounded-2xl shadow-2xl border border-slate-800">
+            <div class="flex flex-col md:flex-row gap-3">
+                <input type="text" placeholder="Введите название товара или ссылку на 1688..." class="flex-1 bg-slate-900/90 border border-slate-800 text-white placeholder-slate-500 rounded-xl px-5 py-3.5 focus:outline-none focus:border-indigo-500">
+                <button onclick="runAISearch()" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    Найти фабрику
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Factory Verification Grid -->
+    <section id="factories" class="max-w-7xl mx-auto px-6 py-12">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+            <span>Проверенные производители (Direct Factory)</span>
+            <span class="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-full font-mono">100% Verified</span>
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Factory Card 1 -->
+            <div class="glass-panel p-6 rounded-2xl border border-slate-800 hover:border-indigo-500/50 transition">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="font-bold text-lg text-white">Shenzhen Electronics Co.</h3>
+                        <p class="text-xs text-slate-400">Шэньчжэнь, Гуандун • Площадь: 12,000 m²</p>
+                    </div>
+                    <span class="bg-emerald-500/10 text-emerald-400 text-xs font-bold px-2.5 py-1 rounded-lg border border-emerald-500/20">Прямой завод</span>
+                </div>
+                <div class="space-y-2 text-sm text-slate-300 border-y border-slate-800/80 py-3 my-3">
+                    <div class="flex justify-between"><span>Уставный капитал:</span> <span class="font-semibold text-white">¥15,000,000</span></div>
+                    <div class="flex justify-between"><span>Повторные заказы:</span> <span class="font-semibold text-emerald-400">42%</span></div>
+                    <div class="flex justify-between"><span>AQL Дефекты:</span> <span class="font-semibold text-indigo-400">&lt; 1.2%</span></div>
+                </div>
+                <button class="w-full bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-semibold py-2.5 rounded-xl text-sm transition">
+                    Заказать инспекцию
+                </button>
+            </div>
+
+            <!-- Factory Card 2 -->
+            <div class="glass-panel p-6 rounded-2xl border border-slate-800 hover:border-indigo-500/50 transition">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="font-bold text-lg text-white">Ningbo Plastic & Mold Ltd.</h3>
+                        <p class="text-xs text-slate-400">Нинбо, Чжэцзян • Площадь: 25,000 m²</p>
+                    </div>
+                    <span class="bg-emerald-500/10 text-emerald-400 text-xs font-bold px-2.5 py-1 rounded-lg border border-emerald-500/20">Прямой завод</span>
+                </div>
+                <div class="space-y-2 text-sm text-slate-300 border-y border-slate-800/80 py-3 my-3">
+                    <div class="flex justify-between"><span>Уставный капитал:</span> <span class="font-semibold text-white">¥30,000,000</span></div>
+                    <div class="flex justify-between"><span>Повторные заказы:</span> <span class="font-semibold text-emerald-400">58%</span></div>
+                    <div class="flex justify-between"><span>AQL Дефекты:</span> <span class="font-semibold text-indigo-400">&lt; 0.8%</span></div>
+                </div>
+                <button class="w-full bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-semibold py-2.5 rounded-xl text-sm transition">
+                    Заказать инспекцию
+                </button>
+            </div>
+
+            <!-- Factory Card 3 -->
+            <div class="glass-panel p-6 rounded-2xl border border-slate-800 hover:border-indigo-500/50 transition">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="font-bold text-lg text-white">Yiwu Textile Garment Works</h3>
+                        <p class="text-xs text-slate-400">Иу, Чжэцзян • Площадь: 8,500 m²</p>
+                    </div>
+                    <span class="bg-emerald-500/10 text-emerald-400 text-xs font-bold px-2.5 py-1 rounded-lg border border-emerald-500/20">Прямой завод</span>
+                </div>
+                <div class="space-y-2 text-sm text-slate-300 border-y border-slate-800/80 py-3 my-3">
+                    <div class="flex justify-between"><span>Уставный капитал:</span> <span class="font-semibold text-white">¥8,000,000</span></div>
+                    <div class="flex justify-between"><span>Повторные заказы:</span> <span class="font-semibold text-emerald-400">39%</span></div>
+                    <div class="flex justify-between"><span>AQL Дефекты:</span> <span class="font-semibold text-indigo-400">&lt; 1.5%</span></div>
+                </div>
+                <button class="w-full bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-semibold py-2.5 rounded-xl text-sm transition">
+                    Заказать инспекцию
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+            document.documentElement.classList.toggle('light');
+        }
+
+        function runAISearch() {
+            alert("AI-Engine запускает поиск по реестрам Qichacha и 1688...");
+        }
+    </script>
+</body>
+</html>
