@@ -16,14 +16,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Безопасное чтение с дефолтным значением на случай сбоя Environment на Render
-SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://ozpskokidbhqtoeykyzf.supabase.co").strip()
-SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "").strip()
+# Защита от пустых строк в Environment на Render
+SUPABASE_URL = os.environ.get("SUPABASE_URL") or "https://ozpskokidbhqtoeykyzf.supabase.co"
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY") or ""
 
 print(f"DEBUG_URL: '{SUPABASE_URL}'")
 print(f"DEBUG_KEY_LENGTH: {len(SUPABASE_KEY)}")
 
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+supabase = create_client(SUPABASE_URL.strip(), SUPABASE_KEY.strip())
 
 @app.get("/api/download-report/{inspection_id}")
 async def download_report(inspection_id: str):
