@@ -1,1 +1,213 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заказать инспекцию фабрики — SourceJet AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .ai-gradient-text {
+            background: linear-gradient(135deg, #c084fc 0%, #818cf8 50%, #22d3ee 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(168, 85, 247, 0.18);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-purple-500 selection:text-white">
 
+    <!-- Header -->
+    <header class="border-b border-purple-900/30 bg-slate-900/80 backdrop-blur-xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-3.5">
+                <div class="w-11 h-11 bg-gradient-to-tr from-purple-600 via-indigo-600 to-cyan-400 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-xl shadow-purple-500/25">⚡</div>
+                <div>
+                    <span class="font-black text-xl tracking-wider text-white">SourceJet <span class="ai-gradient-text">AI</span></span>
+                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase">Factory Inspection Hub</p>
+                </div>
+            </a>
+            <div class="flex items-center gap-2">
+                <button onclick="switchLang('ru')" id="lang-ru" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-600 text-white">RU</button>
+                <button onclick="switchLang('en')" id="lang-en" class="px-2.5 py-1 rounded-lg text-xs font-bold text-slate-400">EN</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Form Container -->
+    <main class="max-w-3xl mx-auto px-6 py-12 flex-1 w-full space-y-8">
+        <div class="text-center space-y-3">
+            <h1 class="text-3xl md:text-4xl font-black text-white" data-ru="Заказать инспекцию товара на фабрике" data-en="Book Factory Quality Inspection">Заказать инспекцию товара на фабрике</h1>
+            <p class="text-slate-400 text-sm" data-ru="Заявка автоматически поступит инспекторам в нужном городе для экономии логистических расходов." data-en="The request will be automatically routed to local inspectors in the selected region.">
+                Заявка автоматически поступит инспекторам в нужном городе для экономии логистических расходов.
+            </p>
+        </div>
+
+        <form id="inspectionForm" class="glass-panel p-6 md:p-8 rounded-3xl border border-purple-900/50 space-y-6 shadow-2xl">
+            
+            <!-- Client & Factory info -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label class="text-xs font-bold uppercase tracking-wider text-purple-300" data-ru="Ваше имя / Компания" data-en="Your Name / Company">Ваше имя / Компания</label>
+                    <input type="text" id="client_name" required placeholder="ООО «Трейд Групп»" class="w-full bg-slate-950/90 border border-purple-900/60 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs font-bold uppercase tracking-wider text-purple-300" data-ru="Название фабрики" data-en="Factory Name">Название фабрики</label>
+                    <input type="text" id="factory_name" required placeholder="Zhejiang Manufacturing Co." class="w-full bg-slate-950/90 border border-purple-900/60 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500">
+                </div>
+            </div>
+
+            <!-- Country & Smart City Selector -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label class="text-xs font-bold uppercase tracking-wider text-purple-300" data-ru="Страна производства" data-en="Manufacturing Country">Страна производства</label>
+                    <select id="country" onchange="updateCities()" class="w-full bg-slate-950/90 border border-purple-900/60 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500">
+                        <option value="China">Китай (China)</option>
+                        <option value="Turkey">Турция (Turkey)</option>
+                    </select>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs font-bold uppercase tracking-wider text-purple-300" data-ru="Город / Промышленный хаб" data-en="City / Industrial Hub">Город / Промышленный хаб</label>
+                    <select id="city" class="w-full bg-slate-950/90 border border-purple-900/60 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500">
+                        <!-- Заполняется динамически скриптом -->
+                    </select>
+                </div>
+            </div>
+
+            <!-- Address and Date -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label class="text-xs font-bold uppercase tracking-wider text-purple-300" data-ru="Адрес фабрики (на местном/английском)" data-en="Factory Address (Local/English)">Адрес фабрики</label>
+                    <input type="text" id="address_chinese" required placeholder="No. 188 Industry Road, Yiwu" class="w-full bg-slate-950/90 border border-purple-900/60 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs font-bold uppercase tracking-wider text-purple-300" data-ru="Желаемая дата инспекции" data-en="Desired Inspection Date">Желаемая дата инспекции</label>
+                    <input type="date" id="scheduled_date" required class="w-full bg-slate-950/90 border border-purple-900/60 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500">
+                </div>
+            </div>
+
+            <!-- Inspection Type -->
+            <div class="space-y-2">
+                <label class="text-xs font-bold uppercase tracking-wider text-purple-300" data-ru="Тип инспекции" data-en="Inspection Type">Тип инспекции</label>
+                <select id="inspection_type" class="w-full bg-slate-950/90 border border-purple-900/60 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500">
+                    <option value="PSI" data-ru="PSI (Финальная проверка перед отгрузкой)" data-en="PSI (Pre-Shipment Inspection)">PSI (Финальная проверка перед отгрузкой)</option>
+                    <option value="DUPRO" data-ru="DUPRO (Проверка в процессе производства)" data-en="DUPRO (During Production Inspection)">DUPRO (Проверка в процессе производства)</option>
+                    <option value="Loading" data-ru="Loading Supervision (Контроль погрузки в контейнер)" data-en="Container Loading Supervision">Loading Supervision (Контроль погрузки в контейнер)</option>
+                </select>
+            </div>
+
+            <!-- Specific Requirements / Checklist notes -->
+            <div class="space-y-2">
+                <label class="text-xs font-bold uppercase tracking-wider text-purple-300" data-ru="Техническое задание и требования к проверке" data-en="Technical Requirements & Notes">ТЗ и особые требования</label>
+                <textarea id="requirements_notes" rows="4" placeholder="Опишите требования к товару, критичные дефекты, параметры упаковки..." class="w-full bg-slate-950/90 border border-purple-900/60 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500"></textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-purple-600 to-cyan-500 text-white font-bold py-4 rounded-2xl text-xs uppercase tracking-wider transition hover:opacity-90 shadow-lg shadow-purple-600/30">
+                <span data-ru="Отправить заявку местным инспекторам" data-en="Dispatch Request to Local Inspectors">Отправить заявку местным инспекторам</span>
+            </button>
+
+            <div id="formStatus" class="text-center text-xs font-mono"></div>
+        </form>
+    </main>
+
+    <footer class="border-t border-purple-900/30 bg-slate-900/80 py-8 text-center text-xs text-slate-500">
+        <p>© 2026 SourceJet AI. Global Sourcing & Logistics Network.</p>
+    </footer>
+
+    <script>
+        const SUPABASE_URL = 'https://ozpskokidbhqtoeykyzf.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_Zpkfm-iDWB7WuHrAp1jDtQ_1w_QU8s0';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let currentLang = 'ru';
+
+        const citiesData = {
+            China: ['Yiwu', 'Guangzhou', 'Shenzhen', 'Foshan', 'Ningbo', 'Hangzhou', 'Shanghai', 'Qingdao'],
+            Turkey: ['Istanbul', 'Bursa', 'Izmir', 'Ankara', 'Denizli']
+        };
+
+        function updateCities() {
+            const country = document.getElementById('country').value;
+            const citySelect = document.getElementById('city');
+            citySelect.innerHTML = '';
+            
+            citiesData[country].forEach(city => {
+                const opt = document.createElement('option');
+                opt.value = city;
+                opt.textContent = city;
+                citySelect.appendChild(opt);
+            });
+        }
+
+        function switchLang(lang) {
+            currentLang = lang;
+            document.getElementById('lang-ru').className = lang === 'ru' ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-600 text-white' : 'px-2.5 py-1 rounded-lg text-xs font-bold text-slate-400';
+            document.getElementById('lang-en').className = lang === 'en' ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-600 text-white' : 'px-2.5 py-1 rounded-lg text-xs font-bold text-slate-400';
+
+            document.querySelectorAll('[data-ru]').forEach(el => {
+                const text = el.getAttribute(`data-${lang}`);
+                if (text) el.innerText = text;
+            });
+        }
+
+        document.getElementById('inspectionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const statusDiv = document.getElementById('formStatus');
+            const btn = document.getElementById('submitBtn');
+
+            btn.disabled = true;
+            btn.innerText = currentLang === 'ru' ? 'Отправка в систему...' : 'Dispatching...';
+            statusDiv.className = 'text-center text-xs font-mono text-purple-400';
+            statusDiv.innerText = currentLang === 'ru' ? 'Маршрутизация заявки локальным инспекторам...' : 'Routing to local inspectors...';
+
+            const payload = {
+                client_name: document.getElementById('client_name').value.trim(),
+                factory_name: document.getElementById('factory_name').value.trim(),
+                country: document.getElementById('country').value,
+                city: document.getElementById('city').value,
+                address_chinese: document.getElementById('address_chinese').value.trim(),
+                inspection_type: document.getElementById('inspection_type').value,
+                scheduled_date: document.getElementById('scheduled_date').value,
+                status: 'searching_inspector',
+                requirements: {
+                    notes: document.getElementById('requirements_notes').value.trim()
+                }
+            };
+
+            const { data, error } = await supabaseClient
+                .from('inspections')
+                .insert([payload])
+                .select();
+
+            if (error) {
+                statusDiv.className = 'text-center text-xs font-mono text-rose-400';
+                statusDiv.innerText = currentLang === 'ru' ? 'Ошибка отправки: ' + error.message : 'Error: ' + error.message;
+                btn.disabled = false;
+                btn.innerText = currentLang === 'ru' ? 'Отправить заявку местным инспекторам' : 'Dispatch Request to Local Inspectors';
+                return;
+            }
+
+            statusDiv.className = 'text-center text-xs font-mono text-emerald-400';
+            statusDiv.innerText = currentLang === 'ru' ? '✓ Заявка успешно создана! Инспектора в выбранном регионе уведомлены.' : '✓ Request created successfully! Local inspectors notified.';
+            
+            setTimeout(() => {
+                document.getElementById('inspectionForm').reset();
+                updateCities();
+                btn.disabled = false;
+                btn.innerText = currentLang === 'ru' ? 'Отправить заявку местным инспекторам' : 'Dispatch Request to Local Inspectors';
+                statusDiv.innerText = '';
+            }, 3000);
+        });
+
+        // Инициализация городов при загрузке
+        window.onload = () => {
+            updateCities();
+        };
+    </script>
+</body>
+</html>
