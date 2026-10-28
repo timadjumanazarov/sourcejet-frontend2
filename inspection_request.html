@@ -65,10 +65,9 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="space-y-2">
                     <label class="text-xs font-bold uppercase tracking-wider text-purple-300" data-ru="Страна производства" data-en="Manufacturing Country">Страна производства</label>
-                    <select id="country" onchange="updateCities()" class="w-full bg-slate-950/90 border border-purple-900/60 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500">
-                        <option value="China">Китай (China)</option>
-                        <option value="Turkey">Турция (Turkey)</option>
-                    </select>
+                    <select id="country" class="w-full bg-slate-950/90 border border-purple-900/60 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500">
+    <option value="China">Китай (China)</option>
+</select>
                 </div>
                 <div class="space-y-2">
                     <label class="text-xs font-bold uppercase tracking-wider text-purple-300" data-ru="Город / Промышленный хаб" data-en="City / Industrial Hub">Город / Промышленный хаб</label>
@@ -126,24 +125,23 @@
 
         let currentLang = 'ru';
 
-        const citiesData = {
-            China: ['Yiwu', 'Guangzhou', 'Shenzhen', 'Foshan', 'Ningbo', 'Hangzhou', 'Shanghai', 'Qingdao'],
-            Turkey: ['Istanbul', 'Bursa', 'Izmir', 'Ankara', 'Denizli']
-        };
+        // Замени блок селектора стран и городов в JS:
+const citiesData = {
+    China: ['Yiwu', 'Guangzhou', 'Shenzhen', 'Foshan', 'Ningbo', 'Hangzhou', 'Shanghai', 'Qingdao']
+};
 
-        function updateCities() {
-            const country = document.getElementById('country').value;
-            const citySelect = document.getElementById('city');
-            citySelect.innerHTML = '';
-            
-            citiesData[country].forEach(city => {
-                const opt = document.createElement('option');
-                opt.value = city;
-                opt.textContent = city;
-                citySelect.appendChild(opt);
-            });
-        }
-
+function updateCities() {
+    const citySelect = document.getElementById('city');
+    citySelect.innerHTML = '';
+    
+    citiesData.China.forEach(city => {
+        const opt = document.createElement('option');
+        opt.value = city;
+        opt.textContent = city;
+        citySelect.appendChild(opt);
+    });
+}
+    
         function switchLang(lang) {
             currentLang = lang;
             document.getElementById('lang-ru').className = lang === 'ru' ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-600 text-white' : 'px-2.5 py-1 rounded-lg text-xs font-bold text-slate-400';
