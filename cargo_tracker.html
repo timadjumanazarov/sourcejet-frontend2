@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SourceJet AI — Cargo Tracking</title>
+    <title>Cargo Tracking & Freight Live — SourceJet AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -15,7 +15,7 @@
         .glass-panel {
             background: rgba(15, 23, 42, 0.75);
             backdrop-filter: blur(16px);
-            border: 1px solid rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.18);
         }
     </style>
 </head>
@@ -25,7 +25,7 @@
     <header class="border-b border-purple-900/30 bg-slate-900/80 backdrop-blur-xl sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             
-            <a href="index.html" class="flex items-center gap-3.5 hover:opacity-80 transition">
+            <a href="index.html" class="flex items-center gap-3.5">
                 <div class="w-11 h-11 bg-gradient-to-tr from-purple-600 via-indigo-600 to-cyan-400 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-xl shadow-purple-500/25">
                     ⚡
                 </div>
@@ -33,13 +33,13 @@
                     <div class="flex items-center gap-2">
                         <span class="font-black text-xl tracking-wider text-white">SourceJet <span class="ai-gradient-text">AI</span></span>
                     </div>
-                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase">Global Sourcing & Trade Network</p>
+                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase">Global Sourcing & Logistics</p>
                 </div>
             </a>
 
             <nav class="hidden md:flex items-center gap-6 text-xs font-semibold uppercase tracking-wider text-slate-300">
                 <a href="index.html" class="hover:text-purple-400 transition" data-ru="Поиск фабрик" data-en="Suppliers Hub">Поиск фабрик</a>
-                <a href="cargo_tracker.html" class="text-purple-400 transition font-bold" data-ru="Трекинг грузов" data-en="Cargo Tracking">Трекинг грузов</a>
+                <a href="cargo_tracker.html" class="text-purple-400 font-bold transition" data-ru="Трекинг грузов" data-en="Cargo Tracking">Трекинг грузов</a>
             </nav>
 
             <div class="flex items-center gap-4">
@@ -51,52 +51,43 @@
         </div>
     </header>
 
-    <!-- Tracker Content -->
-    <main class="max-w-3xl mx-auto px-6 py-16 flex-1 w-full space-y-8">
+    <!-- Main Content -->
+    <main class="max-w-5xl mx-auto px-6 py-12 space-y-10 flex-1 w-full">
+        
         <div class="text-center space-y-3">
-            <h1 class="text-3xl md:text-4xl font-black text-white tracking-tight" data-ru="📦 Живой трекинг грузов" data-en="📦 Real-Time Cargo Tracking">📦 Живой трекинг грузов</h1>
-            <p class="text-slate-400 text-sm" data-ru="Введите трек-номер для мониторинга точек маршрута и статуса доставки." data-en="Enter your tracking number to monitor supply chain checkpoints.">Введите трек-номер для мониторинга точек маршрута и статуса доставки.</p>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/80 border border-cyan-800/60 text-cyan-300 text-xs font-semibold">
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                <span data-ru="Сквозной AI Мониторинг Контейнеров" data-en="Live GPS & Satellite Logistics Monitoring">Сквозной AI Мониторинг Контейнеров</span>
+            </div>
+            <h1 class="text-3xl md:text-5xl font-black text-white" data-ru="Отслеживание груза и статуса поставки" data-en="Real-Time Cargo & Shipment Tracker">Отслеживание груза и статуса поставки</h1>
+            <p class="text-slate-400 text-sm max-w-xl mx-auto" data-ru="Введите номер накладной, контейнера или трек-код для получения информации." data-en="Enter your tracking code or Bill of Lading (BL) number below.">
+                Введите номер накладной, контейнера или трек-код для получения информации.
+            </p>
         </div>
 
-        <div class="glass-panel p-6 rounded-3xl space-y-4 shadow-2xl">
-            <div class="flex flex-col sm:flex-row gap-3">
-                <input type="text" id="trackingInput" value="SJ-88492-CN" 
-                    data-ru-ph="Введите трек-номер..."
-                    data-en-ph="Enter tracking number..."
-                    placeholder="Введите трек-номер..." 
-                    class="flex-1 bg-slate-950/90 border border-purple-900/60 rounded-2xl px-5 py-4 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-sm font-mono tracking-wide">
-                <button onclick="trackShipment()" 
-                    class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold px-8 py-4 rounded-2xl text-xs uppercase tracking-wider transition shadow-lg shadow-purple-600/30" data-ru="Найти груз" data-en="Track Cargo">
-                    Найти груз
+        <!-- Search Box -->
+        <div class="glass-panel p-4 md:p-6 rounded-3xl border border-purple-900/50 shadow-2xl space-y-4">
+            <form onsubmit="handleSearch(event)" class="flex flex-col md:flex-row gap-3">
+                <input type="text" id="trackInput" required
+                    placeholder="Введите трек-код (например: SJ-88902-CN или SJ-44120-TR)..." 
+                    class="w-full bg-slate-950/90 border border-purple-900/60 rounded-2xl px-5 py-4 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-sm font-mono">
+                
+                <button type="submit" id="searchBtn" class="bg-gradient-to-r from-purple-600 to-cyan-500 text-white font-bold px-8 py-4 rounded-2xl text-xs uppercase tracking-wider transition hover:opacity-90 shadow-lg shadow-purple-600/30 whitespace-nowrap">
+                    <span data-ru="Найти груз" data-en="Track Shipment">Найти груз</span>
                 </button>
-            </div>
+            </form>
 
-            <div id="resultContainer" class="hidden space-y-6 border-t border-purple-950 pt-6 mt-4">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="bg-slate-950/60 p-4 rounded-2xl border border-purple-900/30">
-                        <span class="text-[10px] uppercase font-bold text-slate-500 block mb-1" data-ru="Статус" data-en="Status">Статус</span>
-                        <span id="shipmentStatus" class="inline-block px-3 py-1 bg-cyan-950 text-cyan-400 border border-cyan-800/50 rounded-full text-xs font-bold uppercase tracking-wider"></span>
-                    </div>
-                    <div class="bg-slate-950/60 p-4 rounded-2xl border border-purple-900/30">
-                        <span class="text-[10px] uppercase font-bold text-slate-500 block mb-1" data-ru="Маршрут" data-en="Route">Маршрут</span>
-                        <span id="shipmentRoute" class="font-bold text-white text-sm"></span>
-                    </div>
-                    <div class="bg-slate-950/60 p-4 rounded-2xl border border-purple-900/30">
-                        <span class="text-[10px] uppercase font-bold text-slate-500 block mb-1" data-ru="Текущая точка" data-en="Current Checkpoint">Текущая точка</span>
-                        <span id="shipmentLocation" class="font-bold text-purple-300 text-sm"></span>
-                    </div>
-                </div>
-
-                <div class="space-y-3 pt-2">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400" data-ru="История контрольных точек" data-en="Milestone History">История контрольных точек</h3>
-                    <div id="eventsList" class="space-y-4 border-l-2 border-purple-900/50 pl-5 ml-2"></div>
-                </div>
-            </div>
-
-            <div id="errorContainer" class="hidden text-red-400 text-xs text-center bg-red-950/40 border border-red-900/60 p-4 rounded-2xl font-mono">
-                <span data-ru="Груз не найден. Проверьте правильность трек-номера." data-en="Shipment not found. Please verify tracking number.">Груз не найден. Проверьте правильность трек-номера.</span>
+            <div class="flex items-center gap-2 text-xs text-slate-400 px-2">
+                <span data-ru="Демо трек-коды для проверки:" data-en="Quick Test Codes:">Демо трек-коды для проверки:</span>
+                <button onclick="quickTrack('SJ-88902-CN')" class="text-purple-400 font-mono hover:underline font-bold">SJ-88902-CN</button>
+                <span>•</span>
+                <button onclick="quickTrack('SJ-44120-TR')" class="text-purple-400 font-mono hover:underline font-bold">SJ-44120-TR</button>
             </div>
         </div>
+
+        <!-- Result Container -->
+        <div id="shipmentResult" class="hidden space-y-6"></div>
+
     </main>
 
     <footer class="border-t border-purple-900/30 bg-slate-900/80 py-8 text-center text-xs text-slate-500">
@@ -106,23 +97,150 @@
     <script>
         let currentLang = localStorage.getItem('sourcejet_lang') || 'ru';
 
-        // Словарь автоматического перевода динамических данных из БД
-        const dynamicMap = {
-            en: {
-                "В пути": "In Transit",
-                "Нинбо, Китай": "Ningbo, China",
-                "Алматы / Бишкек": "Almaty / Bishkek",
-                "Таможня Урумчи": "Urumqi Customs Hub",
-                "Нинбо": "Ningbo",
-                "Склад Нинбо": "Ningbo Warehouse",
-                "Урумчи": "Urumqi",
-                "Партия принята на фабрике": "Batch Dispatched from Factory",
-                "AQL 2.5 Инспекция пройдена": "AQL 2.5 Inspection Passed",
-                "Прибыл на таможенный терминал": "Arrived at Customs Terminal"
-            }
-        };
+        function switchLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('sourcejet_lang', lang);
 
-        function translateDynamic(text) {
-            if (!text) return '';
-            if (currentLang === 'en' && dynamicMap.en[text]) {
-                return dynamicMap.en
+            document.getElementById('btn-ru').className = lang === 'ru' ? 'px-2.5 py-1 rounded-lg transition bg-purple-600 text-white font-bold' : 'px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white';
+            document.getElementById('btn-en').className = lang === 'en' ? 'px-2.5 py-1 rounded-lg transition bg-purple-600 text-white font-bold' : 'px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white';
+
+            document.querySelectorAll('[data-ru]').forEach(el => {
+                const text = el.getAttribute(`data-${lang}`);
+                if (text) el.innerText = text;
+            });
+        }
+
+        const SUPABASE_URL = 'https://ozpskokidbhqtoeykyzf.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_Zpkfm-iDWB7WuHrAp1jDtQ_1w_QU8s0';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        function quickTrack(code) {
+            document.getElementById('trackInput').value = code;
+            searchShipment(code);
+        }
+
+        function handleSearch(e) {
+            e.preventDefault();
+            const code = document.getElementById('trackInput').value.trim();
+            if (code) searchShipment(code);
+        }
+
+        async function searchShipment(code) {
+            const container = document.getElementById('shipmentResult');
+            const btn = document.getElementById('searchBtn');
+
+            btn.innerText = currentLang === 'ru' ? 'Поиск...' : 'Searching...';
+            container.classList.remove('hidden');
+            container.innerHTML = `<div class="glass-panel p-8 text-center text-slate-400 font-mono rounded-3xl">${currentLang === 'ru' ? 'Загрузка данных из реестра Supabase...' : 'Fetching cargo data...'}</div>`;
+
+            const { data, error } = await supabaseClient
+                .from('shipments')
+                .select('*')
+                .ilike('tracking_number', code)
+                .single();
+
+            btn.innerText = currentLang === 'ru' ? 'Найти груз' : 'Track Shipment';
+
+            if (error || !data) {
+                container.innerHTML = `
+                    <div class="glass-panel p-8 rounded-3xl border border-rose-900/50 text-center space-y-3">
+                        <div class="text-3xl">⚠️</div>
+                        <h3 class="text-lg font-bold text-rose-400">${currentLang === 'ru' ? 'Груз не найден' : 'Shipment Not Found'}</h3>
+                        <p class="text-xs text-slate-400">${currentLang === 'ru' ? 'Проверьте правильность введенного трек-кода.' : 'Please check the tracking number and try again.'}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            renderShipmentDetails(data);
+        }
+
+        function renderShipmentDetails(s) {
+            const container = document.getElementById('shipmentResult');
+            const timeline = s.timeline || [];
+
+            let timelineHTML = '';
+            timeline.forEach((item, index) => {
+                const isCompleted = item.completed;
+                const isCurrent = !isCompleted && (index === 0 || timeline[index - 1]?.completed);
+
+                let dotColor = 'bg-slate-800 border-slate-600 text-slate-500';
+                if (isCompleted) dotColor = 'bg-emerald-500 border-emerald-400 text-white';
+                if (isCurrent) dotColor = 'bg-purple-600 border-cyan-400 text-white animate-pulse';
+
+                timelineHTML += `
+                    <div class="flex items-start gap-4 relative pb-8 last:pb-0">
+                        ${index !== timeline.length - 1 ? `<div class="absolute left-3.5 top-8 bottom-0 w-0.5 ${isCompleted ? 'bg-emerald-500' : 'bg-slate-800'}"></div>` : ''}
+                        
+                        <div class="w-8 h-8 rounded-full border-2 ${dotColor} flex items-center justify-center text-xs font-bold shrink-0 z-10">
+                            ${isCompleted ? '✓' : item.step}
+                        </div>
+
+                        <div class="space-y-1 pt-0.5">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <h4 class="font-bold text-sm text-white">${item.title}</h4>
+                                <span class="text-[10px] bg-slate-900 text-slate-400 px-2 py-0.5 rounded border border-purple-900/40 font-mono">${item.date}</span>
+                            </div>
+                            <p class="text-xs text-slate-400">📍 ${item.location}</p>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = `
+                <!-- Top Status Card -->
+                <div class="glass-panel p-6 md:p-8 rounded-3xl border border-purple-800/40 space-y-6">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-6 border-b border-purple-900/40">
+                        <div>
+                            <span class="text-[10px] font-mono bg-purple-950 text-purple-300 border border-purple-800 px-2.5 py-1 rounded-full uppercase font-bold">TRACKING ID: ${s.tracking_number}</span>
+                            <h2 class="text-2xl font-black text-white mt-2">${s.cargo_description}</h2>
+                            <p class="text-xs text-slate-400 mt-1">${s.client_name ? `Клиент: ${s.client_name}` : ''}</p>
+                        </div>
+                        <div class="text-left md:text-right">
+                            <div class="text-xs text-slate-400 uppercase font-bold">${currentLang === 'ru' ? 'Ориентировочно (ETA):' : 'Estimated Arrival (ETA):'}</div>
+                            <div class="text-xl font-black text-cyan-400 mt-0.5 font-mono">${s.eta || 'В пути'}</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <div class="bg-slate-950/80 p-4 rounded-2xl border border-purple-900/30">
+                            <span class="text-slate-500 uppercase font-bold block mb-1">${currentLang === 'ru' ? 'Пункт отправления' : 'Origin'}</span>
+                            <span class="text-white font-bold text-sm">🛫 ${s.origin}</span>
+                        </div>
+                        <div class="bg-slate-950/80 p-4 rounded-2xl border border-purple-900/30">
+                            <span class="text-slate-500 uppercase font-bold block mb-1">${currentLang === 'ru' ? 'Пункт назначения' : 'Destination'}</span>
+                            <span class="text-white font-bold text-sm">🛬 ${s.destination}</span>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="space-y-2 pt-2">
+                        <div class="flex justify-between text-xs font-bold">
+                            <span class="text-slate-400">${currentLang === 'ru' ? 'Прогресс доставки:' : 'Delivery Progress:'}</span>
+                            <span class="text-purple-400 font-mono">${s.progress_percent}%</span>
+                        </div>
+                        <div class="w-full bg-slate-950 rounded-full h-3 overflow-hidden p-0.5 border border-purple-900/40">
+                            <div class="bg-gradient-to-r from-purple-600 via-indigo-500 to-cyan-400 h-full rounded-full transition-all duration-1000" style="width: ${s.progress_percent}%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline Card -->
+                <div class="glass-panel p-6 md:p-8 rounded-3xl border border-purple-800/40 space-y-6">
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <span>📍</span>
+                        <span>${currentLang === 'ru' ? 'Таймлайн перемещения груза' : 'Shipment Timeline & Logs'}</span>
+                    </h3>
+                    <div class="pt-4">
+                        ${timelineHTML}
+                    </div>
+                </div>
+            `;
+        }
+
+        window.onload = () => {
+            switchLanguage(currentLang);
+        };
+    </script>
+</body>
+</html>
