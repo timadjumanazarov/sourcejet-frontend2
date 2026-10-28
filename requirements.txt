@@ -1,0 +1,6 @@
+reportlab
+qrcode
+pillow
+fastapi
+uvicorn
+supabase
