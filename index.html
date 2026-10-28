@@ -42,7 +42,7 @@
                     <div class="flex items-center gap-2">
                         <span class="font-black text-xl tracking-wider text-white">SourceJet <span class="ai-gradient-text">AI</span></span>
                     </div>
-                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase" data-ru="Global Sourcing & Trade Network" data-en="Global Sourcing & Trade Network">Global Sourcing & Trade Network</p>
+                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase">Global Sourcing & Trade Network</p>
                 </div>
             </div>
 
@@ -53,7 +53,6 @@
                     <span data-ru="База инспекторов" data-en="Inspectors Network">База инспекторов</span>
                     <span class="text-[8px] bg-purple-950 text-purple-300 border border-purple-800 px-1.5 py-0.5 rounded-full">GLOBAL</span>
                 </a>
-                <a href="#analytics" onclick="openRFQModal('AI Analytics Request')" class="hover:text-purple-400 transition" data-ru="Аналитика цен" data-en="AI Analytics">Аналитика цен</a>
             </nav>
 
             <div class="flex items-center gap-4">
@@ -71,7 +70,6 @@
 
     <!-- Hero -->
     <section class="py-16 px-6 text-center max-w-4xl mx-auto space-y-6">
-        
         <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-purple-950/80 border border-purple-800/60 text-purple-300 text-xs font-semibold backdrop-blur-md shadow-inner">
             <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
             <span class="tracking-wide uppercase text-[10px] font-bold" data-ru="Интеллектуальная B2B Экосистема Торговли" data-en="Enterprise Sourcing & Trade Intelligence">Интеллектуальная B2B Экосистема Торговли</span>
@@ -113,12 +111,10 @@
                 </div>
             </div>
         </div>
-
     </section>
 
     <!-- Search & Catalog -->
     <section id="search-section" class="max-w-7xl mx-auto px-6 pb-24 space-y-8 flex-1 w-full">
-        
         <div class="glass-panel p-6 rounded-3xl space-y-4">
             <div class="flex flex-col md:flex-row gap-4">
                 <input type="text" id="searchInput" oninput="renderSuppliers()" 
@@ -148,10 +144,9 @@
         </div>
 
         <div id="suppliersGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
-
     </section>
 
-    <!-- RFQ / Inspection Modal -->
+    <!-- RFQ / Inspection Modal (HTML часть) -->
     <div id="rfqModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center z-50 p-4">
         <div class="glass-panel max-w-lg w-full p-8 rounded-3xl border border-purple-800/50 relative space-y-6 shadow-2xl">
             <button onclick="closeRFQModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white font-bold text-xl">✕</button>
@@ -190,6 +185,7 @@
         <p>© 2026 SourceJet AI. Global Sourcing & Trade Network.</p>
     </footer>
 
+    <!-- JavaScript часть (логика кнопок, языков и отправки в Telegram) -->
     <script>
         let currentLang = localStorage.getItem('sourcejet_lang') || 'ru';
         let rawSuppliers = [];
@@ -288,7 +284,6 @@
             });
         }
 
-        // Modal Handlers
         function openRFQModal(targetName) {
             document.getElementById('factoryTarget').value = targetName;
             const modal = document.getElementById('rfqModal');
@@ -303,45 +298,44 @@
         }
 
         async function submitLead(e) {
-    e.preventDefault();
-    const btn = document.getElementById('submitBtn');
-    btn.innerText = currentLang === 'ru' ? 'Отправка...' : 'Submitting...';
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.innerText = currentLang === 'ru' ? 'Отправка...' : 'Submitting...';
 
-    const leadData = {
-        target: document.getElementById('factoryTarget').value,
-        name: document.getElementById('leadName').value,
-        contact: document.getElementById('leadContact').value,
-        details: document.getElementById('leadDetails').value
-    };
+            const leadData = {
+                target: document.getElementById('factoryTarget').value,
+                name: document.getElementById('leadName').value,
+                contact: document.getElementById('leadContact').value,
+                details: document.getElementById('leadDetails').value
+            };
 
-    // 1. Сохраняем в Supabase
-    await supabaseClient.from('leads').insert([leadData]);
+            // 1. Сохранение в Supabase
+            await supabaseClient.from('leads').insert([leadData]);
 
-    // 2. Моментально отправляем в Telegram прямо из браузера
-    const botToken = '9251200369:AAEs1Tuxt3smms34wrP30SbFyhy5-Ona9RY';
-    const chatId = '247632305';
-    const message = `⚡ *НОВАЯ ЗАЯВКА SOURCEJET AI* ⚡\n\n📌 *Цель:* ${leadData.target}\n👤 *Имя:* ${leadData.name}\n📞 *Контакты:* ${leadData.contact}\n📝 *Детали:* ${leadData.details || 'Нет деталей'}`;
+            // 2. Отправка в Telegram
+            const botToken = '9251200369:AAEs1Tuxt3smms34wrP30SbFyhy5-Ona9RY';
+            const chatId = '247632305';
+            const message = `⚡ *НОВАЯ ЗАЯВКА SOURCEJET AI* ⚡\n\n📌 *Цель:* ${leadData.target}\n👤 *Имя:* ${leadData.name}\n📞 *Контакты:* ${leadData.contact}\n📝 *Детали:* ${leadData.details || 'Нет деталей'}`;
 
-    try {
-        await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                chat_id: chatId,
-                text: message,
-                parse_mode: 'Markdown'
-            })
-        });
-    } catch (err) {
-        console.error('Telegram notification error:', err);
-    }
+            try {
+                await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: chatId,
+                        text: message,
+                        parse_mode: 'Markdown'
+                    })
+                });
+            } catch (err) {
+                console.error('Telegram notification error:', err);
+            }
 
-    alert(currentLang === 'ru' ? 'Заявка успешно отправлена! Мы свяжемся с вами в течение 15 минут.' : 'Request successfully submitted! Our team will contact you shortly.');
-    
-    document.getElementById('rfqForm').reset();
-    closeRFQModal();
-    btn.innerText = currentLang === 'ru' ? 'Отправить заявку' : 'Submit Application';
-}
+            alert(currentLang === 'ru' ? 'Заявка успешно отправлена! Мы свяжемся с вами в течение 15 минут.' : 'Request successfully submitted! Our team will contact you shortly.');
+            
+            document.getElementById('rfqForm').reset();
+            closeRFQModal();
+            btn.innerText = currentLang === 'ru' ? 'Отправить заявку' : 'Submit Application';
         }
 
         window.onload = () => {
