@@ -167,4 +167,80 @@
             const grid = document.getElementById('suppliersGrid');
             grid.innerHTML = '<div class="col-span-3 text-center py-16 text-slate-500 font-mono text-sm">Fetching verified suppliers from database...</div>';
 
-            const { data, error } = await supabaseClient.from
+            const { data, error } = await supabaseClient.from('suppliers').select('*');
+
+            if (error || !data) {
+                grid.innerHTML = `<div class="col-span-3 text-center py-16 text-red-400 font-mono">Database connection error. Please verify credentials.</div>`;
+                return;
+            }
+
+            allSuppliers = data;
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const search = document.getElementById('searchInput').value.trim().toLowerCase();
+            const category = document.getElementById('categorySelect').value;
+            const grid = document.getElementById('suppliersGrid');
+            const countLabel = document.getElementById('resultsCount');
+
+            const filtered = allSuppliers.filter(s => {
+                const sCat = s.category ? String(s.category) : '';
+                const sName = s.name ? String(s.name).toLowerCase() : '';
+                const sLoc = s.location ? String(s.location).toLowerCase() : '';
+
+                const matchesCategory = (category === 'ALL') || (sCat === category);
+                const matchesSearch = !search || sName.includes(search) || sLoc.includes(search) || sCat.toLowerCase().includes(search);
+
+                return matchesCategory && matchesSearch;
+            });
+
+            countLabel.innerText = `Showing ${filtered.length} of ${allSuppliers.length} verified manufacturers`;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-3 text-center py-20 glass-panel rounded-3xl border border-purple-900/30 space-y-2">
+                        <p class="text-slate-300 font-bold text-base">No suppliers match your query</p>
+                        <p class="text-slate-500 text-xs">Try adjusting your search terms or filters</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = '';
+            filtered.forEach(s => {
+                grid.innerHTML += `
+                    <div class="glass-panel p-6 rounded-3xl flex flex-col justify-between space-y-6 transition duration-300 card-glow border border-purple-900/30">
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-start gap-2">
+                                <h3 class="font-bold text-lg text-white leading-snug tracking-tight">${s.name}</h3>
+                                ${s.verified ? '<span class="text-[9px] font-mono bg-emerald-950 text-emerald-400 border border-emerald-800/60 px-2.5 py-1 rounded-full shrink-0 font-bold uppercase tracking-widest">AI Verified</span>' : ''}
+                            </div>
+                            <p class="text-xs text-slate-400 flex items-center gap-1.5 font-medium">📍 ${s.location}</p>
+                            
+                            <div class="space-y-2.5 text-xs text-slate-300 pt-4 border-t border-purple-950/80">
+                                <div class="flex justify-between"><span class="text-slate-500 font-medium">Category:</span> <strong class="text-purple-400">${s.category}</strong></div>
+                                <div class="flex justify-between"><span class="text-slate-500 font-medium">MOQ (Min. Order):</span> <span class="font-mono text-slate-200">${s.moq}</span></div>
+                                <div class="flex justify-between"><span class="text-slate-500 font-medium">Compliance Rating:</span> <span class="font-bold text-amber-400">⭐ ${s.rating} / 5.0</span></div>
+                            </div>
+                        </div>
+
+                        <button onclick="alert('RFQ & Factory Inspection request for ${s.name} successfully submitted to account manager.')" 
+                            class="w-full bg-gradient-to-r from-purple-900/50 to-indigo-900/50 hover:from-purple-600 hover:to-indigo-600 border border-purple-500/30 hover:border-transparent text-purple-200 hover:text-white text-xs font-bold uppercase tracking-wider py-3.5 rounded-2xl transition duration-200 shadow-lg shadow-purple-950/50">
+                            Request Inspection & RFQ
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('categorySelect').value = 'ALL';
+            applyFilters();
+        }
+
+        window.onload = fetchSuppliers;
+    </script>
+</body>
+</html>
