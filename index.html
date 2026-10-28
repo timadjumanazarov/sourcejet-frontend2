@@ -41,7 +41,7 @@
                     <div class="flex items-center gap-2">
                         <span class="font-black text-xl tracking-wider text-white">SourceJet <span class="ai-gradient-text">AI</span></span>
                     </div>
-                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase">Global Trade & Sourcing Network</p>
+                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase" data-i18n="header_sub">Global Trade & Sourcing Network</p>
                 </div>
             </div>
 
@@ -58,7 +58,6 @@
 
             <!-- Language Switcher & CTA -->
             <div class="flex items-center gap-4">
-                <!-- Language Selector -->
                 <div class="bg-slate-900 border border-purple-900/50 rounded-xl p-1 flex items-center gap-1 text-xs font-bold">
                     <button onclick="setLanguage('ru')" id="lang-ru" class="px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white">RU</button>
                     <button onclick="setLanguage('en')" id="lang-en" class="px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white">EN</button>
@@ -126,9 +125,9 @@
                 <select id="categorySelect" onchange="applyFilters()" 
                     class="bg-slate-950/90 border border-purple-900/60 rounded-2xl px-5 py-4 text-slate-300 text-sm focus:outline-none focus:border-purple-500 transition font-medium">
                     <option value="ALL" data-i18n="cat_all">All Categories</option>
-                    <option value="Электроника" data-i18n="cat_electronics">Electronics</option>
-                    <option value="Текстиль" data-i18n="cat_textiles">Textiles & Apparel</option>
-                    <option value="Упаковка" data-i18n="cat_packaging">Packaging & Print</option>
+                    <option value="Электроника">Электроника / Electronics</option>
+                    <option value="Текстиль">Текстиль / Textiles</option>
+                    <option value="Упаковка">Упаковка / Packaging</option>
                 </select>
             </div>
 
@@ -156,14 +155,14 @@
 
     <!-- International Footer -->
     <footer class="border-t border-purple-900/30 bg-slate-900/80 py-10 text-center text-xs text-slate-500 space-y-2">
-        <p class="font-bold text-slate-400 tracking-wider">SOURCEJET AI INTERNATIONAL SOURCING ECOSYSTEM</p>
-        <p>© 2026 SourceJet. All rights reserved. Global Trade Solutions.</p>
+        <p class="font-bold text-slate-400 tracking-wider" data-i18n="footer_title">SOURCEJET AI INTERNATIONAL SOURCING ECOSYSTEM</p>
+        <p data-i18n="footer_copy">© 2026 SourceJet. All rights reserved. Global Trade Solutions.</p>
     </footer>
 
     <script>
-        // Договоримся о словаре переводов
         const translations = {
             ru: {
+                header_sub: "Глобальная торговая сеть",
                 nav_suppliers: "Поиск фабрик",
                 nav_tracking: "Трекинг грузов",
                 nav_inspectors: "База инспекторов",
@@ -179,9 +178,6 @@
                 stat_standards: "Стандарты ISO",
                 search_placeholder: "Поиск по названию фабрики, городу или категории...",
                 cat_all: "Все категории",
-                cat_electronics: "Электроника",
-                cat_textiles: "Текстиль и одежда",
-                cat_packaging: "Упаковка и полиграфия",
                 btn_reset: "Сбросить фильтры",
                 hub_title: "База проверенных производителей",
                 hub_subtitle: "Прямой доступ к верифицированным фабрикам с нейросетевым аудитом.",
@@ -190,9 +186,12 @@
                 card_moq: "Мин. заказ (MOQ):",
                 card_rating: "Рейтинг надежности:",
                 card_btn: "Заказать инспекцию и КП",
-                alert_success: "Заявка на инспекцию и КП успешно отправлена менеджеру."
+                alert_success: "Заявка на инспекцию и КП успешно отправлена менеджеру.",
+                footer_title: "МЕЖДУНАРОДНАЯ ЭКОСИСТЕМА ЗАКУПОК SOURCEJET AI",
+                footer_copy: "© 2026 SourceJet. Все права защищены. Глобальные торговые решения."
             },
             en: {
+                header_sub: "Global Trade & Sourcing Network",
                 nav_suppliers: "Suppliers Hub",
                 nav_tracking: "Cargo Tracking",
                 nav_inspectors: "Inspectors Network",
@@ -208,9 +207,6 @@
                 stat_standards: "Standards Met",
                 search_placeholder: "Search by factory name, city, or category...",
                 cat_all: "All Categories",
-                cat_electronics: "Electronics",
-                cat_textiles: "Textiles & Apparel",
-                cat_packaging: "Packaging & Print",
                 btn_reset: "Reset Filters",
                 hub_title: "Verified Manufacturers Hub",
                 hub_subtitle: "Direct access to vetted industrial partners with AI compliance scoring.",
@@ -219,17 +215,19 @@
                 card_moq: "MOQ (Min. Order):",
                 card_rating: "Compliance Rating:",
                 card_btn: "Request Inspection & RFQ",
-                alert_success: "RFQ & Factory Inspection request successfully submitted to account manager."
+                alert_success: "RFQ & Factory Inspection request successfully submitted to account manager.",
+                footer_title: "SOURCEJET AI INTERNATIONAL SOURCING ECOSYSTEM",
+                footer_copy: "© 2026 SourceJet. All rights reserved. Global Trade Solutions."
             }
         };
 
         let currentLang = localStorage.getItem('sourcejet_lang') || 'ru';
+        let allSuppliers = [];
 
         function setLanguage(lang) {
             currentLang = lang;
             localStorage.setItem('sourcejet_lang', lang);
 
-            // Подсветка активной кнопки языка
             document.getElementById('lang-ru').className = lang === 'ru' 
                 ? 'px-2.5 py-1 rounded-lg bg-purple-600 text-white font-bold transition' 
                 : 'px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition';
@@ -237,7 +235,6 @@
                 ? 'px-2.5 py-1 rounded-lg bg-purple-600 text-white font-bold transition' 
                 : 'px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition';
 
-            // Переключение текстовых элементов по атрибуту data-i18n
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (translations[lang][key]) {
@@ -245,7 +242,6 @@
                 }
             });
 
-            // Переключение плейсхолдеров
             document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
                 const key = el.getAttribute('data-i18n-placeholder');
                 if (translations[lang][key]) {
@@ -253,10 +249,99 @@
                 }
             });
 
-            // Перерендериваем карточки фабрик, чтобы обновились подписи на карточках
             if (allSuppliers.length > 0) {
                 applyFilters();
             }
         }
 
-        const SUPABASE_URL = '
+        const SUPABASE_URL = 'https://ozpskokidbhqtoeykyzf.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_Zpkfm-iDWB7WuHrAp1jDtQ_1w_QU8s0';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function fetchSuppliers() {
+            const grid = document.getElementById('suppliersGrid');
+            grid.innerHTML = `<div class="col-span-3 text-center py-16 text-slate-500 font-mono text-sm">${translations[currentLang].db_loading}</div>`;
+
+            const { data, error } = await supabaseClient.from('suppliers').select('*');
+
+            if (error || !data) {
+                grid.innerHTML = `<div class="col-span-3 text-center py-16 text-red-400 font-mono">Database connection error.</div>`;
+                return;
+            }
+
+            allSuppliers = data;
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const search = document.getElementById('searchInput').value.trim().toLowerCase();
+            const category = document.getElementById('categorySelect').value;
+            const grid = document.getElementById('suppliersGrid');
+            const countLabel = document.getElementById('resultsCount');
+
+            const filtered = allSuppliers.filter(s => {
+                const sCat = s.category ? String(s.category) : '';
+                const sName = s.name ? String(s.name).toLowerCase() : '';
+                const sLoc = s.location ? String(s.location).toLowerCase() : '';
+
+                const matchesCategory = (category === 'ALL') || (sCat === category);
+                const matchesSearch = !search || sName.includes(search) || sLoc.includes(search) || sCat.toLowerCase().includes(search);
+
+                return matchesCategory && matchesSearch;
+            });
+
+            countLabel.innerText = currentLang === 'ru' 
+                ? `Отображается заводов: ${filtered.length} из ${allSuppliers.length}` 
+                : `Showing ${filtered.length} of ${allSuppliers.length} verified manufacturers`;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-3 text-center py-20 glass-panel rounded-3xl border border-purple-900/30 space-y-2">
+                        <p class="text-slate-300 font-bold text-base">${currentLang === 'ru' ? 'Ничего не найдено' : 'No suppliers match your query'}</p>
+                        <p class="text-slate-500 text-xs">${currentLang === 'ru' ? 'Попробуйте изменить параметры поиска' : 'Try adjusting your search terms or filters'}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const t = translations[currentLang];
+            grid.innerHTML = '';
+            filtered.forEach(s => {
+                grid.innerHTML += `
+                    <div class="glass-panel p-6 rounded-3xl flex flex-col justify-between space-y-6 transition duration-300 card-glow border border-purple-900/30">
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-start gap-2">
+                                <h3 class="font-bold text-lg text-white leading-snug tracking-tight">${s.name}</h3>
+                                ${s.verified ? '<span class="text-[9px] font-mono bg-emerald-950 text-emerald-400 border border-emerald-800/60 px-2.5 py-1 rounded-full shrink-0 font-bold uppercase tracking-widest">AI Verified</span>' : ''}
+                            </div>
+                            <p class="text-xs text-slate-400 flex items-center gap-1.5 font-medium">📍 ${s.location}</p>
+                            
+                            <div class="space-y-2.5 text-xs text-slate-300 pt-4 border-t border-purple-950/80">
+                                <div class="flex justify-between"><span class="text-slate-500 font-medium">${t.card_category}</span> <strong class="text-purple-400">${s.category}</strong></div>
+                                <div class="flex justify-between"><span class="text-slate-500 font-medium">${t.card_moq}</span> <span class="font-mono text-slate-200">${s.moq}</span></div>
+                                <div class="flex justify-between"><span class="text-slate-500 font-medium">${t.card_rating}</span> <span class="font-bold text-amber-400">⭐ ${s.rating} / 5.0</span></div>
+                            </div>
+                        </div>
+
+                        <button onclick="alert('${t.alert_success}')" 
+                            class="w-full bg-gradient-to-r from-purple-900/50 to-indigo-900/50 hover:from-purple-600 hover:to-indigo-600 border border-purple-500/30 hover:border-transparent text-purple-200 hover:text-white text-xs font-bold uppercase tracking-wider py-3.5 rounded-2xl transition duration-200 shadow-lg shadow-purple-950/50">
+                            ${t.card_btn}
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('categorySelect').value = 'ALL';
+            applyFilters();
+        }
+
+        window.onload = () => {
+            setLanguage(currentLang);
+            fetchSuppliers();
+        };
+    </script>
+</body>
+</html>
