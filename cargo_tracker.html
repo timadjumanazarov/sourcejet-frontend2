@@ -33,7 +33,7 @@
                     <div class="flex items-center gap-2">
                         <span class="font-black text-xl tracking-wider text-white">SourceJet <span class="ai-gradient-text">AI</span></span>
                     </div>
-                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase">Global Sourcing Network</p>
+                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase">Global Sourcing & Trade Network</p>
                 </div>
             </a>
 
@@ -100,88 +100,29 @@
     </main>
 
     <footer class="border-t border-purple-900/30 bg-slate-900/80 py-8 text-center text-xs text-slate-500">
-        <p>© 2026 SourceJet AI. Global Trade Solutions.</p>
+        <p>© 2026 SourceJet AI. Global Sourcing & Trade Network.</p>
     </footer>
 
     <script>
         let currentLang = localStorage.getItem('sourcejet_lang') || 'ru';
 
-        function switchLanguage(lang) {
-            currentLang = lang;
-            localStorage.setItem('sourcejet_lang', lang);
-
-            document.getElementById('btn-ru').className = lang === 'ru' ? 'px-2.5 py-1 rounded-lg transition bg-purple-600 text-white font-bold' : 'px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white';
-            document.getElementById('btn-en').className = lang === 'en' ? 'px-2.5 py-1 rounded-lg transition bg-purple-600 text-white font-bold' : 'px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white';
-
-            document.querySelectorAll('[data-ru]').forEach(el => {
-                const text = el.getAttribute(`data-${lang}`);
-                if (text) el.innerText = text;
-            });
-
-            document.querySelectorAll('[data-ru-ph]').forEach(el => {
-                const text = el.getAttribute(`data-${lang}-ph`);
-                if (text) el.placeholder = text;
-            });
-
-            trackShipment();
-        }
-
-        const SUPABASE_URL = 'https://ozpskokidbhqtoeykyzf.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_Zpkfm-iDWB7WuHrAp1jDtQ_1w_QU8s0';
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        async function trackShipment() {
-            const trackingNumber = document.getElementById('trackingInput').value.trim();
-            const resultContainer = document.getElementById('resultContainer');
-            const errorContainer = document.getElementById('errorContainer');
-            
-            resultContainer.classList.add('hidden');
-            errorContainer.classList.add('hidden');
-
-            const { data: shipment, error } = await supabaseClient
-                .from('shipments')
-                .select('*')
-                .eq('tracking_number', trackingNumber)
-                .single();
-
-            if (error || !shipment) {
-                errorContainer.classList.remove('hidden');
-                return;
+        // Словарь автоматического перевода динамических данных из БД
+        const dynamicMap = {
+            en: {
+                "В пути": "In Transit",
+                "Нинбо, Китай": "Ningbo, China",
+                "Алматы / Бишкек": "Almaty / Bishkek",
+                "Таможня Урумчи": "Urumqi Customs Hub",
+                "Нинбо": "Ningbo",
+                "Склад Нинбо": "Ningbo Warehouse",
+                "Урумчи": "Urumqi",
+                "Партия принята на фабрике": "Batch Dispatched from Factory",
+                "AQL 2.5 Инспекция пройдена": "AQL 2.5 Inspection Passed",
+                "Прибыл на таможенный терминал": "Arrived at Customs Terminal"
             }
-
-            document.getElementById('shipmentStatus').innerText = shipment.status;
-            document.getElementById('shipmentRoute').innerText = `${shipment.origin} ➔ ${shipment.destination}`;
-            document.getElementById('shipmentLocation').innerText = shipment.current_location || (currentLang === 'ru' ? 'В пути' : 'In transit');
-
-            const { data: events } = await supabaseClient
-                .from('shipment_events')
-                .select('*')
-                .eq('shipment_id', shipment.id)
-                .order('event_timestamp', { ascending: true });
-
-            const eventsList = document.getElementById('eventsList');
-            eventsList.innerHTML = '';
-
-            if (events && events.length > 0) {
-                events.forEach(ev => {
-                    const dateStr = new Date(ev.event_timestamp).toLocaleDateString(currentLang === 'ru' ? 'ru-RU' : 'en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-                    eventsList.innerHTML += `
-                        <div class="relative">
-                            <div class="absolute -left-[27px] top-1.5 w-2.5 h-2.5 bg-cyan-400 rounded-full ring-4 ring-slate-950 shadow-md shadow-cyan-500/50"></div>
-                            <p class="text-sm font-bold text-slate-200">${ev.title}</p>
-                            <p class="text-xs text-slate-500 font-mono">${ev.location} • ${dateStr}</p>
-                        </div>
-                    `;
-                });
-            }
-
-            resultContainer.classList.remove('hidden');
-        }
-
-        window.onload = () => {
-            switchLanguage(currentLang);
-            trackShipment();
         };
-    </script>
-</body>
-</html>
+
+        function translateDynamic(text) {
+            if (!text) return '';
+            if (currentLang === 'en' && dynamicMap.en[text]) {
+                return dynamicMap.en
