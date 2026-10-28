@@ -6,6 +6,9 @@
     <title>Inspection Room & Field Ops — SourceJet AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Подключаем библиотеки для генерации PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         .ai-gradient-text {
             background: linear-gradient(135deg, #c084fc 0%, #818cf8 50%, #22d3ee 100%);
@@ -33,7 +36,10 @@
             </a>
             
             <div class="flex items-center gap-4">
-                <a href="inspector_dashboard.html" class="text-xs text-purple-400 hover:text-purple-300 font-bold transition">← Назад к списку заказов</a>
+                <button onclick="generatePDF()" class="bg-gradient-to-r from-purple-600 to-cyan-500 hover:opacity-90 text-white font-bold px-4 py-2 rounded-xl text-xs uppercase tracking-wider transition flex items-center gap-2 shadow-lg shadow-purple-500/20">
+                    📥 <span>Скачать PDF-отчет</span>
+                </button>
+                <a href="inspector_dashboard.html" class="text-xs text-purple-400 hover:text-purple-300 font-bold transition">← Назад</a>
             </div>
         </div>
     </header>
@@ -41,8 +47,8 @@
     <!-- Main Workspace -->
     <main class="max-w-7xl mx-auto px-6 py-10 flex-1 w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        <!-- Левая колонка: Данные фабрики, Чек-лист и Загрузка фото -->
-        <div class="lg:col-span-2 space-y-6">
+        <!-- Левая колонка: Область отчета, которую превращаем в PDF -->
+        <div id="pdfReportContent" class="lg:col-span-2 space-y-6 bg-slate-950 p-2 rounded-3xl">
             
             <!-- Информация о заказе -->
             <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 space-y-4">
@@ -81,23 +87,23 @@
 
             <!-- Чек-лист проверки -->
             <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 space-y-4">
-                <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">Инспекторский чек-лист</h3>
+                <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">Инспекторский чек-лист (ISO 2859-1)</h3>
                 
                 <div class="space-y-3 text-xs">
-                    <label class="flex items-center gap-3 p-3 bg-slate-950/50 rounded-xl border border-purple-900/20 cursor-pointer hover:bg-slate-900/50 transition">
-                        <input type="checkbox" class="w-4 h-4 accent-purple-600 rounded">
+                    <label class="flex items-center gap-3 p-3 bg-slate-950/50 rounded-xl border border-purple-900/20 cursor-pointer">
+                        <input type="checkbox" checked class="w-4 h-4 accent-purple-600 rounded">
                         <span>Проверка наружной и транспортной упаковки (картон, паллеты, влагозащита)</span>
                     </label>
-                    <label class="flex items-center gap-3 p-3 bg-slate-950/50 rounded-xl border border-purple-900/20 cursor-pointer hover:bg-slate-900/50 transition">
-                        <input type="checkbox" class="w-4 h-4 accent-purple-600 rounded">
+                    <label class="flex items-center gap-3 p-3 bg-slate-950/50 rounded-xl border border-purple-900/20 cursor-pointer">
+                        <input type="checkbox" checked class="w-4 h-4 accent-purple-600 rounded">
                         <span>Сверка общего количества товара с накладной (Quantity Check)</span>
                     </label>
-                    <label class="flex items-center gap-3 p-3 bg-slate-950/50 rounded-xl border border-purple-900/20 cursor-pointer hover:bg-slate-900/50 transition">
-                        <input type="checkbox" class="w-4 h-4 accent-purple-600 rounded">
-                        <span>Проверка качества изделий / выборочный контроль (AQL / Defect Check)</span>
+                    <label class="flex items-center gap-3 p-3 bg-slate-950/50 rounded-xl border border-purple-900/20 cursor-pointer">
+                        <input type="checkbox" checked class="w-4 h-4 accent-purple-600 rounded">
+                        <span>Проверка качества изделий / выборочный контроль (AQL 2.5 Defect Check)</span>
                     </label>
-                    <label class="flex items-center gap-3 p-3 bg-slate-950/50 rounded-xl border border-purple-900/20 cursor-pointer hover:bg-slate-900/50 transition">
-                        <input type="checkbox" class="w-4 h-4 accent-purple-600 rounded">
+                    <label class="flex items-center gap-3 p-3 bg-slate-950/50 rounded-xl border border-purple-900/20 cursor-pointer">
+                        <input type="checkbox" checked class="w-4 h-4 accent-purple-600 rounded">
                         <span>Маркировка, штрихкоды и стикеры (FBA / Экспортные требования)</span>
                     </label>
                 </div>
@@ -165,7 +171,6 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_Zpkfm-iDWB7WuHrAp1jDtQ_1w_QU8s0';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Получаем ID инспекции из URL (?id=...)
         const urlParams = new URLSearchParams(window.location.search);
         const inspectionId = urlParams.get('id');
 
@@ -176,8 +181,6 @@
             }
             loadInspectionData();
             loadMessages();
-
-            // Автообновление чата каждые 4 секунды
             setInterval(loadMessages, 4000);
         });
 
@@ -308,6 +311,57 @@
             } else {
                 alert('Вердикт успешно сохранен и отправлен клиенту!');
                 loadInspectionData();
+            }
+        }
+
+        // Функция генерации профессионального PDF-отчета
+        async function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const element = document.getElementById('pdfReportContent');
+
+            // Показываем уведомление о начале генерации
+            const btn = event.currentTarget;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '⏳ Генерация PDF...';
+            btn.disabled = true;
+
+            try {
+                // Создаем скриншот блока отчета высокого разрешения
+                const canvas = await html2canvas(element, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#020617' // цвет фона slate-950
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                
+                // Рассчитываем пропорции для формата A4
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+                let heightLeft = pdfHeight;
+                let position = 0;
+
+                // Добавляем страницы, если отчет длинный
+                pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+                heightLeft -= pdf.internal.pageSize.getHeight();
+
+                while (heightLeft >= 0) {
+                    position = heightLeft - pdfHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+                    heightLeft -= pdf.internal.pageSize.getHeight();
+                }
+
+                // Скачиваем готовый PDF-файл с уникальным именем
+                pdf.save(`SourceJet-Inspection-Report-${inspectionId.slice(0, 8)}.pdf`);
+            } catch (err) {
+                console.error("PDF Generation Error:", err);
+                alert('Не удалось сгенерировать PDF. Попробуйте еще раз.');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
             }
         }
     </script>
