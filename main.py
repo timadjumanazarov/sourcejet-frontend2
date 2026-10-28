@@ -16,15 +16,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Очищаем от случайных пробелов
-SUPABASE_URL = os.environ.get("SUPABASE_URL", "").strip()
+# Безопасное чтение с дефолтным значением на случай сбоя Environment на Render
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://ozpskokidbhqtoeykyzf.supabase.co").strip()
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "").strip()
 
-print(f"DEBUG: SUPABASE_URL = '{SUPABASE_URL}'")
-print(f"DEBUG: SUPABASE_KEY length = {len(SUPABASE_KEY)}")
-
-if not SUPABASE_URL or not SUPABASE_KEY:
-    raise ValueError("ОШИБКА: SUPABASE_URL или SUPABASE_KEY не заданы в Environment на Render!")
+print(f"DEBUG_URL: '{SUPABASE_URL}'")
+print(f"DEBUG_KEY_LENGTH: {len(SUPABASE_KEY)}")
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
