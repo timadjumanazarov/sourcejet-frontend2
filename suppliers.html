@@ -12,25 +12,33 @@
     <div class="max-w-5xl mx-auto space-y-6">
         <!-- Шапка -->
         <div class="flex justify-between items-center border-b border-slate-800 pb-4">
-            <h1 class="text-2xl font-bold text-cyan-400">🏭 SourceJet AI Sourcing</h1>
+            <div>
+                <h1 class="text-2xl font-bold text-cyan-400">🏭 SourceJet AI Sourcing</h1>
+                <p class="text-xs text-slate-400 mt-1">База верифицированных производителей Китая</p>
+            </div>
             <a href="cargo_tracker.html" class="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-2 rounded-lg transition text-slate-300">📦 Трекинг грузов ➔</a>
         </div>
 
         <!-- Поиск и фильтры -->
-        <div class="flex flex-col md:flex-row gap-3">
-            <input type="text" id="searchInput" placeholder="Поиск по названию или локации..." 
-                class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:border-cyan-500">
-            <select id="categorySelect" onchange="loadSuppliers()" 
-                class="bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-slate-300 focus:outline-none focus:border-cyan-500">
-                <option value="ALL">Все категории</option>
-                <option value="Электроника">Электроника</option>
-                <option value="Текстиль">Текстиль</option>
-                <option value="Упаковка">Упаковка</option>
-            </select>
-            <button onclick="loadSuppliers()" 
-                class="bg-cyan-600 hover:bg-cyan-500 px-6 py-3 rounded-xl font-medium transition text-white">
-                Найти
-            </button>
+        <div class="space-y-3">
+            <div class="flex flex-col md:flex-row gap-3">
+                <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Введите название, город или категорию (например: Иу, Электроника)..." 
+                    class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:border-cyan-500 transition">
+                
+                <select id="categorySelect" onchange="applyFilters()" 
+                    class="bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-slate-300 focus:outline-none focus:border-cyan-500">
+                    <option value="ALL">Все категории</option>
+                    <option value="Электроника">Электроника</option>
+                    <option value="Текстиль">Текстиль</option>
+                    <option value="Упаковка">Упаковка</option>
+                </select>
+            </div>
+
+            <!-- Индикатор результатов -->
+            <div class="flex justify-between items-center text-xs text-slate-400 px-1">
+                <span id="resultsCount">Загрузка данных из базы...</span>
+                <button onclick="resetFilters()" class="text-cyan-400 hover:underline">Сбросить фильтры</button>
+            </div>
         </div>
 
         <!-- Список фабрик -->
@@ -44,45 +52,68 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_Zpkfm-iDWB7WuHrAp1jDtQ_1w_QU8s0';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        async function loadSuppliers() {
-            const search = document.getElementById('searchInput').value.trim().toLowerCase();
-            const category = document.getElementById('categorySelect').value;
+        let allSuppliers = [];
+
+        // 1. Загружаем все данные из базы один раз при старте
+        async function fetchSuppliers() {
             const grid = document.getElementById('suppliersGrid');
+            grid.innerHTML = '<p class="text-slate-500 col-span-2 text-center py-8">Подключение к Supabase...</p>';
 
-            grid.innerHTML = '<p class="text-slate-500 col-span-2 text-center py-8">Загрузка поставщиков...</p>';
+            const { data, error } = await supabaseClient
+                .from('suppliers')
+                .select('*');
 
-            let query = supabaseClient.from('suppliers').select('*');
-
-            if (category !== 'ALL') {
-                query = query.eq('category', category);
-            }
-
-            const { data: suppliers, error } = await query;
-
-            if (error || !suppliers || suppliers.length === 0) {
-                grid.innerHTML = '<p class="text-slate-400 col-span-2 text-center py-8">Поставщики не найдены.</p>';
+            if (error || !data) {
+                grid.innerHTML = '<p class="text-red-400 col-span-2 text-center py-8">Ошибка загрузки данных из базы.</p>';
                 return;
             }
 
-            // Фильтрация по поисковой строке
-            const filtered = suppliers.filter(s => 
-                s.name.toLowerCase().includes(search) || 
-                s.location.toLowerCase().includes(search)
-            );
+            allSuppliers = data;
+            applyFilters();
+        }
+
+        // 2. Мгновенная фильтрация по введенному тексту и категории
+        function applyFilters() {
+            const search = document.getElementById('searchInput').value.trim().toLowerCase();
+            const category = document.getElementById('categorySelect').value;
+            const grid = document.getElementById('suppliersGrid');
+            const countLabel = document.getElementById('resultsCount');
+
+            const filtered = allSuppliers.filter(s => {
+                const matchesCategory = (category === 'ALL') || (s.category === category);
+                const matchesSearch = !search || 
+                    s.name.toLowerCase().includes(search) || 
+                    s.location.toLowerCase().includes(search) ||
+                    s.category.toLowerCase().includes(search);
+                
+                return matchesCategory && matchesSearch;
+            });
+
+            countLabel.innerText = `Найдено производителей: ${filtered.length} из ${allSuppliers.length}`;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-2 text-center py-12 bg-slate-900/50 border border-slate-800 rounded-2xl">
+                        <p class="text-slate-400 font-medium">Ничего не найдено по запросу "${search}"</p>
+                        <p class="text-slate-600 text-xs mt-1">Попробуйте изменить ключевые слова или сбросить категории</p>
+                    </div>
+                `;
+                return;
+            }
 
             grid.innerHTML = '';
             filtered.forEach(s => {
                 grid.innerHTML += `
-                    <div class="bg-slate-900 border border-slate-800 hover:border-slate-700 p-5 rounded-2xl space-y-3">
+                    <div class="bg-slate-900 border border-slate-800 hover:border-slate-700 p-5 rounded-2xl space-y-3 transition">
                         <div class="flex justify-between items-start">
                             <div>
                                 <h3 class="font-bold text-lg text-white">${s.name}</h3>
                                 <p class="text-xs text-slate-400">📍 ${s.location}</p>
                             </div>
-                            ${s.verified ? '<span class="text-xs bg-emerald-950 text-emerald-400 border border-emerald-800/50 px-2.5 py-1 rounded-full font-medium">Verified Supplier</span>' : ''}
+                            ${s.verified ? '<span class="text-xs bg-emerald-950 text-emerald-400 border border-emerald-800/50 px-2.5 py-1 rounded-full font-medium">Verified</span>' : ''}
                         </div>
                         <div class="flex gap-4 text-xs text-slate-300 pt-2 border-t border-slate-800">
-                            <div><span class="text-slate-500">Категория:</span> ${s.category}</div>
+                            <div><span class="text-slate-500">Категория:</span> <strong class="text-cyan-400">${s.category}</strong></div>
                             <div><span class="text-slate-500">MOQ:</span> ${s.moq}</div>
                             <div><span class="text-slate-500">Рейтинг:</span> ⭐ ${s.rating}</div>
                         </div>
@@ -94,7 +125,13 @@
             });
         }
 
-        window.onload = loadSuppliers;
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('categorySelect').value = 'ALL';
+            applyFilters();
+        }
+
+        window.onload = fetchSuppliers;
     </script>
 </body>
 </html>
