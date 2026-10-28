@@ -90,6 +90,78 @@
                 </div>
             </div>
 
+            <!-- Блок дополнительных параметров и метрик инспекции -->
+            <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 space-y-4">
+                <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">Параметры и метрики партии (Inspection Metrics)</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                    <div>
+                        <label class="block text-slate-400 mb-1">Проверено единиц (Sampled Qty)</label>
+                        <input type="number" id="paramSampledQty" placeholder="Напр. 500" class="w-full bg-slate-950 border border-purple-900/60 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500">
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 mb-1">Брак / Дефекты (Defects Found)</label>
+                        <input type="number" id="paramDefectsQty" placeholder="Напр. 3" class="w-full bg-slate-950 border border-purple-900/60 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500">
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 mb-1">Номер контейнера / Лот</label>
+                        <input type="text" id="paramContainerNum" placeholder="Напр. TGHU1234567" class="w-full bg-slate-950 border border-purple-900/60 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500">
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button onclick="saveInspectionParameters()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-4 py-2 rounded-xl text-xs uppercase tracking-wider transition">
+                        💾 Сохранить параметры в отчет
+                    </button>
+                    <span id="paramSaveStatus" class="ml-3 text-[10px] font-mono"></span>
+                </div>
+            </div>
+
+            <!-- Калькулятор выборочного контроля AQL (ISO 2859-1) -->
+            <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 space-y-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">Калькулятор выборки AQL (ISO 2859-1)</h3>
+                    <span class="text-[10px] bg-purple-950 text-purple-300 px-2.5 py-1 rounded-lg border border-purple-800">Normal Level II</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                    <div>
+                        <label class="block text-slate-400 mb-1">Общий размер партии (Lot Size)</label>
+                        <input type="number" id="calcLotSize" placeholder="Напр. 3000" class="w-full bg-slate-950 border border-purple-900/60 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500">
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 mb-1">Уровень AQL (Defects)</label>
+                        <select id="calcAqlLevel" class="w-full bg-slate-950 border border-purple-900/60 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500">
+                            <option value="1.0">AQL 1.0 (Строгий)</option>
+                            <option value="2.5" selected>AQL 2.5 (Стандарт)</option>
+                            <option value="4.0">AQL 4.0 (Лояльный)</option>
+                        </select>
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="calculateAqlSampling()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 rounded-xl text-xs uppercase tracking-wider transition">
+                            Рассчитать выборку
+                        </button>
+                    </div>
+                </div>
+
+                <div id="aqlResultBox" class="hidden bg-slate-950/80 p-3 rounded-xl border border-purple-900/30 text-xs flex justify-between items-center">
+                    <span id="aqlOutputText" class="text-slate-300">Выборка: — | Допустимо брака: —</span>
+                    <button onclick="applyAqlToMetrics()" class="text-purple-400 hover:text-purple-300 font-bold underline text-[11px]">Вставить в метрики</button>
+                </div>
+            </div>
+
+            <!-- Панель быстрых тегов дефектов для чата -->
+            <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 space-y-3">
+                <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">Быстрые замечания / Теги брака</h3>
+                <div class="flex flex-wrap gap-2 text-xs">
+                    <button onclick="insertQuickTag('⚠️ [Замечание]: Нарушена внешняя упаковка / сырость паллет')" class="bg-slate-900 hover:bg-purple-950/80 border border-purple-900/40 px-3 py-1.5 rounded-xl text-slate-300 transition">📦 Повреждение упаковки</button>
+                    <button onclick="insertQuickTag('⚠️ [Замечание]: Обнаружены потертости и царапины на корпусе изделия')" class="bg-slate-900 hover:bg-purple-950/80 border border-purple-900/40 px-3 py-1.5 rounded-xl text-slate-300 transition">🔍 Царапины / Дефекты покрытия</button>
+                    <button onclick="insertQuickTag('⚠️ [Замечание]: Штрихкод поврежден или не соответствует требованиям FBA')" class="bg-slate-900 hover:bg-purple-950/80 border border-purple-900/40 px-3 py-1.5 rounded-xl text-slate-300 transition">🏷️ Проблемы с маркировкой</button>
+                    <button onclick="insertQuickTag('⚠️ [Замечание]: Несоответствие цвета или размеров по спецификации ТЗ')" class="bg-slate-900 hover:bg-purple-950/80 border border-purple-900/40 px-3 py-1.5 rounded-xl text-slate-300 transition">🎨 Отклонение по цвету/размеру</button>
+                    <button onclick="insertQuickTag('✅ [Статус]: Проверка партии завершена успешно, товар готов к отгрузке')" class="bg-emerald-950/50 hover:bg-emerald-900/60 border border-emerald-800/50 px-3 py-1.5 rounded-xl text-emerald-300 transition">✨ Партия Одобрена (Pass)</button>
+                </div>
+            </div>
+
             <!-- Чек-лист проверки -->
             <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 space-y-4">
                 <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">Инспекторский чек-лист (ISO 2859-1)</h3>
@@ -208,10 +280,96 @@
             document.getElementById('inspectorName').innerText = data.inspector_name || 'Инспектор КНР';
             document.getElementById('scheduledDate').innerText = data.scheduled_date || 'По договоренности';
             document.getElementById('factoryAddress').innerText = data.address_chinese || data.address || 'Адрес не указан';
-            document.getElementById('requirementsText').innerText = data.requirements?.notes || data.requirements || 'Спецификации отсутствуют.';
+            
+            const reqNotes = data.requirements?.notes || data.requirements || 'Спецификации отсутствуют.';
+            document.getElementById('requirementsText').innerText = reqNotes;
+
+            if (data.requirements && data.requirements.metrics) {
+                const metrics = data.requirements.metrics;
+                if (metrics.sampled_qty) document.getElementById('paramSampledQty').value = metrics.sampled_qty;
+                if (metrics.defects_qty) document.getElementById('paramDefectsQty').value = metrics.defects_qty;
+                if (metrics.container_number) document.getElementById('paramContainerNum').value = metrics.container_number;
+            }
 
             const badge = document.getElementById('inspectionStatusBadge');
             badge.innerText = (data.status || 'new').toUpperCase();
+        }
+
+        async function saveInspectionParameters() {
+            const sampledQty = document.getElementById('paramSampledQty').value;
+            const defectsQty = document.getElementById('paramDefectsQty').value;
+            const containerNum = document.getElementById('paramContainerNum').value;
+            const statusSpan = document.getElementById('paramSaveStatus');
+
+            statusSpan.className = 'text-[10px] font-mono text-purple-400';
+            statusSpan.innerText = 'Сохранение...';
+
+            const extraMetrics = {
+                sampled_qty: sampledQty,
+                defects_qty: defectsQty,
+                container_number: containerNum,
+                updated_at: new Date().toISOString()
+            };
+
+            const { error } = await supabaseClient
+                .from('inspections')
+                .update({ 
+                    requirements: {
+                        notes: document.getElementById('requirementsText').innerText,
+                        metrics: extraMetrics
+                    }
+                })
+                .eq('id', inspectionId);
+
+            if (error) {
+                statusSpan.className = 'text-[10px] font-mono text-rose-400';
+                statusSpan.innerText = 'Ошибка: ' + error.message;
+            } else {
+                statusSpan.className = 'text-[10px] font-mono text-emerald-400';
+                statusSpan.innerText = '✓ Параметры успешно сохранены!';
+                setTimeout(() => { statusSpan.innerText = ''; }, 3000);
+            }
+        }
+
+        function calculateAqlSampling() {
+            const lotSize = parseInt(document.getElementById('calcLotSize').value);
+            if (!lotSize || lotSize <= 0) {
+                alert('Введите корректный размер партии!');
+                return;
+            }
+
+            let sampleSize = 80;
+            let acceptLimit = 3;
+            let rejectLimit = 4;
+
+            if (lotSize <= 50) { sampleSize = 8; acceptLimit = 0; rejectLimit = 1; }
+            else if (lotSize <= 150) { sampleSize = 20; acceptLimit = 1; rejectLimit = 2; }
+            else if (lotSize <= 500) { sampleSize = 50; acceptLimit = 2; rejectLimit = 3; }
+            else if (lotSize <= 1200) { sampleSize = 80; acceptLimit = 3; rejectLimit = 4; }
+            else if (lotSize <= 3200) { sampleSize = 125; acceptLimit = 5; rejectLimit = 6; }
+            else if (lotSize <= 10000) { sampleSize = 200; acceptLimit = 7; rejectLimit = 8; }
+            else { sampleSize = 315; acceptLimit = 10; rejectLimit = 11; }
+
+            const resultBox = document.getElementById('aqlResultBox');
+            const outputText = document.getElementById('aqlOutputText');
+            
+            resultBox.classList.remove('hidden');
+            outputText.innerText = `Выборка: ${sampleSize} шт. | Допустимо брака (Ac): до ${acceptLimit} шт. (Re ≥ ${rejectLimit})`;
+            
+            window.lastCalculatedSample = sampleSize;
+        }
+
+        function applyAqlToMetrics() {
+            if (window.lastCalculatedSample) {
+                document.getElementById('paramSampledQty').value = window.lastCalculatedSample;
+                alert('Объем выборки успешно подставлен в поле "Проверено единиц"!');
+            }
+        }
+
+        function insertQuickTag(tagText) {
+            const input = document.getElementById('messageInput');
+            input.value = tagText;
+            input.focus();
         }
 
         async function loadMessages() {
@@ -319,7 +477,7 @@
             }
         }
 
-        // Векторный генератор PDF с печатью, QR-кодом и международным форматом
+        // Векторный генератор PDF с печатью, QR-кодом, метриками и фото-фиксацией
         async function generateEnterprisePDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('p', 'mm', 'a4');
@@ -333,13 +491,22 @@
             const requirements = document.getElementById('requirementsText').innerText;
             const statusBadge = document.getElementById('inspectionStatusBadge').innerText;
 
+            const sampledQty = document.getElementById('paramSampledQty').value || 'Не указано';
+            const defectsQty = document.getElementById('paramDefectsQty').value || '0';
+            const containerNum = document.getElementById('paramContainerNum').value || 'Не указан';
+
             const btn = event.currentTarget;
             const originalText = btn.innerHTML;
             btn.innerHTML = '🛡️ Формирование документа...';
             btn.disabled = true;
 
             try {
-                // 1. Генерируем QR-код верификации
+                const { data: mediaMessages } = await supabaseClient
+                    .from('inspection_messages')
+                    .select('*')
+                    .eq('inspection_id', inspectionId)
+                    .ilike('message', '%[Фото/Отчет с фабрики]%');
+
                 const qrContainer = document.getElementById('qrcode');
                 qrContainer.innerHTML = '';
                 const verifyUrl = `https://sourcejet.ai/verify?id=${inspectionId}`;
@@ -349,13 +516,11 @@
                     height: 80
                 });
 
-                // Небольшая задержка для рендеринга QR
                 await new Promise(r => setTimeout(r, 200));
                 const qrCanvas = qrContainer.querySelector('canvas');
                 const qrImgData = qrCanvas ? qrCanvas.toDataURL('image/png') : null;
 
-                // 2. Шапка документа (SGS / Bureau Veritas style)
-                doc.setFillColor(15, 23, 42); // slate-950
+                doc.setFillColor(15, 23, 42);
                 doc.rect(0, 0, 210, 44, 'F');
 
                 doc.setTextColor(192, 132, 252);
@@ -368,7 +533,6 @@
                 doc.text('GLOBAL QUALITY CONTROL & FACTORY AUDIT TERMINAL', 15, 25);
                 doc.text('ISO 2859-1 (AQL 2.5) SAMPLING INSPECTION REPORT', 15, 29);
 
-                // Вставляем QR-код верификации в шапку
                 if (qrImgData) {
                     doc.addImage(qrImgData, 'PNG', 170, 6, 32, 32);
                     doc.setFontSize(6);
@@ -376,7 +540,6 @@
                     doc.text('SCAN TO VERIFY', 172, 41);
                 }
 
-                // 3. Блок статуса и основной сводки
                 let y = 56;
                 doc.setTextColor(15, 23, 42);
                 doc.setFontSize(14);
@@ -392,7 +555,7 @@
                 y += 8;
                 doc.setFillColor(248, 250, 252);
                 doc.setDrawColor(226, 232, 240);
-                doc.rect(15, y, 180, 28, 'FD');
+                doc.rect(15, y, 180, 36, 'FD');
 
                 doc.setTextColor(51, 65, 85);
                 doc.setFontSize(8.5);
@@ -400,9 +563,11 @@
                 doc.text(`Assigned Inspector: ${inspectorName}`, 20, y + 18);
                 doc.text(`Scheduled Date: ${scheduledDate}`, 110, y + 8);
                 doc.text(`Facility Address: ${factoryAddress}`, 110, y + 18);
+                
+                doc.setFont('helvetica', 'bold');
+                doc.text(`Sampled Qty: ${sampledQty} | Defects: ${defectsQty} | Container: ${containerNum}`, 20, y + 28);
 
-                // 4. Раздел Технических Требований
-                y += 36;
+                y += 44;
                 doc.setFont('helvetica', 'bold');
                 doc.setFontSize(10);
                 doc.setTextColor(15, 23, 42);
@@ -415,7 +580,6 @@
                 const splitReq = doc.splitTextToSize(requirements, 180);
                 doc.text(splitReq, 15, y);
 
-                // 5. Раздел Чек-листа
                 y += (splitReq.length * 4.5) + 12;
                 doc.setFont('helvetica', 'bold');
                 doc.setFontSize(10);
@@ -437,11 +601,9 @@
                     doc.text(check, 18, y);
                 });
 
-                // 6. Вердикт и Электронная Печать (Digital Stamp)
                 y += 18;
                 const isPass = statusBadge.toUpperCase().includes('COMPLETED') || statusBadge.toUpperCase().includes('PASS');
                 
-                // Рамка вердикта
                 doc.setFillColor(isPass ? 240 : 254, isPass ? 253 : 242, isPass ? 244 : 242);
                 doc.setDrawColor(isPass ? 187 : 254, isPass ? 247 : 202, isPass ? 208 : 202);
                 doc.rect(15, y, 110, 24, 'FD');
@@ -451,11 +613,10 @@
                 doc.setTextColor(isPass ? 22 : 153, isPass ? 101 : 27, isPass ? 52 : 27);
                 doc.text(`VERDICT: ${isPass ? 'PASSED / APPROVED FOR SHIPMENT' : 'FAILED / ISSUES DETECTED'}`, 20, y + 14);
 
-                // Цифровая Печать Инспектора (Круглый электронный штамп в стиле SGS)
                 const stampX = 155;
                 const stampY = y + 12;
                 
-                doc.setDrawColor(79, 70, 229); // Индиго фиолетовый
+                doc.setDrawColor(79, 70, 229);
                 doc.setLineWidth(0.8);
                 doc.circle(stampX, stampY, 14, 'S');
                 doc.circle(stampX, stampY, 12, 'S');
@@ -468,18 +629,50 @@
                 doc.setFont('helvetica', 'normal');
                 doc.text('VERIFIED AUDIT', stampX - 10, stampY + 6);
 
-                // 7. Юридический дисклеймер и подвал (Legal Disclaimer)
-                y += 32;
+                if (mediaMessages && mediaMessages.length > 0) {
+                    doc.addPage();
+                    
+                    doc.setFillColor(15, 23, 42);
+                    doc.rect(0, 0, 210, 25, 'F');
+                    doc.setTextColor(192, 132, 252);
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(14);
+                    doc.text('3. FACTORY PHOTO & MEDIA EVIDENCE', 15, 16);
+
+                    let startX = 15;
+                    let startY = 35;
+                    let imgWidth = 85;
+                    let imgHeight = 60;
+                    let col = 0;
+
+                    for (let i = 0; i < mediaMessages.length; i++) {
+                        let currentX = startX + (col * 95);
+                        let currentY = startY + (Math.floor(i / 2) * 70);
+
+                        if (currentY > 230) {
+                            doc.addPage();
+                            currentY = 35;
+                        }
+
+                        doc.setDrawColor(203, 213, 225);
+                        doc.rect(currentX, currentY, imgWidth, imgHeight, 'S');
+                        
+                        doc.setFontSize(7);
+                        doc.setTextColor(100, 116, 139);
+                        doc.text(`Evidence #${i + 1}: ${mediaMessages[i].message.slice(0, 30)}`, currentX, currentY + imgHeight + 5);
+
+                        col = col === 1 ? 0 : col + 1;
+                    }
+                }
+
                 doc.setFontSize(6.5);
                 doc.setTextColor(148, 163, 184);
-                doc.text('DISCLAIMER: This report reflects findings at the time and place of inspection only and within the limits of client instructions.', 15, y);
-                doc.text('SourceJet AI is not liable for transport damages or latent manufacturing defects occurring after field ops intervention.', 15, y + 4);
+                doc.text('DISCLAIMER: This report reflects findings at the time and place of inspection only and within the limits of client instructions.', 15, 278);
+                doc.text('SourceJet AI is not liable for transport damages or latent manufacturing defects occurring after field ops intervention.', 15, 282);
                 
-                // Отпечаток целостности (SHA-256 Mock Hash)
                 const cryptoHash = `HASH: ${inspectionId.replaceAll('-', '').toUpperCase().slice(0, 24)}-VERIFIED`;
-                doc.text(`Document Integrity: ${cryptoHash} | Generated via SourceJet Field Ops Terminal.`, 15, 285);
+                doc.text(`Document Integrity: ${cryptoHash} | Generated via SourceJet Field Ops Terminal.`, 15, 288);
 
-                // Сохраняем и выгружаем
                 doc.save(`SourceJet-Report-${inspectionId.slice(0, 8)}.pdf`);
             } catch (err) {
                 console.error("Enterprise PDF Error:", err);
