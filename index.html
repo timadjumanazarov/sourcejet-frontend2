@@ -3,54 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SourceJet - AI Sourcing & B2B Platform</title>
+    <title>SourceJet AI — Sourcing Platform by Go Project</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .ai-gradient-text {
+            background: linear-gradient(135deg, #a855f7 0%, #6366f1 50%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .ai-glow {
+            box-shadow: 0 0 50px -10px rgba(168, 85, 247, 0.25);
+        }
+        .card-glow:hover {
+            box-shadow: 0 0 25px -5px rgba(99, 102, 241, 0.3);
+        }
+    </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-purple-500 selection:text-white">
 
-    <!-- Навигация -->
-    <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+    <!-- Верхняя шапка -->
+    <header class="border-b border-purple-900/30 bg-slate-900/70 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            
+            <!-- Логотип + Go Project -->
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 bg-cyan-500/10 border border-cyan-500/30 rounded-xl flex items-center justify-center text-cyan-400 font-bold text-lg">⚡</div>
-                <span class="font-extrabold text-xl tracking-tight text-white">SourceJet</span>
+                <div class="w-10 h-10 bg-gradient-to-tr from-purple-600 to-indigo-500 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg shadow-purple-500/30">
+                    ⚡
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-extrabold text-xl tracking-tight text-white">SourceJet <span class="ai-gradient-text">AI</span></span>
+                    </div>
+                    <p class="text-[10px] text-purple-400/80 font-medium tracking-wide uppercase">Проект компании Go Project</p>
+                </div>
             </div>
-            <nav class="flex items-center gap-6 text-sm">
-                <a href="#search-section" class="text-slate-300 hover:text-cyan-400 font-medium transition">Поиск фабрик</a>
-                <a href="cargo_tracker.html" class="text-slate-300 hover:text-cyan-400 font-medium transition">Трекинг грузов</a>
-                <a href="#search-section" class="bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded-xl text-xs font-semibold transition">Найти поставщика</a>
+
+            <!-- Расширенное навигационное меню -->
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+                <a href="#search-section" class="hover:text-purple-400 transition">Поиск фабрик</a>
+                <a href="cargo_tracker.html" class="hover:text-purple-400 transition">Трекинг грузов</a>
+                <a href="#inspectors" onclick="alert('Модуль «База инспекторов» в процессе подключения')" class="hover:text-purple-400 transition flex items-center gap-1.5">
+                    <span>База инспекторов</span>
+                    <span class="text-[9px] bg-purple-950 text-purple-300 border border-purple-800 px-1.5 py-0.5 rounded-full font-bold">NEW</span>
+                </a>
+                <a href="#analytics" onclick="alert('Модуль «Аналитика цен» скоро будет доступен')" class="hover:text-purple-400 transition">Аналитика цен</a>
             </nav>
+
+            <!-- Кнопка действия -->
+            <div class="flex items-center gap-3">
+                <a href="#search-section" class="bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 hover:opacity-90 text-white font-semibold px-5 py-2.5 rounded-xl text-xs transition shadow-lg shadow-purple-600/30">
+                    Найти поставщика
+                </a>
+            </div>
         </div>
     </header>
 
-    <!-- Hero-блок (Главная секция) -->
-    <section class="py-20 px-6 text-center max-w-4xl mx-auto space-y-6">
-        <div class="inline-flex items-center gap-2 px-3 me-2 py-1 rounded-full bg-cyan-950/60 border border-cyan-800/50 text-cyan-400 text-xs font-medium">
-            <span>🚀 B2B Платформа нового поколения</span>
+    <!-- Главный баннер (Hero Section) -->
+    <section class="relative py-20 px-6 text-center max-w-5xl mx-auto space-y-6 overflow-hidden">
+        <!-- Неоновый фоновый блик -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] bg-purple-600/20 blur-[120px] rounded-full -z-10 pointer-events-none"></div>
+
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-950/60 border border-purple-800/60 text-purple-300 text-xs font-semibold backdrop-blur-sm">
+            <span class="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></span>
+            <span>Интеллектуальная B2B Экосистема</span>
         </div>
-        <h1 class="text-4xl md:text-6xl font-extrabold text-white tracking-tight leading-tight">
-            Поиск фабрик и поставщиков в Китае
+
+        <h1 class="text-4xl md:text-6xl font-black text-white tracking-tight leading-tight">
+            Поиск поставщиков и фабрик Китая <br>
+            <span class="ai-gradient-text">на базе AI-платформы</span>
         </h1>
-        <p class="text-slate-400 text-base md:text-lg max-w-2xl mx-auto">
-            Находите верифицированных производителей, проверяйте качество продукции и отслеживайте свои поставки в реальном времени.
+
+        <p class="text-slate-400 text-base md:text-lg max-w-3xl mx-auto font-normal">
+            Автоматизированный аудит заводов, прямой заказ инспекций качества, верификация юридических лиц и сквозной логистический трекинг от Go Project.
         </p>
     </section>
 
-    <!-- Секция поиска и каталога -->
-    <section id="search-section" class="max-w-6xl mx-auto px-6 pb-20 space-y-8 flex-1 w-full">
+    <!-- Поиск и каталог фабрик -->
+    <section id="search-section" class="max-w-7xl mx-auto px-6 pb-24 space-y-8 flex-1 w-full">
         
-        <!-- Панель фильтров -->
-        <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl space-y-4 backdrop-blur shadow-2xl">
-            <div class="flex flex-col md:flex-row gap-3">
+        <!-- Панель фильтрации -->
+        <div class="bg-slate-900/80 border border-purple-900/40 p-5 rounded-2xl space-y-4 backdrop-blur-xl ai-glow">
+            <div class="flex flex-col md:flex-row gap-4">
                 <div class="relative flex-1">
                     <input type="text" id="searchInput" oninput="applyFilters()" 
-                        placeholder="Поиск по названию, городу или категории (например: Нинбо, Иу, Электроника)..." 
-                        class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 text-sm transition">
+                        placeholder="Поиск по названию, городу или категории (например: Нинбо, Иу, Текстиль)..." 
+                        class="w-full bg-slate-950/80 border border-purple-900/50 rounded-xl px-5 py-4 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-sm transition">
                 </div>
                 
                 <select id="categorySelect" onchange="applyFilters()" 
-                    class="bg-slate-950 border border-slate-800 rounded-xl px-4 py-3.5 text-slate-300 text-sm focus:outline-none focus:border-cyan-500 transition">
+                    class="bg-slate-950/80 border border-purple-900/50 rounded-xl px-5 py-4 text-slate-300 text-sm focus:outline-none focus:border-purple-500 transition">
                     <option value="ALL">Все категории</option>
                     <option value="Электроника">Электроника</option>
                     <option value="Текстиль">Текстиль</option>
@@ -58,30 +100,31 @@
                 </select>
             </div>
 
-            <div class="flex justify-between items-center text-xs text-slate-400 px-1 pt-1 border-t border-slate-800/60">
-                <span id="resultsCount">Подключение к Supabase...</span>
-                <button onclick="resetFilters()" class="text-cyan-400 hover:text-cyan-300 font-medium transition">Сбросить фильтры</button>
+            <div class="flex justify-between items-center text-xs text-slate-400 px-1 pt-2 border-t border-purple-950">
+                <span id="resultsCount" class="text-purple-300 font-medium">Подключение к базе данных...</span>
+                <button onclick="resetFilters()" class="text-purple-400 hover:text-purple-300 font-medium transition">Сбросить фильтры</button>
             </div>
         </div>
 
-        <!-- Заголовок перед блоком карточек -->
+        <!-- Заголовок блока -->
         <div class="flex justify-between items-end">
             <div>
-                <h2 class="text-2xl font-bold text-white">Проверенные фабрики</h2>
-                <p class="text-xs text-slate-400 mt-1">База данных обновляется из Supabase</p>
+                <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                    <span>Верифицированные производители</span>
+                    <span class="text-xs bg-indigo-950 text-indigo-400 border border-indigo-800 px-2.5 py-0.5 rounded-full">Live DB</span>
+                </h2>
+                <p class="text-xs text-slate-400 mt-1">Прямой доступ к производителям с проверкой Go Project</p>
             </div>
         </div>
 
-        <!-- Динамическая сетка карточек заводов -->
-        <div id="suppliersGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Карточки будут сгенерированы из базы -->
-        </div>
+        <!-- Карточки фабрик -->
+        <div id="suppliersGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
 
     </section>
 
     <!-- Подвал -->
-    <footer class="border-t border-slate-800/80 bg-slate-900/40 py-8 text-center text-xs text-slate-500">
-        <p>© 2026 SourceJet. Все права защищены.</p>
+    <footer class="border-t border-purple-900/30 bg-slate-900/60 py-8 text-center text-xs text-slate-500">
+        <p>© 2026 SourceJet AI. Разработано в рамках экосистемы **Go Project**.</p>
     </footer>
 
     <script>
@@ -93,14 +136,12 @@
 
         async function fetchSuppliers() {
             const grid = document.getElementById('suppliersGrid');
-            grid.innerHTML = '<div class="col-span-3 text-center py-12 text-slate-500">Загрузка поставщиков...</div>';
+            grid.innerHTML = '<div class="col-span-3 text-center py-12 text-slate-500">Загрузка базы фабрик...</div>';
 
-            const { data, error } = await supabaseClient
-                .from('suppliers')
-                .select('*');
+            const { data, error } = await supabaseClient.from('suppliers').select('*');
 
             if (error || !data) {
-                grid.innerHTML = `<div class="col-span-3 text-center py-12 text-red-400">Ошибка загрузки данных из Supabase</div>`;
+                grid.innerHTML = `<div class="col-span-3 text-center py-12 text-red-400">Ошибка загрузки данных из базы Supabase</div>`;
                 return;
             }
 
@@ -125,13 +166,13 @@
                 return matchesCategory && matchesSearch;
             });
 
-            countLabel.innerText = `Найдено производителей: ${filtered.length} из ${allSuppliers.length}`;
+            countLabel.innerText = `Найдено фабрик: ${filtered.length} из ${allSuppliers.length}`;
 
             if (filtered.length === 0) {
                 grid.innerHTML = `
-                    <div class="col-span-3 text-center py-16 bg-slate-900/40 border border-slate-800/80 rounded-2xl">
+                    <div class="col-span-3 text-center py-16 bg-slate-900/50 border border-purple-900/30 rounded-2xl">
                         <p class="text-slate-400 font-medium">Ничего не найдено по вашему запросу</p>
-                        <p class="text-slate-600 text-xs mt-1">Попробуйте изменить ключевые слова или сбросить фильтр</p>
+                        <p class="text-slate-600 text-xs mt-1">Попробуйте изменить ключевые слова</p>
                     </div>
                 `;
                 return;
@@ -140,23 +181,23 @@
             grid.innerHTML = '';
             filtered.forEach(s => {
                 grid.innerHTML += `
-                    <div class="bg-slate-900/90 border border-slate-800 hover:border-slate-700/80 p-6 rounded-2xl flex flex-col justify-between space-y-5 transition duration-200 hover:shadow-xl">
+                    <div class="bg-slate-900/90 border border-purple-900/30 hover:border-purple-500/50 p-6 rounded-2xl flex flex-col justify-between space-y-5 transition duration-200 card-glow">
                         <div class="space-y-4">
                             <div class="flex justify-between items-start gap-2">
                                 <h3 class="font-bold text-lg text-white leading-snug">${s.name}</h3>
-                                ${s.verified ? '<span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800/50 px-2.5 py-0.5 rounded-full shrink-0 font-semibold tracking-wide">Verified</span>' : ''}
+                                ${s.verified ? '<span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800/50 px-2.5 py-0.5 rounded-full shrink-0 font-semibold tracking-wide">Verified AI</span>' : ''}
                             </div>
                             <p class="text-xs text-slate-400 flex items-center gap-1">📍 ${s.location}</p>
                             
-                            <div class="space-y-2 text-xs text-slate-300 pt-3 border-t border-slate-800/80">
-                                <div class="flex justify-between"><span class="text-slate-500">Категория:</span> <strong class="text-cyan-400">${s.category}</strong></div>
-                                <div class="flex justify-between"><span class="text-slate-500">Минимальный заказ (MOQ):</span> <span class="font-medium">${s.moq}</span></div>
-                                <div class="flex justify-between"><span class="text-slate-500">Рейтинг:</span> <span class="font-medium">⭐ ${s.rating}</span></div>
+                            <div class="space-y-2 text-xs text-slate-300 pt-3 border-t border-purple-950">
+                                <div class="flex justify-between"><span class="text-slate-500">Категория:</span> <strong class="text-purple-400">${s.category}</strong></div>
+                                <div class="flex justify-between"><span class="text-slate-500">Минимальный заказ:</span> <span class="font-medium">${s.moq}</span></div>
+                                <div class="flex justify-between"><span class="text-slate-500">Рейтинг:</span> <span class="font-medium text-amber-400">⭐ ${s.rating}</span></div>
                             </div>
                         </div>
 
-                        <button onclick="alert('Заявка на инспекцию фабрики ${s.name} отправлена!')" 
-                            class="w-full bg-cyan-600/10 hover:bg-cyan-600 border border-cyan-500/30 hover:border-transparent text-cyan-400 hover:text-white text-xs py-3 rounded-xl font-semibold transition duration-150">
+                        <button onclick="alert('Заявка на инспекцию фабрики ${s.name} передана в Go Project!')" 
+                            class="w-full bg-gradient-to-r from-purple-900/40 to-indigo-900/40 hover:from-purple-600 hover:to-indigo-600 border border-purple-500/30 hover:border-transparent text-purple-300 hover:text-white text-xs py-3 rounded-xl font-semibold transition duration-200">
                             Заказать инспекцию
                         </button>
                     </div>
