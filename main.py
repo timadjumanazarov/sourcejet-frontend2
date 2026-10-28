@@ -16,14 +16,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Защита от пустых строк в Environment на Render
-SUPABASE_URL = os.environ.get("SUPABASE_URL") or "https://ozpskokidbhqtoeykyzf.supabase.co"
-SUPABASE_KEY = os.environ.get("SUPABASE_KEY") or ""
+# Жестко прописываем URL проекта в коде, чтобы исключить любые ошибки окружения на Render
+SUPABASE_URL = "https://ozpskokidbhqtoeykyzf.supabase.co"
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "").strip()
 
 print(f"DEBUG_URL: '{SUPABASE_URL}'")
 print(f"DEBUG_KEY_LENGTH: {len(SUPABASE_KEY)}")
 
-supabase = create_client(SUPABASE_URL.strip(), SUPABASE_KEY.strip())
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 @app.get("/api/download-report/{inspection_id}")
 async def download_report(inspection_id: str):
