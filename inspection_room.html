@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inspection Room & Live Chat — SourceJet AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .ai-gradient-text {
+            background: linear-gradient(135deg, #c084fc 0%, #818cf8 50%, #22d3ee 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(168, 85, 247, 0.18);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-purple-500 selection:text-white">
+
+    <!-- Header -->
+    <header class="border-b border-purple-900/30 bg-slate-900/80 backdrop-blur-xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="inspector_dashboard.html" class="flex items-center gap-3.5">
+                <div class="w-11 h-11 bg-gradient-to-tr from-purple-600 via-indigo-600 to-cyan-400 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-xl shadow-purple-500/25">⚡</div>
+                <div>
+                    <span class="font-black text-xl tracking-wider text-white">SourceJet <span class="ai-gradient-text">AI</span></span>
+                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase">Inspection Live Room</p>
+                </div>
+            </a>
+            <div class="flex items-center gap-2">
+                <button onclick="switchLang('ru')" id="lang-ru" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-600 text-white">RU</button>
+                <button onclick="switchLang('en')" id="lang-en" class="px-2.5 py-1 rounded-lg text-xs font-bold text-slate-400">EN</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-6 py-10 flex-1 w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Left Column: Inspection Details & Checklist -->
+        <div class="lg:col-span-2 space-y-6">
+            <div class="glass-panel p-6 md:p-8 rounded-3xl border border-purple-900/50 space-y-4">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span id="inspectionCountryCity" class="text-[10px] font-mono text-purple-400 uppercase font-bold">China • Loading</span>
+                        <h1 id="factoryTitle" class="text-2xl font-black text-white mt-1">Загрузка данных инспекции...</h1>
+                    </div>
+                    <span id="inspectionStatusBadge" class="bg-purple-950 text-purple-300 border border-purple-800 text-xs font-bold px-3 py-1 rounded-full">Загрузка...</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-300 pt-2 border-t border-purple-900/30">
+                    <p><strong>👤 <span data-ru="Клиент:" data-en="Client:">Клиент:</span></strong> <span id="clientName">-</span></p>
+                    <p><strong>🕵️‍♂️ <span data-ru="Инспектор:" data-en="Inspector:">Инспектор:</span></strong> <span id="inspectorName">-</span></p>
+                    <p><strong>📍 <span data-ru="Адрес фабрики:" data-en="Factory Address:">Адрес фабрики:</span></strong> <span id="factoryAddress">-</span></p>
+                    <p><strong>📅 <span data-ru="Дата выезда:" data-en="Scheduled Date:">Дата выезда:</span></strong> <span id="scheduledDate">-</span></p>
+                </div>
+
+                <div id="requirementsBox" class="bg-slate-950/80 p-4 rounded-2xl border border-purple-900/40 text-xs text-slate-400 space-y-1">
+                    <strong class="text-purple-300" data-ru="Техническое задание клиента:" data-en="Client Technical Requirements:">Техническое задание клиента:</strong>
+                    <p id="requirementsText">-</p>
+                </div>
+            </div>
+
+            <!-- Inspector Actions / Checklist Form -->
+            <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 space-y-4">
+                <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300" data-ru="Чек-лист проверки и вердикт" data-en="Inspection Checklist & Verdict">Чек-лист проверки и вердикт</h3>
+                
+                <div class="space-y-3 text-xs">
+                    <label class="flex items-center gap-3 cursor-pointer bg-slate-950/60 p-3 rounded-xl border border-purple-900/30">
+                        <input type="checkbox" id="check_qty" class="w-4 h-4 accent-purple-600 rounded">
+                        <span data-ru="Количество и маркировка коробок соответствуют заказу" data-en="Quantity and box labeling match the order">Количество и маркировка коробок соответствуют заказу</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer bg-slate-950/60 p-3 rounded-xl border border-purple-900/30">
+                        <input type="checkbox" id="check_quality" class="w-4 h-4 accent-purple-600 rounded">
+                        <span data-ru="Внешний вид и качество товара проверены (без критических дефектов)" data-en="Appearance and product quality verified (no critical defects)">Внешний вид и качество товара проверены (без критических дефектов)</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer bg-slate-950/60 p-3 rounded-xl border border-purple-900/30">
+                        <input type="checkbox" id="check_packing" class="w-4 h-4 accent-purple-600 rounded">
+                        <span data-ru="Упаковка надежная, экспортная (соответствует требованиям транспортировки)" data-en="Packaging is sturdy and export-grade">Упаковка надежная, экспортная (соответствует требованиям транспортировки)</span>
+                    </label>
+                </div>
+
+                <div class="pt-2 flex gap-4">
+                    <button onclick="updateInspectionStatus('completed')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition">
+                        ✓ <span data-ru="Завершить: Одобрено (Pass)" data-en="Complete: Pass">Завершить: Одобрено (Pass)</span>
+                    </button>
+                    <button onclick="updateInspectionStatus('issues_found')" class="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition">
+                        ⚠ <span data-ru="Завершить: Найден брак (Fail)" data-en="Complete: Fail">Завершить: Найден брак (Fail)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Live Chat -->
+        <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 flex flex-col h-[600px] justify-between">
+            <div class="border-b border-purple-900/40 pb-3 mb-4">
+                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                    💬 <span data-ru="Чат инспекции в реальном времени" data-en="Live Inspection Chat">Чат инспекции в реальном времени</span>
+                </h3>
+                <p class="text-[10px] text-slate-400" data-ru="Обсуждение деталей с инспектором на заводе" data-en="Discuss details with the on-site inspector">Обсуждение деталей с инспектором на заводе</p>
+            </div>
+
+            <!-- Messages Box -->
+            <div id="chatMessages" class="flex-1 overflow-y-auto space-y-3 pr-2 text-xs font-mono">
+                <div class="text-center text-slate-500 py-10" data-ru="Загрузка чата..." data-en="Loading chat...">Загрузка чата...</div>
+            </div>
+
+            <!-- Message Input Form -->
+            <form id="chatForm" onsubmit="sendMessage(event)" class="mt-4 pt-3 border-t border-purple-900/40 flex gap-2">
+                <input type="text" id="messageInput" required placeholder="Написать сообщение..." class="flex-1 bg-slate-950 border border-purple-900/60 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-purple-500">
+                <button type="submit" class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition">
+                    ➤
+                </button>
+            </form>
+        </div>
+
+    </main>
+
+    <script>
+        const SUPABASE_URL = 'https://ozpskokidbhqtoeykyzf.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_Zpkfm-iDWB7WuHrAp1jDtQ_1w_QU8s0';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let currentLang = 'ru';
+        const urlParams = new URLSearchParams(window.location.search);
+        const inspectionId = urlParams.get('id');
+
+        function switchLang(lang) {
+            currentLang = lang;
+            document.getElementById('lang-ru').className = lang === 'ru' ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-600 text-white' : 'px-2.5 py-1 rounded-lg text-xs font-bold text-slate-400';
+            document.getElementById('lang-en').className = lang === 'en' ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-600 text-white' : 'px-2.5 py-1 rounded-lg text-xs font-bold text-slate-400';
+
+            document.querySelectorAll('[data-ru]').forEach(el => {
+                const text = el.getAttribute(`data-${lang}`);
+                if (text) el.innerText = text;
+            });
+        }
+
+        async function loadInspectionData() {
+            if (!inspectionId) {
+                alert('ID инспекции не указан в URL!');
+                return;
+            }
+
+            const { data, error } = await supabaseClient
+                .from('inspections')
+                .select('*')
+                .eq('id', inspectionId)
+                .single();
+
+            if (error) {
+                alert('Ошибка загрузки инспекции: ' + error.message);
+                return;
+            }
+
+            document.getElementById('inspectionCountryCity').innerText = `${data.country} • ${data.city} • ${data.inspection_type}`;
+            document.getElementById('factoryTitle').innerText = data.factory_name;
+            document.getElementById('clientName').innerText = data.client_name;
+            document.getElementById('inspectorName').innerText = data.inspector_name || 'Ожидает назначения';
+            document.getElementById('factoryAddress').innerText = data.address_chinese || 'Не указан';
+            document.getElementById('scheduledDate').innerText = data.scheduled_date || 'По договоренности';
+            document.getElementById('requirementsText').innerText = data.requirements?.notes || 'Особые требования не указаны.';
+
+            const badge = document.getElementById('inspectionStatusBadge');
+            badge.innerText = data.status.toUpperCase();
+            if(data.status === 'completed') badge.className = 'bg-emerald-950 text-emerald-300 border border-emerald-800 text-xs font-bold px-3 py-1 rounded-full';
+            else if(data.status === 'issues_found') badge.className = 'bg-rose-950 text-rose-300 border border-rose-800 text-xs font-bold px-3 py-1 rounded-full';
+            else badge.className = 'bg-amber-950 text-amber-300 border border-amber-800 text-xs font-bold px-3 py-1 rounded-full';
+
+            loadMessages();
+        }
+
+        async function loadMessages() {
+            const { data, error } = await supabaseClient
+                .from('inspection_messages')
+                .select('*')
+                .eq('inspection_id', inspectionId)
+                .order('created_at', { ascending: true });
+
+            const chatBox = document.getElementById('chatMessages');
+            if (error || !data || data.length === 0) {
+                chatBox.innerHTML = `<div class="text-center text-slate-500 py-8">Пока нет сообщений в чате. Напишите первое!</div>`;
+                return;
+            }
+
+            let html = '';
+            data.forEach(m => {
+                const isInspector = m.sender_role === 'inspector';
+                html += `
+                    <div class="p-2.5 rounded-xl ${isInspector ? 'bg-purple-950/40 border border-purple-900/40 ml-4' : 'bg-slate-900/80 mr-4'}">
+                        <div class="flex justify-between text-[10px] text-purple-400 font-bold mb-1">
+                            <span>${m.sender_name} (${m.sender_role})</span>
+                            <span class="text-slate-500">${new Date(m.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                        </div>
+                        <p class="text-slate-200">${m.message}</p>
+                    </div>
+                `;
+            });
+            chatBox.innerHTML = html;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        async function sendMessage(e) {
+            e.preventDefault();
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const senderName = prompt('Ваше имя в чате (например, Клиент или Инспектор):') || 'Участник';
+            const senderRole = prompt('Ваша роль (client или inspector):') || 'client';
+
+            const { error } = await supabaseClient
+                .from('inspection_messages')
+                .insert([{
+                    inspection_id: inspectionId,
+                    sender_role: senderRole,
+                    sender_name: senderName,
+                    message: message
+                }]);
+
+            if (error) {
+                alert('Ошибка отправки: ' + error.message);
+            } else {
+                input.value = '';
+                loadMessages();
+            }
+        }
+
+        async function updateInspectionStatus(newStatus) {
+            const { error } = await supabaseClient
+                .from('inspections')
+                .update({ status: newStatus })
+                .eq('id', inspectionId);
+
+            if (error) {
+                alert('Ошибка обновления статуса: ' + error.message);
+            } else {
+                alert('Статус инспекции успешно изменен на: ' + newStatus);
+                loadInspectionData();
+            }
+        }
+
+        window.onload = () => {
+            loadInspectionData();
+            // Авто-обновление чата каждые 10 секунд
+            setInterval(loadMessages, 10000);
+        };
+    </script>
+</body>
+</html>
