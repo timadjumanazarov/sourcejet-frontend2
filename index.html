@@ -303,31 +303,45 @@
         }
 
         async function submitLead(e) {
-            e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            btn.innerText = currentLang === 'ru' ? 'Отправка...' : 'Submitting...';
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    btn.innerText = currentLang === 'ru' ? 'Отправка...' : 'Submitting...';
 
-            const leadData = {
-                target: document.getElementById('factoryTarget').value,
-                name: document.getElementById('leadName').value,
-                contact: document.getElementById('leadContact').value,
-                details: document.getElementById('leadDetails').value,
-                created_at: new Date().toISOString()
-            };
+    const leadData = {
+        target: document.getElementById('factoryTarget').value,
+        name: document.getElementById('leadName').value,
+        contact: document.getElementById('leadContact').value,
+        details: document.getElementById('leadDetails').value
+    };
 
-            // Сохранение лида в Supabase (в таблицу leads или rfq_requests)
-            const { error } = await supabaseClient.from('leads').insert([leadData]);
+    // 1. Сохраняем в Supabase
+    await supabaseClient.from('leads').insert([leadData]);
 
-            if (error) {
-                // Если таблицы leads пока нет, показываем благодарность клиенту
-                console.log('Lead captured local:', leadData);
-            }
+    // 2. Моментально отправляем в Telegram прямо из браузера
+    const botToken = '9251200369:AAEs1Tuxt3smms34wrP30SbFyhy5-Ona9RY';
+    const chatId = '247632305';
+    const message = `⚡ *НОВАЯ ЗАЯВКА SOURCEJET AI* ⚡\n\n📌 *Цель:* ${leadData.target}\n👤 *Имя:* ${leadData.name}\n📞 *Контакты:* ${leadData.contact}\n📝 *Детали:* ${leadData.details || 'Нет деталей'}`;
 
-            alert(currentLang === 'ru' ? 'Заявка успешно отправлена! Мы свяжемся с вами в течение 15 минут.' : 'Request successfully submitted! Our team will contact you shortly.');
-            
-            document.getElementById('rfqForm').reset();
-            closeRFQModal();
-            btn.innerText = currentLang === 'ru' ? 'Отправить заявку' : 'Submit Application';
+    try {
+        await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: chatId,
+                text: message,
+                parse_mode: 'Markdown'
+            })
+        });
+    } catch (err) {
+        console.error('Telegram notification error:', err);
+    }
+
+    alert(currentLang === 'ru' ? 'Заявка успешно отправлена! Мы свяжемся с вами в течение 15 минут.' : 'Request successfully submitted! Our team will contact you shortly.');
+    
+    document.getElementById('rfqForm').reset();
+    closeRFQModal();
+    btn.innerText = currentLang === 'ru' ? 'Отправить заявку' : 'Submit Application';
+}
         }
 
         window.onload = () => {
