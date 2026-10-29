@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seller Control Dashboard — SourceJet AI</title>
+    <title>Importer Portal — SourceJet AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -28,7 +28,7 @@
                 <div class="w-11 h-11 bg-gradient-to-tr from-purple-600 via-indigo-600 to-cyan-400 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-xl shadow-purple-500/25">⚡</div>
                 <div>
                     <span class="font-black text-xl tracking-wider text-white">SourceJet <span class="ai-gradient-text">AI</span></span>
-                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase" data-ru="Кабинет Селлера & Supply Chain" data-en="Seller Control & Supply Chain">Кабинет Селлера & Supply Chain</p>
+                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase" data-ru="Портал Импортера & Supply Chain" data-en="Importer Portal & Supply Chain">Портал Импортера & Supply Chain</p>
                 </div>
             </div>
 
@@ -127,7 +127,7 @@
     </main>
 
     <footer class="border-t border-purple-900/30 bg-slate-900/80 py-6 text-center text-xs text-slate-500">
-        <p>© 2026 SourceJet AI. Seller Control Dashboard.</p>
+        <p>© 2026 SourceJet AI. Importer Portal.</p>
     </footer>
 
     <script>
@@ -151,7 +151,7 @@
             if (window.loadedData) renderShipments(window.loadedData);
         }
 
-        async function loadSellerInspections() {
+        async function loadImporterInspections() {
             const { data, error } = await supabaseClient
                 .from('inspections')
                 .select('*')
@@ -245,7 +245,7 @@
 
         window.onload = () => {
             switchLanguage(currentLang);
-            loadSellerInspections();
+            loadImporterInspections();
         };
     </script>
 </body>
