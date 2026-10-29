@@ -435,7 +435,7 @@
             document.getElementById('factoryModal').classList.add('hidden');
         }
 
-        // НАСТОЯЩИЙ ИИ-ПОИСК: Прямой запрос к OpenAI API с клиентской стороны и запись в Supabase
+        // НАСТОЯЩИЙ ИИ-ПОИСК: Прямой запрос к OpenAI API через ключ key_9F6SpnVt9tLNqEC4
         async function triggerAiSearch() {
             const searchQuery = document.getElementById('searchInput').value.trim();
             if (!searchQuery) return;
@@ -453,8 +453,8 @@
 
                 console.log("⚡ Отправка запроса в OpenAI API для поиска фабрик по запросу:", searchQuery);
 
-                // ВАЖНО: Твой реальный OpenAI ключ
-                const OPENAI_API_KEY = "sk-proj-ТВОЙ_КЛЮЧ_ОПЕНАИ"; // Либо вставь свой ключ сюда для тестов
+                // Интегрированный ключ OpenAI
+                const OPENAI_API_KEY = "key_9F6SpnVt9tLNqEC4".trim();
 
                 const systemPrompt = `You are a B2B Sourcing AI. Generate a JSON object with an array of 3 realistic verified manufacturing factories in China for "${searchQuery}". 
 Fields required per supplier object: name, category ("${currentCategory}"), location, moq, rating (4.85-4.99), verdict (detailed audit in ${currentLang}).
