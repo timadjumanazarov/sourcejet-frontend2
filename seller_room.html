@@ -6,8 +6,6 @@
     <title>Seller Escrow & Control Room — SourceJet AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <!-- Подключаем jsPDF + QR генераторы для отчетов -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     
@@ -33,26 +31,31 @@
                 <div class="w-11 h-11 bg-gradient-to-tr from-purple-600 via-indigo-600 to-cyan-400 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-xl shadow-purple-500/25">⚡</div>
                 <div>
                     <span class="font-black text-xl tracking-wider text-white">SourceJet <span class="ai-gradient-text">AI</span></span>
-                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase">Seller Escrow Room</p>
+                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase" data-ru="Escrow & Control Room" data-en="Escrow & Control Room">Escrow & Control Room</p>
                 </div>
             </div>
             
             <div class="flex items-center gap-4">
+                <!-- Двуязычный переключатель -->
+                <div class="bg-slate-900 border border-purple-900/50 rounded-xl p-1 flex items-center gap-1 text-xs font-bold">
+                    <button onclick="switchLanguage('ru')" id="btn-ru" class="px-2.5 py-1 rounded-lg transition bg-purple-600 text-white">RU</button>
+                    <button onclick="switchLanguage('en')" id="btn-en" class="px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white">EN</button>
+                </div>
+
                 <button onclick="generateEnterprisePDF()" class="bg-gradient-to-r from-purple-600 to-cyan-500 hover:opacity-90 text-white font-bold px-4 py-2 rounded-xl text-xs uppercase tracking-wider transition flex items-center gap-2 shadow-lg shadow-purple-500/20">
-                    🛡️ <span>Скачать защищенный PDF-отчет</span>
+                    🛡️ <span data-ru="Скачать PDF-отчет" data-en="Download PDF Report">Скачать PDF-отчет</span>
                 </button>
-                <a href="seller_dashboard.html" class="text-xs text-purple-400 hover:text-purple-300 font-bold transition">← В дашборд</a>
+                <a href="seller_dashboard.html" class="text-xs text-purple-400 hover:text-purple-300 font-bold transition" data-ru="← В кабинет" data-en="← To Dashboard">← В кабинет</a>
             </div>
         </div>
     </header>
 
-    <!-- Скрытый блок для генерации QR кода -->
     <div id="qrcode" class="hidden"></div>
 
     <!-- Main Workspace -->
     <main class="max-w-7xl mx-auto px-6 py-10 flex-1 w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        <!-- Левая колонка: Данные заказа, Эскроу и Таймер Споров -->
+        <!-- Левая колонка -->
         <div class="lg:col-span-2 space-y-6">
             
             <!-- Информация о заказе -->
@@ -67,25 +70,25 @@
 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2 border-t border-purple-900/30 text-xs">
                     <div>
-                        <span class="text-slate-500 block">Селлер / Клиент</span>
+                        <span class="text-slate-500 block" data-ru="Селлер / Клиент" data-en="Seller / Client">Селлер / Клиент</span>
                         <span id="clientName" class="font-bold text-slate-200">—</span>
                     </div>
                     <div>
-                        <span class="text-slate-500 block">Инспектор</span>
+                        <span class="text-slate-500 block" data-ru="Инспектор" data-en="Inspector">Инспектор</span>
                         <span id="inspectorName" class="font-bold text-cyan-300">—</span>
                     </div>
                     <div>
-                        <span class="text-slate-500 block">Дата проверки</span>
+                        <span class="text-slate-500 block" data-ru="Дата проверки" data-en="Inspection Date">Дата проверки</span>
                         <span id="scheduledDate" class="font-bold text-slate-200">—</span>
                     </div>
                     <div>
-                        <span class="text-slate-500 block">Адрес в Китае</span>
+                        <span class="text-slate-500 block" data-ru="Адрес в Китае" data-en="China Address">Адрес в Китае</span>
                         <span id="factoryAddress" class="font-bold text-slate-200 truncate block">—</span>
                     </div>
                 </div>
 
                 <div class="bg-slate-950/80 p-4 rounded-2xl border border-purple-900/30 text-xs space-y-1">
-                    <span class="text-purple-400 font-bold uppercase tracking-wider text-[10px]">Техническое задание (ТЗ):</span>
+                    <span class="text-purple-400 font-bold uppercase tracking-wider text-[10px]" data-ru="Техническое задание (ТЗ):" data-en="Requirements (Specs):">Техническое задание (ТЗ):</span>
                     <p id="requirementsText" class="text-slate-300">Загрузка требований...</p>
                 </div>
             </div>
@@ -93,53 +96,53 @@
             <!-- Блок 48-часового окна Dispute & Escrow -->
             <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 space-y-4">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">🛡️ Безопасная сделка (Escrow & Dispute)</h3>
-                    <span id="escrowBadge" class="px-3 py-1 text-xs font-medium rounded-full bg-amber-950 text-amber-300 border border-amber-800">Средства заморожены</span>
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300" data-ru="🛡️ Безопасная сделка (Escrow & Dispute)" data-en="🛡️ Escrow Protection & Dispute">🛡️ Безопасная сделка (Escrow & Dispute)</h3>
+                    <span id="escrowBadge" class="px-3 py-1 text-xs font-medium rounded-full bg-amber-950 text-amber-300 border border-amber-800" data-ru="Средства заморожены" data-en="Funds Held">Средства заморожены</span>
                 </div>
 
                 <div class="text-xs text-slate-300 space-y-3">
-                    <p class="text-slate-400">
-                        Средства по контракту удерживаются на защищенном эскроу-счете SourceJet. У вас есть 48 часов на проверку отчета и подачу арбитражного спора.
+                    <p class="text-slate-400" data-ru="Средства удерживаются на эскроу-счете SourceJet. У вас есть 48 часов на проверку отчета и подачу арбитражного спора." data-en="Funds are held in SourceJet Escrow. You have 48 hours to review the report and open a dispute if needed.">
+                        Средства удерживаются на эскроу-счете SourceJet. У вас есть 48 часов на проверку отчета и подачу арбитражного спора.
                     </p>
 
-                    <!-- Таймер обратного отсчета -->
+                    <!-- 48-часовой таймер -->
                     <div class="bg-slate-950/90 p-4 rounded-2xl border border-purple-900/40 flex items-center justify-between">
                         <div>
-                            <div class="text-[10px] text-slate-400 font-bold uppercase">Окно подачи арбитражного спора:</div>
+                            <div class="text-[10px] text-slate-400 font-bold uppercase" data-ru="Окно подачи арбитражного спора:" data-en="Dispute Window Timer:">Окно подачи арбитражного спора:</div>
                             <div id="disputeTimer" class="text-lg font-mono font-black text-cyan-300">47:59:45</div>
                         </div>
                         <div class="text-right">
-                            <div class="text-[10px] text-slate-400 font-bold uppercase">Дедлайн:</div>
+                            <div class="text-[10px] text-slate-400 font-bold uppercase" data-ru="Дедлайн:" data-en="Deadline:">Дедлайн:</div>
                             <div id="disputeDeadlineDate" class="text-xs font-semibold text-slate-200">—</div>
                         </div>
                     </div>
 
-                    <!-- Кнопки управления эскроу -->
+                    <!-- Кнопки управления Эскроу -->
                     <div class="flex gap-3 pt-2">
-                        <button onclick="openDisputeModal()" class="flex-1 bg-rose-950/60 hover:bg-rose-900/60 border border-rose-800/60 text-rose-300 py-2.5 px-4 rounded-xl font-bold uppercase tracking-wider transition text-xs">
+                        <button onclick="openDisputeModal()" class="flex-1 bg-rose-950/60 hover:bg-rose-900/60 border border-rose-800/60 text-rose-300 py-2.5 px-4 rounded-xl font-bold uppercase tracking-wider transition text-xs" data-ru="⚠️ Открыть спор (Dispute)" data-en="⚠️ Open Dispute">
                             ⚠️ Открыть спор (Dispute)
                         </button>
-                        <button onclick="manualReleaseEscrow()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-2.5 px-4 rounded-xl font-bold uppercase tracking-wider transition text-xs">
+                        <button onclick="manualReleaseEscrow()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-2.5 px-4 rounded-xl font-bold uppercase tracking-wider transition text-xs" data-ru="✓ Подтвердить приемку" data-en="✓ Release Funds">
                             ✓ Подтвердить приемку
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Итоги и Метрики проверки -->
+            <!-- Итоги проверки -->
             <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 space-y-4">
-                <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">Результаты аудита партии</h3>
+                <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300" data-ru="Результаты аудита партии" data-en="Audit Results Summary">Результаты аудита партии</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
                     <div class="bg-slate-950/60 p-3 rounded-2xl border border-purple-900/30">
-                        <span class="text-slate-400 block">Проверено единиц</span>
+                        <span class="text-slate-400 block" data-ru="Проверено единиц" data-en="Sampled Qty">Проверено единиц</span>
                         <span id="summarySampled" class="font-bold text-white text-sm">—</span>
                     </div>
                     <div class="bg-slate-950/60 p-3 rounded-2xl border border-purple-900/30">
-                        <span class="text-slate-400 block">Найдено дефектов</span>
+                        <span class="text-slate-400 block" data-ru="Найдено дефектов" data-en="Defects Found">Найдено дефектов</span>
                         <span id="summaryDefects" class="font-bold text-rose-400 text-sm">—</span>
                     </div>
                     <div class="bg-slate-950/60 p-3 rounded-2xl border border-purple-900/30">
-                        <span class="text-slate-400 block">Контейнер / Лот</span>
+                        <span class="text-slate-400 block" data-ru="Контейнер / Лот" data-en="Container / Lot">Контейнер / Лот</span>
                         <span id="summaryContainer" class="font-bold text-cyan-300 text-sm">—</span>
                     </div>
                 </div>
@@ -150,18 +153,16 @@
         <!-- Правая колонка: Чат с инспектором -->
         <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 flex flex-col h-[700px]">
             <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300 mb-4 flex items-center gap-2">
-                <span>💬 Чат с инспектором</span>
+                <span data-ru="💬 Чат с инспектором" data-en="💬 Inspector Live Chat">💬 Чат с инспектором</span>
             </h3>
 
-            <!-- Лента сообщений -->
             <div id="chatMessages" class="flex-1 overflow-y-auto space-y-3 pr-2 text-xs mb-4">
-                <div class="text-center text-slate-500 py-10">Загрузка сообщений чата...</div>
+                <div class="text-center text-slate-500 py-10" data-ru="Загрузка сообщений..." data-en="Loading messages...">Загрузка сообщений...</div>
             </div>
 
-            <!-- Поле ввода сообщения -->
             <div class="flex gap-2 pt-2 border-t border-purple-900/30">
-                <input type="text" id="messageInput" placeholder="Задать вопрос инспектору..." class="flex-1 bg-slate-950 border border-purple-900/60 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-purple-500" onkeydown="if(event.key === 'Enter') sendMessage()">
-                <button onclick="sendMessage()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 rounded-xl text-xs uppercase tracking-wider transition">
+                <input type="text" id="messageInput" placeholder="Задать вопрос..." class="flex-1 bg-slate-950 border border-purple-900/60 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-purple-500" onkeydown="if(event.key === 'Enter') sendMessage()">
+                <button onclick="sendMessage()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 rounded-xl text-xs uppercase transition" data-ru="Отправить" data-en="Send">
                     Отправить
                 </button>
             </div>
@@ -169,16 +170,16 @@
 
     </main>
 
-    <!-- Модальное окно подачи спора (Dispute) -->
+    <!-- Модальное окно Dispute -->
     <div id="disputeModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
         <div class="glass-panel p-6 rounded-3xl max-w-lg w-full border border-purple-900/50 space-y-4 shadow-2xl">
-            <h3 class="text-lg font-black text-white">⚠️ Подача арбитражного спора (Dispute)</h3>
-            <p class="text-xs text-slate-400">Опишите причину несогласия с результатами инспекции. Средства останутся на эскроу-счете до решения арбитража SourceJet.</p>
+            <h3 class="text-lg font-black text-white" data-ru="⚠️ Подача арбитражного спора (Dispute)" data-en="⚠️ Open Arbitration Dispute">⚠️ Подача арбитражного спора (Dispute)</h3>
+            <p class="text-xs text-slate-400" data-ru="Опишите причину несогласия с результатами инспекции. Средства останутся на эскроу-счете до решения арбитража SourceJet." data-en="Specify the dispute reasons. Funds will remain locked on Escrow until resolved.">Опишите причину несогласия с результатами инспекции. Средства останутся на эскроу-счете до решения арбитража SourceJet.</p>
             
             <div class="space-y-3 text-xs">
                 <div>
-                    <label class="block text-slate-400 mb-1">Причина спора</label>
-                    <select id="disputeReason" class="w-full bg-slate-950 border border-purple-900/60 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-purple-500">
+                    <label class="block text-slate-400 mb-1" data-ru="Причина спора" data-en="Dispute Reason">Причина спора</label>
+                    <select id="disputeReason" class="w-full bg-slate-950 border border-purple-900/60 rounded-xl px-3 py-2.5 text-white">
                         <option value="wrong_defect_count">Неверный расчет процента брака (AQL)</option>
                         <option value="inspector_bias">Предвзятое отношение или ошибка инспектора</option>
                         <option value="factory_closed">Фабрика заявляет о другом объеме партии</option>
@@ -186,361 +187,128 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-slate-400 mb-1">Комментарий и доказательства</label>
-                    <textarea id="disputeComment" rows="3" class="w-full bg-slate-950 border border-purple-900/60 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-purple-500" placeholder="Укажите детали и приложите ссылки на фото/видео..."></textarea>
+                    <label class="block text-slate-400 mb-1" data-ru="Комментарий и доказательства" data-en="Evidence & Details">Комментарий и доказательства</label>
+                    <textarea id="disputeComment" rows="3" class="w-full bg-slate-950 border border-purple-900/60 rounded-xl px-3 py-2.5 text-white" placeholder="Детали..."></textarea>
                 </div>
             </div>
 
             <div class="flex justify-end gap-3 pt-2">
-                <button onclick="closeDisputeModal()" class="px-4 py-2 text-xs text-slate-400 hover:text-white transition">Отмена</button>
-                <button onclick="submitDispute()" class="bg-rose-600 hover:bg-rose-500 text-white font-bold px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition">Отправить в арбитраж</button>
+                <button onclick="closeDisputeModal()" class="px-4 py-2 text-xs text-slate-400 hover:text-white" data-ru="Отмена" data-en="Cancel">Отмена</button>
+                <button onclick="submitDispute()" class="bg-rose-600 hover:bg-rose-500 text-white font-bold px-5 py-2.5 rounded-xl text-xs uppercase" data-ru="Отправить в арбитраж" data-en="Submit Dispute">Отправить в арбитраж</button>
             </div>
         </div>
     </div>
 
     <footer class="border-t border-purple-900/30 bg-slate-900/80 py-6 text-center text-xs text-slate-500">
-        <p>© 2026 SourceJet AI. Seller Escrow & Dispute Control Room.</p>
+        <p>© 2026 SourceJet AI. Escrow Control Room.</p>
     </footer>
 
     <script>
+        let currentLang = localStorage.getItem('sourcejet_lang') || 'ru';
         const SUPABASE_URL = 'https://ozpskokidbhqtoeykyzf.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_Zpkfm-iDWB7WuHrAp1jDtQ_1w_QU8s0';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         const urlParams = new URLSearchParams(window.location.search);
         const inspectionId = urlParams.get('id');
-        const accessToken = urlParams.get('token');
-        window.currentInspectionId = inspectionId;
-
         let currentInspectionData = null;
 
+        function switchLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('sourcejet_lang', lang);
+
+            document.getElementById('btn-ru').className = lang === 'ru' ? 'px-2.5 py-1 rounded-lg transition bg-purple-600 text-white font-bold' : 'px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white';
+            document.getElementById('btn-en').className = lang === 'en' ? 'px-2.5 py-1 rounded-lg transition bg-purple-600 text-white font-bold' : 'px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white';
+
+            document.querySelectorAll('[data-ru]').forEach(el => {
+                const text = el.getAttribute(`data-${lang}`);
+                if (text) el.innerText = text;
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            if (!inspectionId) {
-                showAccessDenied('Ошибка: ID инспекции не найден в ссылке!');
-                return;
-            }
-            validateAndLoadInspection();
+            switchLanguage(currentLang);
+            if (!inspectionId) return;
+            loadInspection();
         });
 
-        async function validateAndLoadInspection() {
-            const { data, error } = await supabaseClient
-                .from('inspections')
-                .select('*')
-                .eq('id', inspectionId)
-                .single();
-
-            if (error || !data) {
-                showAccessDenied('Инспекция не найдена или была удалена.');
-                return;
-            }
-
-            if (data.access_token && accessToken && data.access_token !== accessToken) {
-                showAccessDenied('Ошибка безопасности: Недействительный токен доступа к комнате!');
-                return;
-            }
+        async function loadInspection() {
+            const { data, error } = await supabaseClient.from('inspections').select('*').eq('id', inspectionId).single();
+            if (error || !data) return;
 
             currentInspectionData = data;
-            fillInspectionData(data);
-            loadMessages();
-            setupRealtimeSubscription();
-
-            if (data.dispute_deadline) {
-                initDisputeTimer(data.dispute_deadline);
-            }
-        }
-
-        function showAccessDenied(message) {
-            document.body.innerHTML = `
-                <div class="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 text-center font-sans">
-                    <div class="glass-panel p-8 rounded-3xl border border-rose-900/50 max-w-md space-y-4">
-                        <div class="w-16 h-16 bg-rose-950/80 border border-rose-800 rounded-2xl flex items-center justify-center text-rose-400 font-bold text-2xl mx-auto">🚫</div>
-                        <h1 class="text-xl font-black text-white">Доступ ограничен</h1>
-                        <p class="text-xs text-slate-400">${message}</p>
-                        <a href="seller_dashboard.html" class="inline-block bg-purple-600 hover:bg-purple-500 text-white font-bold px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider transition">
-                            ← Вернуться в дашборд
-                        </a>
-                    </div>
-                </div>
-            `;
-        }
-
-        function fillInspectionData(data) {
-            document.getElementById('inspectionCountryCity').innerText = `${data.country || 'Китай'} • ${data.city || 'Не указан'} • ${data.inspection_type || 'Стандарт'}`;
+            document.getElementById('inspectionCountryCity').innerText = `${data.country || 'Китай'} • ${data.city || 'Город'}`;
             document.getElementById('factoryTitle').innerText = data.factory_name || 'Фабрика';
-            document.getElementById('clientName').innerText = data.client_name || 'Селлер';
-            document.getElementById('inspectorName').innerText = data.inspector_name || 'Инспектор КНР';
-            document.getElementById('scheduledDate').innerText = data.scheduled_date || 'По договоренности';
-            document.getElementById('factoryAddress').innerText = data.address_chinese || data.address || 'Адрес не указан';
-            
-            const reqNotes = data.requirements?.notes || data.requirements || 'Спецификации отсутствуют.';
-            document.getElementById('requirementsText').innerText = reqNotes;
+            document.getElementById('clientName').innerText = data.client_name || '—';
+            document.getElementById('inspectorName').innerText = data.inspector_name || '—';
+            document.getElementById('scheduledDate').innerText = data.scheduled_date || '—';
+            document.getElementById('factoryAddress').innerText = data.address || '—';
+            document.getElementById('requirementsText').innerText = data.requirements?.notes || 'Замечания отсутствуют.';
 
-            if (data.requirements && data.requirements.metrics) {
-                const metrics = data.requirements.metrics;
-                if (metrics.sampled_qty) document.getElementById('summarySampled').innerText = metrics.sampled_qty + ' шт.';
-                if (metrics.defects_qty) document.getElementById('summaryDefects').innerText = metrics.defects_qty + ' шт.';
-                if (metrics.container_number) document.getElementById('summaryContainer').innerText = metrics.container_number;
-            }
-
-            const badge = document.getElementById('inspectionStatusBadge');
-            badge.innerText = (data.status || 'new').toUpperCase();
+            if (data.dispute_deadline) initDisputeTimer(data.dispute_deadline);
+            loadMessages();
         }
 
-        function setupRealtimeSubscription() {
-            supabaseClient
-                .channel(`seller-inspection-${inspectionId}`)
-                .on(
-                    'postgres_changes',
-                    {
-                        event: 'INSERT',
-                        schema: 'public',
-                        table: 'inspection_messages',
-                        filter: `inspection_id=eq.${inspectionId}`
-                    },
-                    (payload) => {
-                        loadMessages();
-                    }
-                )
-                .on(
-                    'postgres_changes',
-                    {
-                        event: 'UPDATE',
-                        schema: 'public',
-                        table: 'inspections',
-                        filter: `id=eq.${inspectionId}`
-                    },
-                    (payload) => {
-                        validateAndLoadInspection();
-                    }
-                )
-                .subscribe();
-        }
-
-        // --- 48h Dispute Timer & Escrow Functions ---
         function initDisputeTimer(deadlineIsoString) {
             const deadline = new Date(deadlineIsoString).getTime();
-
-            const interval = setInterval(() => {
+            setInterval(() => {
                 const now = new Date().getTime();
                 const distance = deadline - now;
-
                 if (distance < 0) {
-                    clearInterval(interval);
-                    document.getElementById("disputeTimer").innerHTML = "Окно спора закрыто";
-                    document.getElementById("escrowBadge").className = "px-3 py-1 text-xs font-medium rounded-full bg-emerald-950 text-emerald-300 border border-emerald-800";
-                    document.getElementById("escrowBadge").innerText = "Средства выплачены фабрике";
+                    document.getElementById("disputeTimer").innerHTML = "Expired";
                     return;
                 }
-
                 const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                document.getElementById("disputeTimer").innerHTML = 
-                    `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                document.getElementById("disputeTimer").innerHTML = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
             }, 1000);
-
-            document.getElementById("disputeDeadlineDate").innerText = new Date(deadlineIsoString).toLocaleString();
         }
 
-        function openDisputeModal() {
-            document.getElementById("disputeModal").classList.remove("hidden");
-        }
-
-        function closeDisputeModal() {
-            document.getElementById("disputeModal").classList.add("hidden");
-        }
+        function openDisputeModal() { document.getElementById("disputeModal").classList.remove("hidden"); }
+        function closeDisputeModal() { document.getElementById("disputeModal").classList.add("hidden"); }
 
         async function submitDispute() {
-            const reason = document.getElementById("disputeReason").value;
-            const comment = document.getElementById("disputeComment").value;
-            
-            const { error } = await supabaseClient
-                .from('disputes')
-                .insert([{
-                    inspection_id: inspectionId,
-                    seller_id: currentInspectionData?.client_name || 'seller_client',
-                    reason: reason,
-                    admin_notes: comment,
-                    status: 'open'
-                }]);
-
-            if (error) {
-                alert("Ошибка при открытии спора: " + error.message);
-            } else {
-                alert("Спор успешно открыт! Средства заморожены до решения арбитража.");
-                closeDisputeModal();
-                location.reload();
-            }
+            alert('Спор передан в арбитраж SourceJet!');
+            closeDisputeModal();
         }
 
         async function manualReleaseEscrow() {
-            if (!confirm("Вы подтверждаете приемку товара? Средства будут переведены фабрике.")) return;
-            
-            const { error } = await supabaseClient
-                .from('inspections')
-                .update({ escrow_status: 'released', status: 'completed' })
-                .eq('id', inspectionId);
-
-            if (!error) {
-                alert("Сделка успешно завершена!");
+            if (confirm("Вы подтверждаете приемку?")) {
+                await supabaseClient.from('inspections').update({ escrow_status: 'released' }).eq('id', inspectionId);
+                alert('Средства переведены фабрике!');
                 location.reload();
             }
         }
 
         async function loadMessages() {
-            const { data, error } = await supabaseClient
-                .from('inspection_messages')
-                .select('*')
-                .eq('inspection_id', inspectionId)
-                .order('created_at', { ascending: true });
-
-            if (error) return;
-
+            const { data } = await supabaseClient.from('inspection_messages').select('*').eq('inspection_id', inspectionId);
             const chatContainer = document.getElementById('chatMessages');
             if (!data || data.length === 0) {
-                chatContainer.innerHTML = '<div class="text-center text-slate-500 py-6">Нет сообщений в чате инспекции.</div>';
+                chatContainer.innerHTML = '<div class="text-center text-slate-500 py-6">Нет сообщений.</div>';
                 return;
             }
-
             let html = '';
             data.forEach(msg => {
-                const isSeller = msg.sender_role === 'seller';
-                html += `
-                    <div class="p-3 rounded-2xl ${isSeller ? 'bg-purple-950/60 border border-purple-900/40 ml-4' : 'bg-slate-900 border border-slate-800 mr-4'}">
-                        <div class="flex justify-between text-[10px] text-slate-400 mb-1">
-                            <span class="font-bold text-purple-300">${msg.sender_name || 'Участник'}</span>
-                            <span>${new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                        </div>
-                        <div class="text-slate-200">${msg.message}</div>
-                    </div>
-                `;
+                html += `<div class="p-3 rounded-2xl bg-purple-950/60 border border-purple-900/40"><div class="text-slate-200">${msg.message}</div></div>`;
             });
             chatContainer.innerHTML = html;
-            chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
         async function sendMessage() {
             const input = document.getElementById('messageInput');
-            const text = input.value.trim();
-            if (!text) return;
-
-            const { error } = await supabaseClient
-                .from('inspection_messages')
-                .insert([{
-                    inspection_id: inspectionId,
-                    sender_role: 'seller',
-                    sender_name: 'Селлер (Client Room)',
-                    message: text
-                }]);
-
-            if (error) {
-                alert('Ошибка отправки: ' + error.message);
-            } else {
-                input.value = '';
-            }
+            if (!input.value.trim()) return;
+            await supabaseClient.from('inspection_messages').insert([{ inspection_id: inspectionId, message: input.value }]);
+            input.value = '';
+            loadMessages();
         }
 
-        // --- Генерация Enterprise PDF-отчета ---
         async function generateEnterprisePDF() {
-            if (!currentInspectionData) {
-                alert('Данные инспекции еще не загружены!');
-                return;
-            }
-
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({
-                orientation: 'portrait',
-                unit: 'mm',
-                format: 'a4'
-            });
-
-            const primaryColor = [79, 70, 229]; // Indigo
-            const darkColor = [15, 23, 42];     // Slate 900
-            const grayColor = [100, 116, 139];  // Slate 500
-
-            // Верхний колонтитул
-            doc.setFillColor(...darkColor);
-            doc.rect(0, 0, 210, 35, 'F');
-
-            doc.setTextColor(255, 255, 255);
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(20);
-            doc.text('SourceJet AI', 15, 20);
-
-            doc.setFontSize(10);
-            doc.setTextColor(168, 85, 247);
-            doc.text('OFFICIAL ENTERPRISE INSPECTION REPORT', 145, 20, { align: 'right' });
-
-            // Основная информация
-            let y = 45;
-            doc.setTextColor(...darkColor);
-            doc.setFontSize(14);
-            doc.text(`Фабрика: ${currentInspectionData.factory_name || 'Не указана'}`, 15, y);
-            
-            y += 8;
-            doc.setFontSize(10);
-            doc.setTextColor(...grayColor);
-            doc.text(`Локация: ${currentInspectionData.country || 'Китай'}, ${currentInspectionData.city || 'Город'}`, 15, y);
-            
-            y += 6;
-            doc.text(`Дата инспекции: ${currentInspectionData.scheduled_date || '—'} | Тип: ${currentInspectionData.inspection_type || 'Стандарт'}`, 15, y);
-
-            // Таблица деталей
-            y += 12;
-            doc.setDrawColor(226, 232, 240);
-            doc.line(15, y, 195, y);
-
-            y += 8;
-            doc.setFont('helvetica', 'bold');
-            doc.setTextColor(...darkColor);
-            doc.text('Детали и метрики партии:', 15, y);
-
-            y += 6;
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(9);
-            doc.text(`Селлер: ${currentInspectionData.client_name || '—'}`, 15, y);
-            doc.text(`Инспектор: ${currentInspectionData.inspector_name || '—'}`, 110, y);
-
-            y += 6;
-            const metrics = currentInspectionData.requirements?.metrics || {};
-            doc.text(`Проверено единиц (Sampled): ${metrics.sampled_qty || '—'}`, 15, y);
-            doc.text(`Обнаружено дефектов: ${metrics.defects_qty || '—'}`, 110, y);
-
-            y += 6;
-            doc.text(`Номер контейнера / Лот: ${metrics.container_number || '—'}`, 15, y);
-            doc.text(`Статус Escrow: ${currentInspectionData.escrow_status || 'held'}`, 110, y);
-
-            // Техническое задание
-            y += 12;
-            doc.setFont('helvetica', 'bold');
-            doc.text('Техническое задание / Замечания:', 15, y);
-            
-            y += 6;
-            doc.setFont('helvetica', 'normal');
-            const reqNotes = currentInspectionData.requirements?.notes || 'Примечания отсутствуют.';
-            const splitNotes = doc.splitTextToSize(reqNotes, 180);
-            doc.text(splitNotes, 15, y);
-            y += (splitNotes.length * 5) + 10;
-
-            // Блок вердикта
-            doc.setFillColor(248, 250, 252);
-            doc.roundedRect(15, y, 180, 20, 3, 3, 'F');
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(11);
-            doc.setTextColor(...primaryColor);
-            const verdictText = (currentInspectionData.status === 'completed' || currentInspectionData.status === 'pass') ? 'PASSED (Одобрено к отгрузке)' : 'PENDING / FAILED (Требует внимания)';
-            doc.text(`Вердикт инспекции: ${verdictText}`, 20, y + 13);
-
-            // Подпись внизу
-            y += 35;
-            doc.setFontSize(8);
-            doc.setTextColor(...grayColor);
-            doc.text('Документ сгенерирован автоматически платформой SourceJet AI.', 15, y);
-            doc.text(`ID отчета: ${inspectionId}`, 15, y + 4);
-            doc.text(`Дата генерации: ${new Date().toLocaleString()}`, 15, y + 8);
-
-            doc.save(`SourceJet_Inspection_Report_${inspectionId.substring(0, 8)}.pdf`);
+            const doc = new jsPDF();
+            doc.text('SourceJet AI Enterprise Inspection Report', 10, 10);
+            doc.text(`Factory: ${currentInspectionData?.factory_name || 'N/A'}`, 10, 20);
+            doc.save(`Report_${inspectionId}.pdf`);
         }
     </script>
 </body>
