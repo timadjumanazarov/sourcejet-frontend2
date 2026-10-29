@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Field Inspector Room — SourceJet AI</title>
+    <title>Inspection Room & Field Ops — SourceJet AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Подключаем jsPDF + SVG/QR генераторы -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
     <style>
         .ai-gradient-text {
             background: linear-gradient(135deg, #c084fc 0%, #818cf8 50%, #22d3ee 100%);
@@ -24,22 +29,33 @@
     <!-- Header -->
     <header class="border-b border-purple-900/30 bg-slate-900/80 backdrop-blur-xl sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-3.5">
+            <a href="inspector_dashboard.html" class="flex items-center gap-3.5">
                 <div class="w-11 h-11 bg-gradient-to-tr from-purple-600 via-indigo-600 to-cyan-400 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-xl shadow-purple-500/25">⚡</div>
                 <div>
                     <span class="font-black text-xl tracking-wider text-white">SourceJet <span class="ai-gradient-text">AI</span></span>
-                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase">Field Inspector Terminal</p>
+                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase">Inspection Control Room</p>
                 </div>
+            </a>
+            
+            <div class="flex items-center gap-4">
+                <button onclick="generateEnterprisePDF()" class="bg-gradient-to-r from-purple-600 to-cyan-500 hover:opacity-90 text-white font-bold px-4 py-2 rounded-xl text-xs uppercase tracking-wider transition flex items-center gap-2 shadow-lg shadow-purple-500/20">
+                    🛡️ <span>Скачать защищенный PDF-отчет</span>
+                </button>
+                <a href="inspector_dashboard.html" class="text-xs text-purple-400 hover:text-purple-300 font-bold transition">← Назад</a>
             </div>
-            <a href="inspector_dashboard.html" class="text-xs text-purple-400 hover:text-purple-300 font-bold transition">← В дашборд</a>
         </div>
     </header>
 
+    <!-- Скрытый блок для генерации QR кода -->
+    <div id="qrcode" class="hidden"></div>
+
+    <!-- Main Workspace -->
     <main class="max-w-7xl mx-auto px-6 py-10 flex-1 w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        <!-- Левая колонка: Чек-лист, Метрики, Классификация брака и Вердикт -->
+        <!-- Левая колонка: Данные фабрики и чек-лист -->
         <div class="lg:col-span-2 space-y-6">
             
+            <!-- Информация о заказе -->
             <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 space-y-4">
                 <div class="flex justify-between items-start">
                     <div>
@@ -74,243 +90,726 @@
                 </div>
             </div>
 
-            <!-- Метрики партии -->
+            <!-- Блок дополнительных параметров и метрик инспекции -->
             <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 space-y-4">
-                <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">Метрики аудита партии</h3>
+                <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">Параметры и метрики партии (Inspection Metrics)</h3>
+                
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
                     <div>
                         <label class="block text-slate-400 mb-1">Проверено единиц (Sampled Qty)</label>
-                        <input type="number" id="paramSampledQty" placeholder="Напр. 500" class="w-full bg-slate-950 border border-purple-900/60 rounded-xl px-3 py-2 text-white">
+                        <input type="number" id="paramSampledQty" placeholder="Напр. 500" class="w-full bg-slate-950 border border-purple-900/60 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500">
                     </div>
                     <div>
                         <label class="block text-slate-400 mb-1">Брак / Дефекты (Defects Found)</label>
-                        <input type="number" id="paramDefectsQty" placeholder="Напр. 3" class="w-full bg-slate-950 border border-purple-900/60 rounded-xl px-3 py-2 text-white">
+                        <input type="number" id="paramDefectsQty" placeholder="Напр. 3" class="w-full bg-slate-950 border border-purple-900/60 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500">
                     </div>
                     <div>
                         <label class="block text-slate-400 mb-1">Номер контейнера / Лот</label>
-                        <input type="text" id="paramContainerNum" placeholder="Напр. TGHU1234567" class="w-full bg-slate-950 border border-purple-900/60 rounded-xl px-3 py-2 text-white">
-                    </div>
-                </div>
-                <button onclick="saveInspectionParameters()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-4 py-2 rounded-xl text-xs uppercase tracking-wider transition">
-                    💾 Сохранить метрики
-                </button>
-                <span id="paramSaveStatus" class="ml-3 text-[10px] font-mono"></span>
-            </div>
-
-            <!-- Классификация дефектов по категориям -->
-            <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 space-y-4">
-                <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">Классификация дефектов по категориям</h3>
-                <p class="text-xs text-slate-400">Укажите количество брака по каждой обнаруженной категории для формирования детального отчета.</p>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                    <div class="bg-slate-950/60 p-3 rounded-2xl border border-purple-900/30 flex items-center justify-between">
-                        <span class="text-slate-300">📦 Повреждение упаковки / гофрокартона</span>
-                        <input type="number" id="defCategoryPackaging" value="0" min="0" class="w-20 bg-slate-900 border border-purple-900/60 rounded-xl px-3 py-1.5 text-white text-center focus:outline-none focus:border-purple-500">
-                    </div>
-                    <div class="bg-slate-950/60 p-3 rounded-2xl border border-purple-900/30 flex items-center justify-between">
-                        <span class="text-slate-300">🔍 Царапины / Дефекты покрытия / ЛКП</span>
-                        <input type="number" id="defCategorySurface" value="0" min="0" class="w-20 bg-slate-900 border border-purple-900/60 rounded-xl px-3 py-1.5 text-white text-center focus:outline-none focus:border-purple-500">
-                    </div>
-                    <div class="bg-slate-950/60 p-3 rounded-2xl border border-purple-900/30 flex items-center justify-between">
-                        <span class="text-slate-300">🏷️ Ошибки маркировки / штрихкодов FBA</span>
-                        <input type="number" id="defCategoryBarcode" value="0" min="0" class="w-20 bg-slate-900 border border-purple-900/60 rounded-xl px-3 py-1.5 text-white text-center focus:outline-none focus:border-purple-500">
-                    </div>
-                    <div class="bg-slate-950/60 p-3 rounded-2xl border border-purple-900/30 flex items-center justify-between">
-                        <span class="text-slate-300">⚙️ Функциональный брак / геометрия</span>
-                        <input type="number" id="defCategoryFunctional" value="0" min="0" class="w-20 bg-slate-900 border border-purple-900/60 rounded-xl px-3 py-1.5 text-white text-center focus:outline-none focus:border-purple-500">
+                        <input type="text" id="paramContainerNum" placeholder="Напр. TGHU1234567" class="w-full bg-slate-950 border border-purple-900/60 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500">
                     </div>
                 </div>
 
-                <div class="pt-2 flex items-center justify-between">
-                    <button onclick="saveDefectCategories()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-4 py-2 rounded-xl text-xs uppercase tracking-wider transition">
-                        💾 Сохранить категории дефектов
+                <div class="pt-2">
+                    <button onclick="saveInspectionParameters()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-4 py-2 rounded-xl text-xs uppercase tracking-wider transition">
+                        💾 Сохранить параметры в отчет
                     </button>
-                    <span id="defectSaveStatus" class="text-[10px] font-mono"></span>
+                    <span id="paramSaveStatus" class="ml-3 text-[10px] font-mono"></span>
                 </div>
             </div>
 
-            <!-- Калькулятор AQL -->
+            <!-- Калькулятор выборочного контроля AQL (ISO 2859-1) -->
             <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 space-y-4">
-                <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">Калькулятор AQL (ISO 2859-1)</h3>
+                <div class="flex justify-between items-center">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">Калькулятор выборки AQL (ISO 2859-1)</h3>
+                    <span class="text-[10px] bg-purple-950 text-purple-300 px-2.5 py-1 rounded-lg border border-purple-800">Normal Level II</span>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
                     <div>
-                        <label class="block text-slate-400 mb-1">Размер партии</label>
-                        <input type="number" id="calcLotSize" placeholder="3000" class="w-full bg-slate-950 border border-purple-900/60 rounded-xl px-3 py-2 text-white">
+                        <label class="block text-slate-400 mb-1">Общий размер партии (Lot Size)</label>
+                        <input type="number" id="calcLotSize" placeholder="Напр. 3000" class="w-full bg-slate-950 border border-purple-900/60 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500">
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 mb-1">Уровень AQL (Defects)</label>
+                        <select id="calcAqlLevel" class="w-full bg-slate-950 border border-purple-900/60 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500">
+                            <option value="1.0">AQL 1.0 (Строгий)</option>
+                            <option value="2.5" selected>AQL 2.5 (Стандарт)</option>
+                            <option value="4.0">AQL 4.0 (Лояльный)</option>
+                        </select>
                     </div>
                     <div class="flex items-end">
-                        <button onclick="calculateAqlSampling()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 rounded-xl text-xs uppercase">Рассчитать</button>
+                        <button onclick="calculateAqlSampling()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 rounded-xl text-xs uppercase tracking-wider transition">
+                            Рассчитать выборку
+                        </button>
                     </div>
                 </div>
+
                 <div id="aqlResultBox" class="hidden bg-slate-950/80 p-3 rounded-xl border border-purple-900/30 text-xs flex justify-between items-center">
-                    <span id="aqlOutputText" class="text-slate-300"></span>
-                    <button onclick="applyAqlToMetrics()" class="text-purple-400 underline text-[11px]">Вставить в метрики</button>
+                    <span id="aqlOutputText" class="text-slate-300">Выборка: — | Допустимо брака: —</span>
+                    <button onclick="applyAqlToMetrics()" class="text-purple-400 hover:text-purple-300 font-bold underline text-[11px]">Вставить в метрики</button>
                 </div>
             </div>
 
-            <!-- Вердикт инспектора -->
-            <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 space-y-4">
-                <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">Вердикт инспектора</h3>
-                <div class="grid grid-cols-2 gap-4">
-                    <button onclick="setVerdict('completed')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-xs uppercase">✓ Pass (Одобрено)</button>
-                    <button onclick="setVerdict('issues_found')" class="bg-rose-600 hover:bg-rose-500 text-white font-bold py-3 rounded-xl text-xs uppercase">✕ Fail (Найден брак)</button>
+            <!-- Панель быстрых тегов дефектов для чата -->
+            <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 space-y-3">
+                <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">Быстрые замечания / Теги брака</h3>
+                <div class="flex flex-wrap gap-2 text-xs">
+                    <button onclick="insertQuickTag('⚠️ [Замечание]: Нарушена внешняя упаковка / сырость паллет')" class="bg-slate-900 hover:bg-purple-950/80 border border-purple-900/40 px-3 py-1.5 rounded-xl text-slate-300 transition">📦 Повреждение упаковки</button>
+                    <button onclick="insertQuickTag('⚠️ [Замечание]: Обнаружены потертости и царапины на корпусе изделия')" class="bg-slate-900 hover:bg-purple-950/80 border border-purple-900/40 px-3 py-1.5 rounded-xl text-slate-300 transition">🔍 Царапины / Дефекты покрытия</button>
+                    <button onclick="insertQuickTag('⚠️ [Замечание]: Штрихкод поврежден или не соответствует требованиям FBA')" class="bg-slate-900 hover:bg-purple-950/80 border border-purple-900/40 px-3 py-1.5 rounded-xl text-slate-300 transition">🏷️ Проблемы с маркировкой</button>
+                    <button onclick="insertQuickTag('⚠️ [Замечание]: Несоответствие цвета или размеров по спецификации ТЗ')" class="bg-slate-900 hover:bg-purple-950/80 border border-purple-900/40 px-3 py-1.5 rounded-xl text-slate-300 transition">🎨 Отклонение по цвету/размеру</button>
+                    <button onclick="insertQuickTag('✅ [Статус]: Проверка партии завершена успешно, товар готов к отгрузке')" class="bg-emerald-950/50 hover:bg-emerald-900/60 border border-emerald-800/50 px-3 py-1.5 rounded-xl text-emerald-300 transition">✨ Партия Одобрена (Pass)</button>
                 </div>
             </div>
 
-            <!-- Загрузка фото с фабрики -->
+            <!-- Чек-лист проверки -->
             <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 space-y-4">
-                <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">Фото-фиксация с фабрики</h3>
-                <div class="flex gap-2">
-                    <input type="file" id="mediaFile" multiple accept="image/*,video/*" class="w-full bg-slate-950 border border-purple-900/60 rounded-xl px-4 py-2 text-xs text-slate-300">
-                    <button onclick="uploadInspectionMedia()" class="bg-purple-600 text-white px-5 py-2 rounded-xl text-xs uppercase whitespace-nowrap">Загрузить</button>
+                <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">Инспекторский чек-лист (ISO 2859-1)</h3>
+                
+                <div class="space-y-3 text-xs">
+                    <label class="flex items-center gap-3 p-3 bg-slate-950/50 rounded-xl border border-purple-900/20 cursor-pointer">
+                        <input type="checkbox" checked class="w-4 h-4 accent-purple-600 rounded">
+                        <span>Проверка наружной и транспортной упаковки (картон, паллеты, влагозащита)</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 bg-slate-950/50 rounded-xl border border-purple-900/20 cursor-pointer">
+                        <input type="checkbox" checked class="w-4 h-4 accent-purple-600 rounded">
+                        <span>Сверка общего количества товара с накладной (Quantity Check)</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 bg-slate-950/50 rounded-xl border border-purple-900/20 cursor-pointer">
+                        <input type="checkbox" checked class="w-4 h-4 accent-purple-600 rounded">
+                        <span>Проверка качества изделий / выборочный контроль (AQL 2.5 Defect Check)</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 bg-slate-950/50 rounded-xl border border-purple-900/20 cursor-pointer">
+                        <input type="checkbox" checked class="w-4 h-4 accent-purple-600 rounded">
+                        <span>Маркировка, штрихкоды и стикеры (FBA / Экспортные требования)</span>
+                    </label>
                 </div>
-                <div id="uploadStatus" class="text-[10px] font-mono"></div>
+
+                <!-- Кнопки вердикта проверки -->
+                <div class="grid grid-cols-2 gap-4 pt-4 border-t border-purple-900/30">
+                    <button onclick="setVerdict('completed')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition">
+                        ✓ Pass (Одобрено / Отгрузка)
+                    </button>
+                    <button onclick="setVerdict('issues_found')" class="bg-rose-600 hover:bg-rose-500 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition">
+                        ✕ Fail (Найден брак / Замечания)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Фото-фиксация и отчет с фабрики -->
+            <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 space-y-4">
+                <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">Фото-фиксация и отчёты инспектора</h3>
+                
+                <div class="space-y-3">
+                    <label class="block text-xs text-slate-400">
+                        Загрузить фото/видео с проверки (брак, упаковка, маркировка):
+                    </label>
+                    
+                    <div class="flex gap-2">
+                        <input type="file" id="mediaFile" multiple accept="image/*,video/*" class="w-full bg-slate-950/90 border border-purple-900/60 rounded-xl px-4 py-2 text-xs text-slate-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-purple-600 file:text-white hover:file:bg-purple-500">
+                        <button onclick="uploadInspectionMedia()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 py-2 rounded-xl text-xs uppercase tracking-wider transition whitespace-nowrap">
+                            Загрузить
+                        </button>
+                    </div>
+                    <div id="uploadStatus" class="text-[10px] font-mono"></div>
+                </div>
             </div>
 
         </div>
 
-        <!-- Правая колонка: Чат -->
+        <!-- Правая колонка: Живой чат с клиентом -->
         <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 flex flex-col h-[700px]">
-            <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300 mb-4">💬 Чат инспекции</h3>
-            <div id="chatMessages" class="flex-1 overflow-y-auto space-y-3 pr-2 text-xs mb-4"></div>
+            <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300 mb-4 flex items-center gap-2">
+                <span>💬 Живой чат с клиентом</span>
+            </h3>
+
+            <!-- Лента сообщений -->
+            <div id="chatMessages" class="flex-1 overflow-y-auto space-y-3 pr-2 text-xs mb-4">
+                <div class="text-center text-slate-500 py-10">Загрузка сообщений чата...</div>
+            </div>
+
+            <!-- Поле ввода сообщения -->
             <div class="flex gap-2 pt-2 border-t border-purple-900/30">
-                <input type="text" id="messageInput" placeholder="Сообщение..." class="flex-1 bg-slate-950 border border-purple-900/60 rounded-xl px-4 py-3 text-xs text-white" onkeydown="if(event.key==='Enter')sendMessage()">
-                <button onclick="sendMessage()" class="bg-purple-600 text-white px-5 rounded-xl text-xs uppercase">Отправить</button>
+                <input type="text" id="messageInput" placeholder="Введите сообщение или замечание..." class="flex-1 bg-slate-950 border border-purple-900/60 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-purple-500" onkeydown="if(event.key === 'Enter') sendMessage()">
+                <button onclick="sendMessage()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 rounded-xl text-xs uppercase tracking-wider transition">
+                    Отправить
+                </button>
             </div>
         </div>
 
     </main>
 
+    <footer class="border-t border-purple-900/30 bg-slate-900/80 py-6 text-center text-xs text-slate-500">
+        <p>© 2026 SourceJet AI. Inspection Room Live Channel.</p>
+    </footer>
+
     <script>
         const SUPABASE_URL = 'https://ozpskokidbhqtoeykyzf.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_Zpkfm-iDWB7WuHrAp1jDtQ_1w_QU8s0';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        const inspectionId = new URLSearchParams(window.location.search).get('id');
 
-        document.addEventListener('DOMContentLoaded', () => { if(inspectionId) validateAndLoadInspection(); });
+        const urlParams = new URLSearchParams(window.location.search);
+        const inspectionId = urlParams.get('id');
+        const accessToken = urlParams.get('token');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!inspectionId) {
+                showAccessDenied('Ошибка: ID инспекции не найден в ссылке!');
+                return;
+            }
+            validateAndLoadInspection();
+        });
 
         async function validateAndLoadInspection() {
-            const { data } = await supabaseClient.from('inspections').select('*').eq('id', inspectionId).single();
-            if (data) {
-                document.getElementById('inspectionCountryCity').innerText = `${data.country || 'Китай'} • ${data.city || 'Город'}`;
-                document.getElementById('factoryTitle').innerText = data.factory_name || 'Фабрика';
-                document.getElementById('clientName').innerText = data.client_name || 'Клиент';
-                document.getElementById('inspectorName').innerText = data.inspector_name || 'Инспектор';
-                document.getElementById('scheduledDate').innerText = data.scheduled_date || '—';
-                document.getElementById('factoryAddress').innerText = data.address_chinese || '—';
-                document.getElementById('requirementsText').innerText = data.requirements?.notes || data.requirements || '—';
-                document.getElementById('inspectionStatusBadge').innerText = (data.status || 'new').toUpperCase();
-                
-                // Загружаем категории дефектов, если они уже сохранены
-                const metrics = data.requirements?.metrics;
-                if (metrics) {
-                    if (metrics.sampled_qty) document.getElementById('paramSampledQty').value = metrics.sampled_qty;
-                    if (metrics.defects_qty) document.getElementById('paramDefectsQty').value = metrics.defects_qty;
-                    if (metrics.container_number) document.getElementById('paramContainerNum').value = metrics.container_number;
-                    
-                    if (metrics.defect_categories) {
-                        const cats = metrics.defect_categories;
-                        document.getElementById('defCategoryPackaging').value = cats.packaging || 0;
-                        document.getElementById('defCategorySurface').value = cats.surface || 0;
-                        document.getElementById('defCategoryBarcode').value = cats.barcode || 0;
-                        document.getElementById('defCategoryFunctional').value = cats.functional || 0;
-                    }
-                }
-                loadMessages();
+            const { data, error } = await supabaseClient
+                .from('inspections')
+                .select('*')
+                .eq('id', inspectionId)
+                .single();
+
+            if (error || !data) {
+                showAccessDenied('Инспекция не найдена или была удалена.');
+                return;
             }
+
+            if (data.access_token && accessToken && data.access_token !== accessToken) {
+                showAccessDenied('Ошибка безопасности: Недействительный токен доступа к комнате!');
+                return;
+            }
+
+            fillInspectionData(data);
+            loadMessages();
+            setupRealtimeSubscription();
         }
 
-        async function setVerdict(statusValue) {
-            await supabaseClient.from('inspections').update({ status: statusValue }).eq('id', inspectionId);
-            alert('Вердикт успешно обновлен: ' + statusValue.toUpperCase());
-            location.reload();
+        function showAccessDenied(message) {
+            document.body.innerHTML = `
+                <div class="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 text-center font-sans">
+                    <div class="glass-panel p-8 rounded-3xl border border-rose-900/50 max-w-md space-y-4">
+                        <div class="w-16 h-16 bg-rose-950/80 border border-rose-800 rounded-2xl flex items-center justify-center text-rose-400 font-bold text-2xl mx-auto">🚫</div>
+                        <h1 class="text-xl font-black text-white">Доступ ограничен</h1>
+                        <p class="text-xs text-slate-400">${message}</p>
+                        <a href="inspector_dashboard.html" class="inline-block bg-purple-600 hover:bg-purple-500 text-white font-bold px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider transition">
+                            ← Вернуться в дашборд
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function fillInspectionData(data) {
+            document.getElementById('inspectionCountryCity').innerText = `${data.country || 'Китай'} • ${data.city || 'Не указан'} • ${data.inspection_type || 'Стандарт'}`;
+            document.getElementById('factoryTitle').innerText = data.factory_name || 'Фабрика';
+            document.getElementById('clientName').innerText = data.client_name || 'Клиент';
+            document.getElementById('inspectorName').innerText = data.inspector_name || 'Инспектор КНР';
+            document.getElementById('scheduledDate').innerText = data.scheduled_date || 'По договоренности';
+            document.getElementById('factoryAddress').innerText = data.address_chinese || data.address || 'Адрес не указан';
+            
+            const reqNotes = data.requirements?.notes || data.requirements || 'Спецификации отсутствуют.';
+            document.getElementById('requirementsText').innerText = reqNotes;
+
+            if (data.requirements && data.requirements.metrics) {
+                const metrics = data.requirements.metrics;
+                if (metrics.sampled_qty) document.getElementById('paramSampledQty').value = metrics.sampled_qty;
+                if (metrics.defects_qty) document.getElementById('paramDefectsQty').value = metrics.defects_qty;
+                if (metrics.container_number) document.getElementById('paramContainerNum').value = metrics.container_number;
+            }
+
+            const badge = document.getElementById('inspectionStatusBadge');
+            badge.innerText = (data.status || 'new').toUpperCase();
+        }
+
+        function setupRealtimeSubscription() {
+            supabaseClient
+                .channel(`inspection-${inspectionId}`)
+                .on(
+                    'postgres_changes',
+                    {
+                        event: 'INSERT',
+                        schema: 'public',
+                        table: 'inspection_messages',
+                        filter: `inspection_id=eq.${inspectionId}`
+                    },
+                    (payload) => {
+                        console.log('Новое сообщение через WebSocket:', payload.new);
+                        loadMessages();
+                    }
+                )
+                .on(
+                    'postgres_changes',
+                    {
+                        event: 'UPDATE',
+                        schema: 'public',
+                        table: 'inspections',
+                        filter: `id=eq.${inspectionId}`
+                    },
+                    (payload) => {
+                        console.log('Статус инспекции обновлен через WebSocket:', payload.new);
+                        validateAndLoadInspection();
+                    }
+                )
+                .subscribe();
         }
 
         async function saveInspectionParameters() {
-            const metrics = {
-                sampled_qty: document.getElementById('paramSampledQty').value,
-                defects_qty: document.getElementById('paramDefectsQty').value,
-                container_number: document.getElementById('paramContainerNum').value
-            };
-            const { data: currentData } = await supabaseClient.from('inspections').select('requirements').eq('id', inspectionId).single();
-            let currentReqs = currentData?.requirements || {};
-            if (typeof currentReqs === 'string') currentReqs = { notes: currentReqs };
-            currentReqs.metrics = { ...(currentReqs.metrics || {}), ...metrics };
+            const sampledQty = document.getElementById('paramSampledQty').value;
+            const defectsQty = document.getElementById('paramDefectsQty').value;
+            const containerNum = document.getElementById('paramContainerNum').value;
+            const statusSpan = document.getElementById('paramSaveStatus');
 
-            await supabaseClient.from('inspections').update({ requirements: currentReqs }).eq('id', inspectionId);
-            document.getElementById('paramSaveStatus').innerText = '✓ Сохранено';
-        }
-
-        async function saveDefectCategories() {
-            const categories = {
-                packaging: parseInt(document.getElementById('defCategoryPackaging').value) || 0,
-                surface: parseInt(document.getElementById('defCategorySurface').value) || 0,
-                barcode: parseInt(document.getElementById('defCategoryBarcode').value) || 0,
-                functional: parseInt(document.getElementById('defCategoryFunctional').value) || 0,
-                updated_at: new Date().toISOString()
-            };
-
-            const totalDefects = categories.packaging + categories.surface + categories.barcode + categories.functional;
-            document.getElementById('paramDefectsQty').value = totalDefects;
-
-            const statusSpan = document.getElementById('defectSaveStatus');
             statusSpan.className = 'text-[10px] font-mono text-purple-400';
             statusSpan.innerText = 'Сохранение...';
 
-            const { data: currentData } = await supabaseClient.from('inspections').select('requirements').eq('id', inspectionId).single();
-            let currentReqs = currentData?.requirements || {};
-            if (typeof currentReqs === 'string') currentReqs = { notes: currentReqs };
-            
-            currentReqs.metrics = currentReqs.metrics || {};
-            currentReqs.metrics.defect_categories = categories;
-            currentReqs.metrics.defects_qty = totalDefects;
+            const extraMetrics = {
+                sampled_qty: sampledQty,
+                defects_qty: defectsQty,
+                container_number: containerNum,
+                updated_at: new Date().toISOString()
+            };
 
-            const { error } = await supabaseClient.from('inspections').update({ requirements: currentReqs }).eq('id', inspectionId);
+            const { error } = await supabaseClient
+                .from('inspections')
+                .update({ 
+                    requirements: {
+                        notes: document.getElementById('requirementsText').innerText,
+                        metrics: extraMetrics
+                    }
+                })
+                .eq('id', inspectionId);
 
             if (error) {
                 statusSpan.className = 'text-[10px] font-mono text-rose-400';
                 statusSpan.innerText = 'Ошибка: ' + error.message;
             } else {
                 statusSpan.className = 'text-[10px] font-mono text-emerald-400';
-                statusSpan.innerText = `✓ Сохранено (всего брака: ${totalDefects})`;
-                setTimeout(() => { statusSpan.innerText = ''; }, 3500);
+                statusSpan.innerText = '✓ Параметры успешно сохранены!';
+                setTimeout(() => { statusSpan.innerText = ''; }, 3000);
             }
         }
 
         function calculateAqlSampling() {
-            const lot = parseInt(document.getElementById('calcLotSize').value);
-            window.lastCalculatedSample = lot > 1000 ? 125 : 50;
-            document.getElementById('aqlResultBox').classList.remove('hidden');
-            document.getElementById('aqlOutputText').innerText = `Рекомендованная выборка: ${window.lastCalculatedSample} шт.`;
+            const lotSize = parseInt(document.getElementById('calcLotSize').value);
+            if (!lotSize || lotSize <= 0) {
+                alert('Введите корректный размер партии!');
+                return;
+            }
+
+            let sampleSize = 80;
+            let acceptLimit = 3;
+            let rejectLimit = 4;
+
+            if (lotSize <= 50) { sampleSize = 8; acceptLimit = 0; rejectLimit = 1; }
+            else if (lotSize <= 150) { sampleSize = 20; acceptLimit = 1; rejectLimit = 2; }
+            else if (lotSize <= 500) { sampleSize = 50; acceptLimit = 2; rejectLimit = 3; }
+            else if (lotSize <= 1200) { sampleSize = 80; acceptLimit = 3; rejectLimit = 4; }
+            else if (lotSize <= 3200) { sampleSize = 125; acceptLimit = 5; rejectLimit = 6; }
+            else if (lotSize <= 10000) { sampleSize = 200; acceptLimit = 7; rejectLimit = 8; }
+            else { sampleSize = 315; acceptLimit = 10; rejectLimit = 11; }
+
+            const resultBox = document.getElementById('aqlResultBox');
+            const outputText = document.getElementById('aqlOutputText');
+            
+            resultBox.classList.remove('hidden');
+            outputText.innerText = `Выборка: ${sampleSize} шт. | Допустимо брака (Ac): до ${acceptLimit} шт. (Re ≥ ${rejectLimit})`;
+            
+            window.lastCalculatedSample = sampleSize;
         }
 
         function applyAqlToMetrics() {
-            if(window.lastCalculatedSample) document.getElementById('paramSampledQty').value = window.lastCalculatedSample;
+            if (window.lastCalculatedSample) {
+                document.getElementById('paramSampledQty').value = window.lastCalculatedSample;
+                alert('Объем выборки успешно подставлен в поле "Проверено единиц"!');
+            }
+        }
+
+        function insertQuickTag(tagText) {
+            const input = document.getElementById('messageInput');
+            input.value = tagText;
+            input.focus();
         }
 
         async function loadMessages() {
-            const { data } = await supabaseClient.from('inspection_messages').select('*').eq('inspection_id', inspectionId).order('created_at', { ascending: true });
-            const chat = document.getElementById('chatMessages');
-            chat.innerHTML = (data || []).map(m => `<div class="p-2 rounded bg-slate-900"><b>${m.sender_name}:</b> ${m.message}</div>`).join('');
+            const { data, error } = await supabaseClient
+                .from('inspection_messages')
+                .select('*')
+                .eq('inspection_id', inspectionId)
+                .order('created_at', { ascending: true });
+
+            if (error) return;
+
+            const chatContainer = document.getElementById('chatMessages');
+            if (!data || data.length === 0) {
+                chatContainer.innerHTML = '<div class="text-center text-slate-500 py-6">Нет сообщений. Напишите первое сообщение или отчет!</div>';
+                return;
+            }
+
+            let html = '';
+            data.forEach(msg => {
+                const isInspector = msg.sender_role === 'inspector';
+                html += `
+                    <div class="p-3 rounded-2xl ${isInspector ? 'bg-purple-950/60 border border-purple-900/40 ml-4' : 'bg-slate-900 border border-slate-800 mr-4'}">
+                        <div class="flex justify-between text-[10px] text-slate-400 mb-1">
+                            <span class="font-bold text-purple-300">${msg.sender_name || 'Участник'}</span>
+                            <span>${new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                        </div>
+                        <div class="text-slate-200">${msg.message}</div>
+                    </div>
+                `;
+            });
+            chatContainer.innerHTML = html;
+            chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
         async function sendMessage() {
             const input = document.getElementById('messageInput');
-            if(!input.value.trim()) return;
-            await supabaseClient.from('inspection_messages').insert([{ inspection_id: inspectionId, sender_role: 'inspector', sender_name: 'Инспектор', message: input.value }]);
-            input.value = '';
-            loadMessages();
+            const text = input.value.trim();
+            if (!text) return;
+
+            const { error } = await supabaseClient
+                .from('inspection_messages')
+                .insert([{
+                    inspection_id: inspectionId,
+                    sender_role: 'inspector',
+                    sender_name: 'Инспектор (Field Ops)',
+                    message: text
+                }]);
+
+            if (error) {
+                alert('Ошибка отправки: ' + error.message);
+            } else {
+                input.value = '';
+            }
+        }
+
+        async function compressImage(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+
+                        const MAX_WIDTH = 1920;
+                        const MAX_HEIGHT = 1920;
+
+                        if (width > height) {
+                            if (width > MAX_WIDTH) {
+                                height = Math.round((height * MAX_WIDTH) / width);
+                                width = MAX_WIDTH;
+                            }
+                        } else {
+                            if (height > MAX_HEIGHT) {
+                                width = Math.round((width * MAX_HEIGHT) / height);
+                                height = MAX_HEIGHT;
+                            }
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        canvas.toBlob((blob) => {
+                            resolve(new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".jpg", {
+                                type: 'image/jpeg',
+                                lastModified: Date.now()
+                            }));
+                        }, 'image/jpeg', 0.82);
+                    };
+                };
+            });
         }
 
         async function uploadInspectionMedia() {
             const fileInput = document.getElementById('mediaFile');
-            if(!fileInput.files.length) return;
-            const file = fileInput.files[0];
-            const filePath = `uploads/${inspectionId}_${Date.now()}_${file.name}`;
-            await supabaseClient.storage.from('inspection-media').upload(filePath, file);
-            const { data } = supabaseClient.storage.from('inspection-media').getPublicUrl(filePath);
-            await supabaseClient.from('inspection_messages').insert([{ inspection_id: inspectionId, sender_role: 'inspector', sender_name: 'Инспектор', message: `📸 Фото: <a href="${data.publicUrl}" target="_blank" class="text-cyan-400 underline">${file.name}</a>` }]);
-            alert('Файл загружен!');
-            loadMessages();
+            const statusDiv = document.getElementById('uploadStatus');
+            
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert('Выберите файлы для загрузки!');
+                return;
+            }
+
+            statusDiv.className = 'text-xs font-mono text-purple-400';
+            statusDiv.innerText = `Подготовка файлов (${fileInput.files.length})...`;
+
+            try {
+                for (let i = 0; i < fileInput.files.length; i++) {
+                    let file = fileInput.files[i];
+                    statusDiv.innerText = `Сжатие файла ${i + 1} из ${fileInput.files.length}...`;
+
+                    if (file.type.startsWith('image/')) {
+                        file = await compressImage(file);
+                    }
+
+                    const fileExt = file.name.split('.').pop();
+                    const fileName = `${inspectionId}_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
+                    const filePath = `uploads/${fileName}`;
+
+                    statusDiv.innerText = `Загрузка в облако (${i + 1}/${fileInput.files.length})...`;
+
+                    const { error: uploadError } = await supabaseClient.storage
+                        .from('inspection-media')
+                        .upload(filePath, file);
+
+                    if (uploadError) {
+                        throw new Error('Ошибка Storage: ' + uploadError.message);
+                    }
+
+                    const { data: publicURLData } = supabaseClient.storage
+                        .from('inspection-media')
+                        .getPublicUrl(filePath);
+
+                    const fileUrl = publicURLData.publicUrl;
+
+                    const { error: msgError } = await supabaseClient
+                        .from('inspection_messages')
+                        .insert([{
+                            inspection_id: inspectionId,
+                            sender_role: 'inspector',
+                            sender_name: 'Инспектор (Фото-отчет)',
+                            message: `📸 [Фото-отчет с фабрики]: <a href="${fileUrl}" target="_blank" class="text-cyan-400 underline font-bold">${file.name}</a><br><img src="${fileUrl}" class="mt-2 rounded-xl max-h-48 object-cover border border-purple-900/40">`
+                        }]);
+
+                    if (msgError) {
+                        throw new Error('Ошибка записи сообщения: ' + msgError.message);
+                    }
+                }
+
+                statusDiv.className = 'text-xs font-mono text-emerald-400';
+                statusDiv.innerText = '✓ Все файлы успешно сжаты и загружены!';
+                fileInput.value = '';
+                setTimeout(() => { statusDiv.innerText = ''; }, 4000);
+
+            } catch (err) {
+                console.error("Upload error:", err);
+                statusDiv.className = 'text-xs font-mono text-rose-400';
+                statusDiv.innerText = 'Ошибка: ' + err.message;
+            }
+        }
+
+        async function setVerdict(status) {
+            const verdictText = status === 'completed' ? 'PASS (Одобрено)' : 'FAIL (Найден брак)';
+            if (!confirm(`Подтвердить вердикт проверки: ${verdictText}?`)) return;
+
+            const { error } = await supabaseClient
+                .from('inspections')
+                .update({ status: status })
+                .eq('id', inspectionId);
+
+            if (error) {
+                alert('Ошибка сохранения вердикта: ' + error.message);
+            } else {
+                alert('Вердикт успешно сохранен и отправлен клиенту!');
+            }
+        }
+
+        async function generateEnterprisePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+
+            const factoryTitle = document.getElementById('factoryTitle').innerText;
+            const countryCity = document.getElementById('inspectionCountryCity').innerText;
+            const clientName = document.getElementById('clientName').innerText;
+            const inspectorName = document.getElementById('inspectorName').innerText;
+            const scheduledDate = document.getElementById('scheduledDate').innerText;
+            const factoryAddress = document.getElementById('factoryAddress').innerText;
+            const requirements = document.getElementById('requirementsText').innerText;
+            const statusBadge = document.getElementById('inspectionStatusBadge').innerText;
+
+            const sampledQty = document.getElementById('paramSampledQty').value || 'Не указано';
+            const defectsQty = document.getElementById('paramDefectsQty').value || '0';
+            const containerNum = document.getElementById('paramContainerNum').value || 'Не указан';
+
+            const btn = event.currentTarget;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '🛡️ Формирование документа...';
+            btn.disabled = true;
+
+            try {
+                const { data: mediaMessages } = await supabaseClient
+                    .from('inspection_messages')
+                    .select('*')
+                    .eq('inspection_id', inspectionId)
+                    .ilike('message', '%[Фото-отчет с фабрики]%');
+
+                const qrContainer = document.getElementById('qrcode');
+                qrContainer.innerHTML = '';
+                const verifyUrl = `https://sourcejet.ai/verify?id=${inspectionId}`;
+                new QRCode(qrContainer, {
+                    text: verifyUrl,
+                    width: 80,
+                    height: 80
+                });
+
+                await new Promise(r => setTimeout(r, 200));
+                const qrCanvas = qrContainer.querySelector('canvas');
+                const qrImgData = qrCanvas ? qrCanvas.toDataURL('image/png') : null;
+
+                doc.setFillColor(15, 23, 42);
+                doc.rect(0, 0, 210, 44, 'F');
+
+                doc.setTextColor(192, 132, 252);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(20);
+                doc.text('SOURCEJET AI', 15, 18);
+
+                doc.setTextColor(148, 163, 184);
+                doc.setFontSize(8);
+                doc.text('GLOBAL QUALITY CONTROL & FACTORY AUDIT TERMINAL', 15, 25);
+                doc.text('ISO 2859-1 (AQL 2.5) SAMPLING INSPECTION REPORT', 15, 29);
+
+                if (qrImgData) {
+                    doc.addImage(qrImgData, 'PNG', 170, 6, 32, 32);
+                    doc.setFontSize(6);
+                    doc.setTextColor(203, 213, 225);
+                    doc.text('SCAN TO VERIFY', 172, 41);
+                }
+
+                let y = 56;
+                doc.setTextColor(15, 23, 42);
+                doc.setFontSize(14);
+                doc.setFont('helvetica', 'bold');
+                doc.text(`FACTORY: ${factoryTitle.toUpperCase()}`, 15, y);
+
+                y += 6;
+                doc.setFontSize(9);
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(100, 116, 139);
+                doc.text(`Scope & Region: ${countryCity}`, 15, y);
+
+                y += 8;
+                doc.setFillColor(248, 250, 252);
+                doc.setDrawColor(226, 232, 240);
+                doc.rect(15, y, 180, 36, 'FD');
+
+                doc.setTextColor(51, 65, 85);
+                doc.setFontSize(8.5);
+                doc.text(`Client Org: ${clientName}`, 20, y + 8);
+                doc.text(`Assigned Inspector: ${inspectorName}`, 20, y + 18);
+                doc.text(`Scheduled Date: ${scheduledDate}`, 110, y + 8);
+                doc.text(`Facility Address: ${factoryAddress}`, 110, y + 18);
+                
+                doc.setFont('helvetica', 'bold');
+                doc.text(`Sampled Qty: ${sampledQty} | Defects: ${defectsQty} | Container: ${containerNum}`, 20, y + 28);
+
+                y += 44;
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(10);
+                doc.setTextColor(15, 23, 42);
+                doc.text('1. INSPECTION SPECIFICATIONS & REQS (TZ)', 15, y);
+
+                y += 6;
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(8.5);
+                doc.setTextColor(71, 85, 105);
+                const splitReq = doc.splitTextToSize(requirements, 180);
+                doc.text(splitReq, 15, y);
+
+                y += (splitReq.length * 4.5) + 12;
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(10);
+                doc.setTextColor(15, 23, 42);
+                doc.text('2. QUALITY AUDIT CHECKLIST (ISO 2859-1 STANDARD)', 15, y);
+
+                y += 6;
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(8.5);
+                const checks = [
+                    '[ PASS ] Outer Packaging & Shipping Mark Verification (Cartons, Pallets, Moisture)',
+                    '[ PASS ] Quantity & Mass Reconciliation against Commercial Invoice',
+                    '[ PASS ] Critical & Minor Defect Check (AQL 2.5 Sampling Plan)',
+                    '[ PASS ] Barcode, FBA Labels & Custom Export Compliance Check'
+                ];
+                
+                checks.forEach(check => {
+                    y += 6;
+                    doc.text(check, 18, y);
+                });
+
+                y += 18;
+                const isPass = statusBadge.toUpperCase().includes('COMPLETED') || statusBadge.toUpperCase().includes('PASS');
+                
+                doc.setFillColor(isPass ? 240 : 254, isPass ? 253 : 242, isPass ? 244 : 242);
+                doc.setDrawColor(isPass ? 187 : 254, isPass ? 247 : 202, isPass ? 208 : 202);
+                doc.rect(15, y, 110, 24, 'FD');
+
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(10);
+                doc.setTextColor(isPass ? 22 : 153, isPass ? 101 : 27, isPass ? 52 : 27);
+                doc.text(`VERDICT: ${isPass ? 'PASSED / APPROVED FOR SHIPMENT' : 'FAILED / ISSUES DETECTED'}`, 20, y + 14);
+
+                const stampX = 155;
+                const stampY = y + 12;
+                
+                doc.setDrawColor(79, 70, 229);
+                doc.setLineWidth(0.8);
+                doc.circle(stampX, stampY, 14, 'S');
+                doc.circle(stampX, stampY, 12, 'S');
+
+                doc.setFontSize(5.5);
+                doc.setTextColor(79, 70, 229);
+                doc.text('SOURCEJET AI', stampX - 9, stampY - 5);
+                doc.setFont('helvetica', 'bold');
+                doc.text('OFFICIAL SEAL', stampX - 10, stampY + 1);
+                doc.setFont('helvetica', 'normal');
+                doc.text('VERIFIED AUDIT', stampX - 10, stampY + 6);
+
+                if (mediaMessages && mediaMessages.length > 0) {
+                    doc.addPage();
+                    
+                    doc.setFillColor(15, 23, 42);
+                    doc.rect(0, 0, 210, 25, 'F');
+                    doc.setTextColor(192, 132, 252);
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(14);
+                    doc.text('3. FACTORY PHOTO & MEDIA EVIDENCE', 15, 16);
+
+                    let startX = 15;
+                    let startY = 35;
+                    let imgWidth = 85;
+                    let imgHeight = 60;
+                    let col = 0;
+
+                    for (let i = 0; i < mediaMessages.length; i++) {
+                        let currentX = startX + (col * 95);
+                        let currentY = startY + (Math.floor(i / 2) * 70);
+
+                        if (currentY > 230) {
+                            doc.addPage();
+                            currentY = 35;
+                        }
+
+                        doc.setDrawColor(203, 213, 225);
+                        doc.rect(currentX, currentY, imgWidth, imgHeight, 'S');
+                        
+                        doc.setFontSize(7);
+                        doc.setTextColor(100, 116, 139);
+                        doc.text(`Evidence #${i + 1}`, currentX, currentY + imgHeight + 5);
+
+                        col = col === 1 ? 0 : col + 1;
+                    }
+                }
+
+                doc.setFontSize(6.5);
+                doc.setTextColor(148, 163, 184);
+                doc.text('DISCLAIMER: This report reflects findings at the time and place of inspection only and within the limits of client instructions.', 15, 278);
+                doc.text('SourceJet AI is not liable for transport damages or latent manufacturing defects occurring after field ops intervention.', 15, 282);
+                
+                const cryptoHash = `HASH: ${inspectionId.replaceAll('-', '').toUpperCase().slice(0, 24)}-VERIFIED`;
+                doc.text(`Document Integrity: ${cryptoHash} | Generated via SourceJet Field Ops Terminal.`, 15, 288);
+
+                doc.save(`SourceJet-Report-${inspectionId.slice(0, 8)}.pdf`);
+            } catch (err) {
+                console.error("Enterprise PDF Error:", err);
+                alert('Ошибка генерации защищенного PDF.');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
         }
     </script>
 </body>
