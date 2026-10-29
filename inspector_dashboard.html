@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seller Control Dashboard — SourceJet AI</title>
+    <title>Inspector Dispatch Dashboard — SourceJet AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -28,7 +28,7 @@
                 <div class="w-11 h-11 bg-gradient-to-tr from-purple-600 via-indigo-600 to-cyan-400 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-xl shadow-purple-500/25">⚡</div>
                 <div>
                     <span class="font-black text-xl tracking-wider text-white">SourceJet <span class="ai-gradient-text">AI</span></span>
-                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase" data-ru="Кабинет Селлера & Supply Chain" data-en="Seller Control & Supply Chain">Кабинет Селлера & Supply Chain</p>
+                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase" data-ru="Панель Инспектора & Терминал" data-en="Inspector Terminal & Hub">Панель Инспектора & Терминал</p>
                 </div>
             </div>
 
@@ -46,79 +46,53 @@
     <!-- Main Workspace -->
     <main class="max-w-7xl mx-auto px-6 py-10 flex-1 w-full space-y-10">
         
-        <!-- Верхняя аналитика -->
+        <!-- Верхняя аналитика инспектора -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="glass-panel p-6 rounded-3xl border border-purple-900/40">
-                <span class="text-xs text-slate-400 font-bold uppercase" data-ru="Всего инспекций" data-en="Total Inspections">Всего инспекций</span>
-                <div id="statTotal" class="text-3xl font-black text-white mt-2">0</div>
+                <span class="text-xs text-slate-400 font-bold uppercase" data-ru="Назначено аудитов" data-en="Assigned Audits">Назначено аудитов</span>
+                <div id="statAssigned" class="text-3xl font-black text-white mt-2">0</div>
             </div>
             <div class="glass-panel p-6 rounded-3xl border border-purple-900/40">
-                <span class="text-xs text-slate-400 font-bold uppercase" data-ru="Заморожено на Escrow" data-en="Held in Escrow">Заморожено на Escrow</span>
-                <div class="text-3xl font-black text-amber-400 mt-2">$12,450 USD</div>
+                <span class="text-xs text-slate-400 font-bold uppercase" data-ru="Выполнено проверок" data-en="Completed Audits">Выполнено проверок</span>
+                <div id="statCompleted" class="text-3xl font-black text-emerald-400 mt-2">0</div>
             </div>
             <div class="glass-panel p-6 rounded-3xl border border-purple-900/40">
-                <span class="text-xs text-slate-400 font-bold uppercase" data-ru="Активные споры" data-en="Active Disputes">Активные споры</span>
-                <div class="text-3xl font-black text-cyan-400 mt-2">0</div>
+                <span class="text-xs text-slate-400 font-bold uppercase" data-ru="Статус терминала" data-en="Terminal Status">Статус терминала</span>
+                <div class="text-3xl font-black text-cyan-400 mt-2">Online 🟢</div>
             </div>
         </div>
 
-        <!-- Каталог Инспекторов в Китае -->
+        <!-- Список назначенных инспекций для полевой работы -->
         <section class="space-y-4">
             <div class="flex justify-between items-center">
-                <h2 class="text-xl font-black text-white" data-ru="База инспекторов и гидов в КНР" data-en="China Inspectors & Guides Network">База инспекторов и гидов в КНР</h2>
-                <span class="text-xs text-purple-400 font-mono" data-ru="Доступны для выезда" data-en="Ready for Audit">Доступны для выезда</span>
+                <h2 class="text-xl font-black text-white" data-ru="Очередь инспекций на фабриках" data-en="Factory Inspection Queue">Очередь инспекций на фабриках</h2>
+                <span class="text-xs text-purple-400 font-mono" data-ru="ISO 2859-1 AQL Ready" data-en="ISO 2859-1 AQL Ready">ISO 2859-1 AQL Ready</span>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="glass-panel p-6 rounded-3xl space-y-4 border border-purple-900/40">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <h3 class="font-bold text-white text-base">Ван Вэй (Wang Wei)</h3>
-                            <p class="text-xs text-slate-400">📍 Иу / Чжэцзян (Yiwu)</p>
-                        </div>
-                        <span class="bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">★ 4.98</span>
-                    </div>
-                    <p class="text-xs text-slate-300" data-ru="Специализация: Электроника, Упаковка, Потребительские товары." data-en="Specs: Electronics, Packaging, Consumer Goods.">Специализация: Электроника, Упаковка, Потребительские товары.</p>
-                    <button onclick="alert('Инспектор выбран!')" class="w-full bg-purple-600/30 hover:bg-purple-600 text-purple-200 hover:text-white border border-purple-800 rounded-xl py-2 text-xs font-bold uppercase transition" data-ru="Назначить на фабрику" data-en="Assign to Factory">Назначить на фабрику</button>
-                </div>
-
-                <div class="glass-panel p-6 rounded-3xl space-y-4 border border-purple-900/40">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <h3 class="font-bold text-white text-base">Ли Цзян (Li Jiang)</h3>
-                            <p class="text-xs text-slate-400">📍 Шэньчжэнь / Гуанчжоу</p>
-                        </div>
-                        <span class="bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">★ 4.95</span>
-                    </div>
-                    <p class="text-xs text-slate-300" data-ru="Специализация: Сложная техника, Компоненты, AQL-тесты." data-en="Specs: Complex Hardware, Components, AQL Inspections.">Специализация: Сложная техника, Компоненты, AQL-тесты.</p>
-                    <button onclick="alert('Инспектор выбран!')" class="w-full bg-purple-600/30 hover:bg-purple-600 text-purple-200 hover:text-white border border-purple-800 rounded-xl py-2 text-xs font-bold uppercase transition" data-ru="Назначить на фабрику" data-en="Assign to Factory">Назначить на фабрику</button>
-                </div>
-
-                <div class="glass-panel p-6 rounded-3xl space-y-4 border border-purple-900/40">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <h3 class="font-bold text-white text-base">Чэнь Мин (Chen Ming)</h3>
-                            <p class="text-xs text-slate-400">📍 Нинбо / Шанхай</p>
-                        </div>
-                        <span class="bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">★ 4.91</span>
-                    </div>
-                    <p class="text-xs text-slate-300" data-ru="Специализация: Текстиль, Одежда, Аудит фабрик перед оплатой." data-en="Specs: Textiles, Garments, Pre-shipment Factory Audits.">Специализация: Текстиль, Одежда, Аудит фабрик перед оплатой.</p>
-                    <button onclick="alert('Инспектор выбран!')" class="w-full bg-purple-600/30 hover:bg-purple-600 text-purple-200 hover:text-white border border-purple-800 rounded-xl py-2 text-xs font-bold uppercase transition" data-ru="Назначить на фабрику" data-en="Assign to Factory">Назначить на фабрику</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Мои Заявки с Интерактивной цепью поставок (Supply Chain Map) -->
-        <section class="space-y-4">
-            <h2 class="text-xl font-black text-white" data-ru="Мониторинг цепочки поставок и инспекций" data-en="Supply Chain & Inspections Tracking">Мониторинг цепочки поставок и инспекций</h2>
-            <div id="shipmentsContainer" class="space-y-4">
-                <div class="glass-panel p-8 rounded-3xl text-center text-slate-500" data-ru="Загрузка партий..." data-en="Loading shipments...">Загрузка партий...</div>
+            
+            <div class="glass-panel rounded-3xl border border-purple-900/50 overflow-hidden shadow-2xl">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-slate-900/90 border-b border-purple-900/40 text-slate-400 font-bold uppercase">
+                        <tr>
+                            <th class="p-4" data-ru="Фабрика / Заказ" data-en="Factory / Order">Фабрика / Заказ</th>
+                            <th class="p-4" data-ru="Локация в КНР" data-en="China Location">Локация в КНР</th>
+                            <th class="p-4" data-ru="Заказчик" data-en="Client">Заказчик</th>
+                            <th class="p-4" data-ru="Статус" data-en="Status">Статус</th>
+                            <th class="p-4 text-right" data-ru="Полевой терминал" data-en="Field Terminal">Полевой терминал</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inspectorInspectionsBody" class="divide-y divide-purple-900/20">
+                        <tr>
+                            <td colspan="5" class="p-8 text-center text-slate-500" data-ru="Загрузка очереди инспекций..." data-en="Loading inspection queue...">Загрузка очереди инспекций...</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </section>
 
     </main>
 
     <footer class="border-t border-purple-900/30 bg-slate-900/80 py-6 text-center text-xs text-slate-500">
-        <p>© 2026 SourceJet AI. Seller Control Dashboard.</p>
+        <p>© 2026 SourceJet AI. Inspector Field Terminal.</p>
     </footer>
 
     <script>
@@ -139,105 +113,61 @@
                 if (text) el.innerText = text;
             });
 
-            if (window.loadedData) renderShipments(window.loadedData);
+            if (window.loadedInspections) renderInspectorQueue(window.loadedInspections);
         }
 
-        async function loadSellerInspections() {
+        async function loadInspectorInspections() {
             const { data, error } = await supabaseClient
                 .from('inspections')
                 .select('*')
                 .order('created_at', { ascending: false });
 
             if (error || !data) {
-                document.getElementById('shipmentsContainer').innerHTML = `<div class="glass-panel p-8 rounded-3xl text-center text-red-400">Database error</div>`;
+                document.getElementById('inspectorInspectionsBody').innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-400">Database error</td></tr>`;
                 return;
             }
 
-            window.loadedData = data;
-            document.getElementById('statTotal').innerText = data.length;
-            renderShipments(data);
+            window.loadedInspections = data;
+            document.getElementById('statAssigned').innerText = data.length;
+            document.getElementById('statCompleted').innerText = data.filter(i => i.status === 'completed' || i.status === 'inspected').length;
+            
+            renderInspectorQueue(data);
         }
 
-        function renderShipments(data) {
-            const container = document.getElementById('shipmentsContainer');
+        function renderInspectorQueue(data) {
+            const tbody = document.getElementById('inspectorInspectionsBody');
             if (data.length === 0) {
-                container.innerHTML = `<div class="glass-panel p-8 rounded-3xl text-center text-slate-500">${currentLang === 'ru' ? 'Нет активных заявок' : 'No active requests'}</div>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-500">${currentLang === 'ru' ? 'Нет назначенных инспекций' : 'No inspections assigned'}</td></tr>`;
                 return;
             }
 
             let html = '';
             data.forEach(item => {
-                // Имитируем шаги supply chain на основе статуса
-                const status = item.status || 'new';
-                let step1 = 'bg-purple-600 text-white';
-                let step2 = 'bg-slate-900 text-slate-500 border border-purple-900/50';
-                let step3 = 'bg-slate-900 text-slate-500 border border-purple-900/50';
-                let step4 = 'bg-slate-900 text-slate-500 border border-purple-900/50';
-
-                if (status === 'inspected' || status === 'completed') {
-                    step2 = 'bg-purple-600 text-white';
-                }
-                if (status === 'released' || status === 'shipped') {
-                    step2 = 'bg-purple-600 text-white';
-                    step3 = 'bg-cyan-500 text-white';
-                    step4 = 'bg-emerald-500 text-white';
-                }
-
+                const status = (item.status || 'new').toUpperCase();
                 html += `
-                    <div class="glass-panel p-6 rounded-3xl border border-purple-900/40 space-y-6">
-                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                            <div>
-                                <div class="flex items-center gap-2">
-                                    <h3 class="font-black text-lg text-white">${item.factory_name || 'Фабрика'}</h3>
-                                    <span class="text-[9px] font-mono bg-purple-950 text-purple-300 border border-purple-800 px-2.5 py-0.5 rounded-full uppercase">${status}</span>
-                                </div>
-                                <p class="text-xs text-slate-400 mt-0.5">📦 ${item.product_name || 'Товар'} • 📍 ${item.country || 'Китай'}, ${item.city || 'Город'} • 👤 ${item.inspector_name || 'Инспектор'}</p>
-                            </div>
-                            <a href="seller_room.html?id=${item.id}" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition shadow-lg hover:opacity-90">
-                                ${currentLang === 'ru' ? 'Открыть комнату (Escrow)' : 'Open Escrow Room'} →
+                    <tr class="hover:bg-purple-950/20 transition">
+                        <td class="p-4">
+                            <div class="font-bold text-white">${item.factory_name || 'Фабрика'}</div>
+                            <div class="text-[10px] text-slate-400">${item.product_name || 'Товар / Лот'}</div>
+                        </td>
+                        <td class="p-4 text-slate-300">${item.country || 'Китай'}, ${item.city || 'Город'}</td>
+                        <td class="p-4 text-cyan-300 font-medium">${item.client_name || 'Клиент'}</td>
+                        <td class="p-4"><span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-950 text-purple-300 border border-purple-800">${status}</span></td>
+                        <td class="p-4 text-right">
+                            <a href="inspector_room.html?id=${item.id}" class="inline-block bg-gradient-to-r from-purple-600 to-cyan-500 hover:opacity-90 text-white font-bold px-4 py-2 rounded-xl transition text-xs shadow-lg">
+                                📋 ${currentLang === 'ru' ? 'Открыть терминал' : 'Open Terminal'}
                             </a>
-                        </div>
-
-                        <!-- Supply Chain Visual Progress Bar -->
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 pt-4 border-t border-purple-900/30 text-xs">
-                            <div class="flex items-center gap-3 bg-slate-950/60 p-3 rounded-2xl border border-purple-900/30">
-                                <div class="w-7 h-7 rounded-xl flex items-center justify-center font-bold ${step1}">1</div>
-                                <div>
-                                    <div class="text-[10px] text-slate-400 uppercase font-bold" data-ru="Этап 1" data-en="Step 1">Этап 1</div>
-                                    <div class="font-semibold text-slate-200" data-ru="Заявка & Завод" data-en="RFQ & Factory">Заявка & Завод</div>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-3 bg-slate-950/60 p-3 rounded-2xl border border-purple-900/30">
-                                <div class="w-7 h-7 rounded-xl flex items-center justify-center font-bold ${step2}">2</div>
-                                <div>
-                                    <div class="text-[10px] text-slate-400 uppercase font-bold" data-ru="Этап 2" data-en="Step 2">Этап 2</div>
-                                    <div class="font-semibold text-slate-200" data-ru="Инспекция AQL" data-en="AQL Audit">Инспекция AQL</div>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-3 bg-slate-950/60 p-3 rounded-2xl border border-purple-900/30">
-                                <div class="w-7 h-7 rounded-xl flex items-center justify-center font-bold ${step3}">3</div>
-                                <div>
-                                    <div class="text-[10px] text-slate-400 uppercase font-bold" data-ru="Этап 3" data-en="Step 3">Этап 3</div>
-                                    <div class="font-semibold text-slate-200" data-ru="Escrow & Окно 48ч" data-en="Escrow & Dispute">Escrow & Окно 48ч</div>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-3 bg-slate-950/60 p-3 rounded-2xl border border-purple-900/30">
-                                <div class="w-7 h-7 rounded-xl flex items-center justify-center font-bold ${step4}">4</div>
-                                <div>
-                                    <div class="text-[10px] text-slate-400 uppercase font-bold" data-ru="Этап 4" data-en="Step 4">Этап 4</div>
-                                    <div class="font-semibold text-slate-200" data-ru="Отгрузка / Логистика" data-en="Shipping / Cargo">Отгрузка / Логистика</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                        </td>
+                    </tr>
                 `;
             });
-            container.innerHTML = html;
+
+            tbody.innerHTML = html;
         }
 
         window.onload = () => {
             switchLanguage(currentLang);
-            loadSellerInspections();
+            loadInspectorInspections();
         };
     </script>
 </body>
