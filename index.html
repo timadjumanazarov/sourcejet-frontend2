@@ -105,7 +105,6 @@
                 </select>
             </div>
 
-            <!-- Блок с предложением AI-поиска, если результаты не найдены -->
             <div id="aiSearchPrompt" class="hidden glass-panel p-5 rounded-2xl border border-cyan-500/40 text-center space-y-3 mt-4">
                 <p class="text-xs text-slate-300" data-ru="🔍 В локальной базе нет совпадений. Запустить AI Sourcing Agent для подборки фабрик по вашему запросу?" data-en="🔍 No local matches found. Launch AI Sourcing Agent to generate supplier selection for your request?">
                     🔍 В локальной базе нет совпадений. Запустить AI Sourcing Agent для подборки фабрик по вашему запросу?
@@ -129,7 +128,6 @@
             </h2>
         </div>
 
-        <!-- Сетка результатов поиска -->
         <div id="suppliersGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="col-span-3 text-center py-16 glass-panel rounded-3xl text-slate-400 text-xs">
                 ✨ Введите поисковый запрос выше, чтобы найти или сгенерировать через ИИ проверенные заводы.
@@ -193,21 +191,27 @@
         </div>
     </section>
 
-    <!-- Modal: Full Database Directory -->
+    <!-- Modal: Full Database Directory with Category Filter -->
     <div id="databaseModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md">
-        <div class="glass-panel border border-purple-500/30 rounded-3xl max-w-5xl w-full p-6 sm:p-8 space-y-6 relative max-h-[90vh] overflow-y-auto">
+        <div class="glass-panel border border-purple-500/30 rounded-3xl max-w-6xl w-full p-6 sm:p-8 space-y-6 relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeDatabaseModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white font-bold text-xl cursor-pointer">✕</button>
 
-            <div class="flex justify-between items-center pr-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pr-8">
                 <div>
                     <h3 class="text-2xl font-black text-white" data-ru="Полная База Производителей" data-en="Full Manufacturers Database">Полная База Производителей</h3>
-                    <p class="text-xs text-slate-400 mt-1" data-ru="Все верифицированные заводы и поставщики, разделенные по категориям" data-en="All verified factories and suppliers categorized">Все верифицированные заводы и поставщики, разделенные по категориям</p>
+                    <p class="text-xs text-slate-400 mt-1" data-ru="Каталог верифицированных заводов с фильтрацией по категориям" data-en="Verified factories catalog with category filtering">Каталог верифицированных заводов с фильтрацией по категориям</p>
                 </div>
-                <input type="text" id="modalSearchInput" oninput="renderModalDatabase()" placeholder="Поиск в базе..." 
-                    class="bg-slate-950 border border-purple-900/60 rounded-xl px-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 w-64">
+                <input type="text" id="modalSearchInput" oninput="renderModalDatabase()" placeholder="Поиск в базе по названию или городу..." 
+                    class="bg-slate-950 border border-purple-900/60 rounded-xl px-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 w-full md:w-80">
             </div>
 
-            <div id="modalSuppliersGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-4"></div>
+            <!-- Встроенные кнопки фильтрации по категориям -->
+            <div id="modalCategoryTabs" class="flex flex-wrap gap-2 pt-2 border-t border-purple-900/30">
+                <!-- Динамически заполняются категорийные табы -->
+            </div>
+
+            <!-- Сетка каталога в модалке -->
+            <div id="modalSuppliersGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2"></div>
         </div>
     </div>
 
@@ -266,6 +270,7 @@
     <script>
         let currentLang = localStorage.getItem('sourcejet_lang') || 'ru';
         let rawSuppliers = [];
+        let selectedModalCategory = 'ALL';
 
         function switchLanguage(lang) {
             currentLang = lang;
@@ -373,12 +378,41 @@
 
         async function openDatabaseModal() {
             await loadSuppliers();
+            selectedModalCategory = 'ALL';
+            renderCategoryTabs();
             renderModalDatabase();
             document.getElementById('databaseModal').classList.remove('hidden');
         }
 
         function closeDatabaseModal() {
             document.getElementById('databaseModal').classList.add('hidden');
+        }
+
+        // Рендер кнопок-фильтров по категориям внутри модалки
+        function renderCategoryTabs() {
+            const tabsContainer = document.getElementById('modalCategoryTabs');
+            const categories = ['ALL', ...new Set(rawSuppliers.map(s => s.category).filter(Boolean))];
+
+            tabsContainer.innerHTML = '';
+            categories.forEach(cat => {
+                const isActive = selectedModalCategory === cat;
+                const btnClass = isActive 
+                    ? 'bg-purple-600 text-white font-bold border-purple-500' 
+                    : 'bg-slate-900 text-slate-300 hover:bg-slate-800 border-purple-900/50';
+                
+                const displayName = cat === 'ALL' ? 'Все категории' : cat;
+                tabsContainer.innerHTML += `
+                    <button onclick="setModalCategory('${cat}')" class="px-3 py-1.5 rounded-xl text-xs border transition cursor-pointer ${btnClass}">
+                        ${displayName}
+                    </button>
+                `;
+            });
+        }
+
+        function setModalCategory(cat) {
+            selectedModalCategory = cat;
+            renderCategoryTabs();
+            renderModalDatabase();
         }
 
         function renderModalDatabase() {
@@ -388,13 +422,16 @@
             const filtered = rawSuppliers.filter(s => {
                 const sName = s.name ? String(s.name).toLowerCase() : '';
                 const sLoc = s.location ? String(s.location).toLowerCase() : '';
-                const sCat = s.category ? String(s.category).toLowerCase() : '';
-                return !search || sName.includes(search) || sLoc.includes(search) || sCat.includes(search);
+                const sCat = s.category ? String(s.category) : '';
+
+                const matchesCat = (selectedModalCategory === 'ALL') || (sCat === selectedModalCategory);
+                const matchesSearch = !search || sName.includes(search) || sLoc.includes(search) || sCat.toLowerCase().includes(search);
+                return matchesCat && matchesSearch;
             });
 
             grid.innerHTML = '';
             if (filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-3 text-center py-8 text-slate-500 text-xs">Ничего не найдено в базе</div>`;
+                grid.innerHTML = `<div class="col-span-3 text-center py-12 text-slate-500 text-xs">Ничего не найдено в данной категории</div>`;
                 return;
             }
 
@@ -433,121 +470,6 @@
 
         function closeModal() {
             document.getElementById('factoryModal').classList.add('hidden');
-        }
-
-        // НАДЕЖНЫЙ ПРЯМОЙ ВЫЗОВ OPENAI С ОТРАБОТКОЙ КЛИЕНТСКИХ ИСКЛЮЧЕНИЙ
-        async function triggerAiSearch() {
-            const searchQuery = document.getElementById('searchInput').value.trim();
-            if (!searchQuery) return;
-
-            const loader = document.getElementById('aiLoader');
-            const promptBox = document.getElementById('aiSearchPrompt');
-            
-            promptBox.classList.add('hidden');
-            loader.classList.remove('hidden');
-
-            try {
-                const currentCategory = document.getElementById('categorySelect').value !== 'ALL' 
-                    ? document.getElementById('categorySelect').value 
-                    : 'Электроника';
-
-                const OPENAI_API_KEY = "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".trim();
-
-                const systemPrompt = `You are a B2B Sourcing AI. Generate a JSON object with an array of 3 realistic verified manufacturing factories in China for "${searchQuery}". 
-Fields required per supplier object: name, category ("${currentCategory}"), location, moq, rating (4.85-4.99), verdict (detailed audit in ${currentLang}).
-Return ONLY raw valid JSON matching this exact structure, with no markdown code blocks:
-{
-  "suppliers": [
-    { "name": "...", "category": "...", "location": "...", "moq": "...", "rating": 4.9, "verdict": "..." }
-  ]
-}`;
-
-                // Прямой запрос к API с отключением заголовков сторонних прокси
-                let rawContent = "";
-                try {
-                    const openAiRes = await fetch('https://api.openai.com/v1/chat/completions', {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${OPENAI_API_KEY}`,
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            model: 'gpt-4o-mini',
-                            messages: [{ role: 'system', content: systemPrompt }],
-                            temperature: 0.7,
-                        })
-                    });
-
-                    const aiData = await openAiRes.json();
-                    if (aiData.choices && aiData.choices[0]) {
-                        rawContent = aiData.choices[0].message.content;
-                    } else {
-                        throw new Error(JSON.stringify(aiData));
-                    }
-                } catch (directError) {
-                    console.warn("Direct fetch failed, fallback to client structural generation:", directError);
-                    // Локальный фоллбек-генератор структурированных фабрик при сетевых блокировках CORS браузером
-                    rawContent = JSON.stringify({
-                        suppliers: [
-                            {
-                                name: `Guangzhou ${searchQuery.toUpperCase()} Premium Textiles Ltd.`,
-                                category: currentCategory,
-                                location: "Guangdong, Guangzhou",
-                                moq: "500 meters",
-                                rating: 4.92,
-                                verdict: `Специализированная фабрика по производству высокопрочных материалов категории "${searchQuery}". Экспортный сертификат ISO9001.`
-                            },
-                            {
-                                name: `Zhejiang ${searchQuery.charAt(0).toUpperCase() + searchQuery.slice(1)} Industrial Fabric Co.`,
-                                category: currentCategory,
-                                location: "Zhejiang, Ningbo",
-                                moq: "1000 meters",
-                                rating: 4.88,
-                                verdict: `Крупнейший завод в Нинбо. Полный цикл окрашивания и обработки тканей с высокой устойчивостью к износу.`
-                            },
-                            {
-                                name: `Jiangsu Global ${searchQuery} Supply Corp.`,
-                                category: currentCategory,
-                                location: "Jiangsu, Suzhou",
-                                moq: "300 meters",
-                                rating: 4.95,
-                                verdict: `Верифицированный поставщик фурнитуры и специального полотна под нужды локальных и международных брендов.`
-                            }
-                        ]
-                    });
-                }
-
-                const cleanedJson = rawContent.replace(/```json|```/g, '').trim();
-                const parsed = JSON.parse(cleanedJson);
-
-                const factoriesToInsert = parsed.suppliers.map(s => ({
-                    name: s.name,
-                    category: s.category || currentCategory,
-                    location: s.location || 'Гуандун, Китай',
-                    moq: s.moq || '300 pcs',
-                    rating: Number(s.rating) || 4.9,
-                    verified: true,
-                    source: 'openai_direct_client',
-                    verdict: s.verdict
-                }));
-
-                const { data, error } = await supabaseClient
-                    .from('suppliers')
-                    .insert(factoriesToInsert)
-                    .select();
-
-                if (error) throw error;
-
-                await loadSuppliers();
-                renderSuppliers();
-
-            } catch (err) {
-                console.error("Критическая ошибка AI-поиска:", err);
-                alert("Ошибка генерации: " + err.message);
-                promptBox.classList.remove('hidden');
-            } finally {
-                loader.classList.add('hidden');
-            }
         }
 
         window.onload = () => {
