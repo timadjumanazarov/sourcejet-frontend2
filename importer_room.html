@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Importer Escrow & Dispute Room — SourceJet AI</title>
+    <title>Escrow & Dispute Room — SourceJet AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -25,131 +25,207 @@
     <header class="border-b border-purple-900/30 bg-slate-900/80 backdrop-blur-xl sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3.5">
-                <div class="w-11 h-11 bg-gradient-to-tr from-purple-600 via-indigo-600 to-cyan-400 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-xl shadow-purple-500/25">⚡</div>
+                <div class="w-11 h-11 bg-gradient-to-tr from-purple-600 via-indigo-600 to-cyan-400 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-xl shadow-purple-500/25">🛡️</div>
                 <div>
-                    <span class="font-black text-xl tracking-wider text-white">SourceJet <span class="ai-gradient-text">AI</span></span>
-                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase" data-ru="Комната Escrow & Арбитража" data-en="Importer Escrow & Dispute Room">Комната Escrow & Арбитража</p>
+                    <span class="font-black text-xl tracking-wider text-white">SourceJet <span class="ai-gradient-text">Escrow</span></span>
+                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase" data-ru="Комната арбитража и приемки" data-en="Dispute & Inspection Room">Комната арбитража и приемки</p>
                 </div>
             </div>
-            <a href="seller_dashboard.html" class="text-xs text-purple-400 hover:text-purple-300 font-bold transition" data-ru="← Назад в Портал импортера" data-en="← Back to Importer Portal">← Назад в Портал импортера</a>
+
+            <div class="flex items-center gap-4">
+                <!-- Языковой переключатель -->
+                <div class="bg-slate-900 border border-purple-900/50 rounded-xl p-1 flex items-center gap-1 text-xs font-bold">
+                    <button onclick="switchLanguage('ru')" id="btn-ru" class="px-2.5 py-1 rounded-lg transition bg-purple-600 text-white">RU</button>
+                    <button onclick="switchLanguage('en')" id="btn-en" class="px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white">EN</button>
+                </div>
+                <a href="importer_dashboard.html" class="text-xs text-purple-400 hover:text-purple-300 font-bold transition" data-ru="← Назад в Портал" data-en="← Back to Portal">← Назад в Портал</a>
+            </div>
         </div>
     </header>
 
     <!-- Main Workspace -->
-    <main class="max-w-7xl mx-auto px-6 py-10 flex-1 w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <main class="max-w-5xl mx-auto px-6 py-10 flex-1 w-full space-y-8">
         
-        <!-- Левая часть: Детали партии и Escrow таймер -->
-        <div class="lg:col-span-2 space-y-6">
-            <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 space-y-4">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <span id="roomLocation" class="text-xs font-mono text-purple-400 uppercase font-bold">Китай • Загрузка...</span>
-                        <h1 id="roomFactory" class="text-2xl font-black text-white mt-1">Загрузка данных...</h1>
+        <!-- Верхняя инфо-плашка сделки -->
+        <div class="glass-panel p-6 md:p-8 rounded-3xl border border-purple-900/40 space-y-6 shadow-2xl">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-purple-900/30 pb-6">
+                <div>
+                    <div class="flex items-center gap-3">
+                        <h1 id="roomTitle" class="text-2xl font-black text-white">Загрузка данных партии...</h1>
+                        <span id="roomStatusBadge" class="text-[10px] font-mono bg-purple-950 text-purple-300 border border-purple-800 px-3 py-1 rounded-full uppercase font-bold">SECURE ESCROW</span>
                     </div>
-                    <span class="bg-amber-950 text-amber-300 border border-amber-800 text-xs font-bold px-3 py-1 rounded-full uppercase" data-ru="Escrow заморожен" data-en="Escrow Held">Escrow заморожен</span>
+                    <p id="roomSubtitle" class="text-xs text-slate-400 mt-1">Инициализация защищенного смарт-контракта...</p>
                 </div>
-
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 pt-2 border-t border-purple-900/30 text-xs">
-                    <div>
-                        <span class="text-slate-500 block" data-ru="Товар / Партия" data-en="Product / Batch">Товар / Партия</span>
-                        <span id="roomProduct" class="font-bold text-cyan-300">—</span>
-                    </div>
-                    <div>
-                        <span class="text-slate-500 block" data-ru="Инспектор" data-en="Inspector">Инспектор</span>
-                        <span id="roomInspector" class="font-bold text-slate-200">—</span>
-                    </div>
-                    <div>
-                        <span class="text-slate-500 block" data-ru="Статус проверки" data-en="Audit Status">Статус проверки</span>
-                        <span id="roomStatus" class="font-bold text-emerald-400">—</span>
-                    </div>
-                </div>
-
-                <!-- 48-часовой таймер споров -->
-                <div class="bg-amber-950/40 p-4 rounded-2xl border border-amber-800/60 flex items-center justify-between">
-                    <div>
-                        <div class="text-[10px] uppercase font-bold text-amber-400" data-ru="⏱️ Окно подачи спора / Арбитража Escrow:" data-en="⏱️ Escrow Dispute & Arbitration Window:">⏱️ Окно подачи спора / Арбитража Escrow:</div>
-                        <div id="disputeTimer" class="text-lg font-black text-white" data-ru="47ч 59мин до автовыплаты фабрике" data-en="47h 59m until factory payout">47ч 59мин до автовыплаты фабрике</div>
-                    </div>
-                    <button onclick="openDispute()" class="bg-rose-600 hover:bg-rose-500 text-white font-bold px-4 py-2 rounded-xl text-xs uppercase transition shadow-lg" data-ru="⚠️ Подать спор" data-en="⚠️ Raise Dispute">
-                        ⚠️ Подать спор
-                    </button>
+                
+                <!-- Таймер 48 часов -->
+                <div class="bg-amber-950/40 border border-amber-800/60 p-4 rounded-2xl text-right">
+                    <div class="text-[10px] text-amber-400 uppercase font-bold tracking-wider" data-ru="Окно арбитража (48ч)" data-en="Arbitration Window (48h)">Окно арбитража (48ч)</div>
+                    <div id="escrowTimer" class="text-lg font-mono font-black text-amber-300">47:59:12</div>
                 </div>
             </div>
 
-            <!-- Секция отчета и документов -->
-            <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 space-y-4">
-                <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300" data-ru="📄 Инспекционный отчет & AQL (ISO 2859-1)" data-en="📄 Inspection Report & AQL (ISO 2859-1)">📄 Инспекционный отчет & AQL (ISO 2859-1)</h3>
-                <p class="text-xs text-slate-300" data-ru="Полный Enterprise-отчет с фотографиями дефектов с фабрики, подписью инспектора и результатами проверки." data-en="Enterprise audit report including factory defect photography, inspector verification, and compliance metrics.">Полный Enterprise-отчет с фотографиями дефектов с фабрики, подписью инспектора и результатами проверки.</p>
-                <button onclick="alert('Генерация официального Enterprise PDF-отчета SourceJet AI...')" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 py-3 rounded-xl text-xs uppercase tracking-wider transition shadow-lg" data-ru="📥 Скачать Enterprise PDF-отчет" data-en="📥 Download Enterprise PDF Report">
-                    📥 Скачать Enterprise PDF-отчет
-                </button>
+            <!-- Детали контракта в три колонки -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
+                <div class="bg-slate-950/60 p-4 rounded-2xl border border-purple-900/30 space-y-1">
+                    <span class="text-slate-400 font-bold uppercase text-[10px]" data-ru="Фабрика / Поставщик" data-en="Factory / Supplier">Фабрика / Поставщик</span>
+                    <div id="infoFactory" class="font-bold text-white text-sm">-</div>
+                </div>
+                <div class="bg-slate-950/60 p-4 rounded-2xl border border-purple-900/30 space-y-1">
+                    <span class="text-slate-400 font-bold uppercase text-[10px]" data-ru="Тип инспекции" data-en="Inspection Type">Тип инспекции</span>
+                    <div id="infoType" class="font-bold text-cyan-400 text-sm">-</div>
+                </div>
+                <div class="bg-slate-950/60 p-4 rounded-2xl border border-purple-900/30 space-y-1">
+                    <span class="text-slate-400 font-bold uppercase text-[10px]" data-ru="Статус депозита" data-en="Deposit Status">Статус депозита</span>
+                    <div class="font-bold text-emerald-400 text-sm">🔒 Заморожено (Held)</div>
+                </div>
             </div>
         </div>
 
-        <!-- Правая колонка: Чат комнаты -->
-        <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 flex flex-col h-[650px]">
-            <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300 mb-4" data-ru="💬 Чат сделки & Арбитраж" data-en="💬 Deal Chat & Arbitration">💬 Чат сделки & Арбитраж</h3>
-            <div id="roomMessages" class="flex-1 overflow-y-auto space-y-3 pr-2 text-xs mb-4">
-                <div class="text-center text-slate-500 py-10" data-ru="Загрузка сообщений..." data-en="Loading messages...">Загрузка сообщений...</div>
+        <!-- Отчет инспектора и фотогалерея -->
+        <div class="glass-panel p-6 md:p-8 rounded-3xl border border-purple-900/40 space-y-6 shadow-xl">
+            <div class="flex justify-between items-center">
+                <h3 class="font-black text-lg text-white" data-ru="Результаты инспекции в Китае (AQL 2.5)" data-en="China Inspection Results (AQL 2.5)">Результаты инспекции в Китае (AQL 2.5)</h3>
+                <span class="text-xs text-emerald-400 font-mono bg-emerald-950 border border-emerald-800 px-3 py-1 rounded-full">✓ Протокол ISO 2859-1</span>
             </div>
-            <div class="flex gap-2 pt-2 border-t border-purple-900/30">
-                <input type="text" id="roomMessageInput" data-ru-ph="Сообщение по сделке..." data-en-ph="Deal message..." placeholder="Сообщение по сделке..." class="flex-1 bg-slate-950 border border-purple-900/60 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-purple-500" onkeydown="if(event.key === 'Enter') sendRoomMessage()">
-                <button onclick="sendRoomMessage()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 rounded-xl text-xs uppercase transition" data-ru="Отправить" data-en="Send">Отправить</button>
+
+            <p class="text-xs text-slate-300" data-ru="Инспектор проверил качество сборки, штрихкоды, критические дефекты и параметры упаковки на фабрике. Ниже представлены фотоматериалы с места проверки." data-en="The inspector verified assembly quality, barcodes, critical defects, and packaging parameters at the factory. Below are photo materials from the audit.">
+                Инспектор проверил качество сборки, штрихкоды, критические дефекты и параметры упаковки на фабрике. Ниже представлены фотоматериалы с места проверки.
+            </p>
+
+            <!-- Сетка фотографий инспекции (мокапы для наглядности) -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-slate-900 border border-purple-900/50 rounded-2xl p-2 space-y-2">
+                    <div class="h-28 bg-purple-950/50 rounded-xl flex items-center justify-center text-purple-400 font-mono text-xs border border-purple-900/30">[ Фото: Упаковка ]</div>
+                    <div class="text-[11px] text-slate-300 font-bold px-1">Гофрокороб / Маркировка</div>
+                </div>
+                <div class="bg-slate-900 border border-purple-900/50 rounded-2xl p-2 space-y-2">
+                    <div class="h-28 bg-purple-950/50 rounded-xl flex items-center justify-center text-purple-400 font-mono text-xs border border-purple-900/30">[ Фото: Товар ]</div>
+                    <div class="text-[11px] text-slate-300 font-bold px-1">Проверка партии на брак</div>
+                </div>
+                <div class="bg-slate-900 border border-purple-900/50 rounded-2xl p-2 space-y-2">
+                    <div class="h-28 bg-purple-950/50 rounded-xl flex items-center justify-center text-purple-400 font-mono text-xs border border-purple-900/30">[ Фото: Штрихкод ]</div>
+                    <div class="text-[11px] text-slate-300 font-bold px-1">Сканирование штрихкодов</div>
+                </div>
+                <div class="bg-slate-900 border border-purple-900/50 rounded-2xl p-2 space-y-2">
+                    <div class="h-28 bg-purple-950/50 rounded-xl flex items-center justify-center text-purple-400 font-mono text-xs border border-purple-900/30">[ Фото: Склад ]</div>
+                    <div class="text-[11px] text-slate-300 font-bold px-1">Зона погрузки в контейнер</div>
+                </div>
             </div>
+        </div>
+
+        <!-- Панель управления Escrow (Действия импортера) -->
+        <div class="glass-panel p-6 md:p-8 rounded-3xl border border-purple-900/40 space-y-6 shadow-xl bg-gradient-to-r from-purple-950/30 to-cyan-950/30">
+            <h3 class="font-black text-lg text-white" data-ru="Управление смарт-контрактом & Арбитраж" data-en="Smart Contract Management & Arbitration">Управление смарт-контрактом & Арбитраж</h3>
+            <p class="text-xs text-slate-300" data-ru="Подтвердите приемку товара, если инспекция прошла успешно — средства будут разморожены для фабрики. Если обнаружен брак, откройте спор для подключения арбитража SourceJet." data-en="Confirm product acceptance if inspection passed successfully — funds will be released to the factory. If defects are found, open a dispute for SourceJet arbitration.">
+                Подтвердите приемку товара, если инспекция прошла успешно — средства будут разморожены для фабрики. Если обнаружен брак, откройте спор для подключения арбитража SourceJet.
+            </p>
+
+            <div class="flex flex-col md:flex-row gap-4 pt-2">
+                <button onclick="updateEscrowStatus('released')" class="flex-1 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white font-bold py-4 rounded-2xl text-xs uppercase tracking-wider transition hover:opacity-90 shadow-lg shadow-emerald-600/20">
+                    <span data-ru="✓ Принять партию и перевести средства" data-en="✓ Accept Shipment & Release Funds">✓ Принять партию и перевести средства</span>
+                </button>
+                <button onclick="updateEscrowStatus('dispute')" class="flex-1 bg-slate-900 hover:bg-rose-950 text-rose-400 border border-rose-900/60 font-bold py-4 rounded-2xl text-xs uppercase tracking-wider transition shadow-lg">
+                    <span data-ru="⚡ Открыть спор по браку (Dispute)" data-en="⚡ Open Defect Dispute">⚡ Открыть спор по браку (Dispute)</span>
+                </button>
+            </div>
+
+            <div id="actionStatus" class="text-center text-xs font-mono"></div>
         </div>
 
     </main>
 
+    <footer class="border-t border-purple-900/30 bg-slate-900/80 py-6 text-center text-xs text-slate-500">
+        <p>© 2026 SourceJet AI. Secure Escrow & Dispute Room.</p>
+    </footer>
+
     <script>
+        let currentLang = localStorage.getItem('sourcejet_lang') || 'ru';
         const SUPABASE_URL = 'https://ozpskokidbhqtoeykyzf.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_Zpkfm-iDWB7WuHrAp1jDtQ_1w_QU8s0';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const inspectionId = urlParams.get('id');
+        let currentInspectionId = null;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            if (!inspectionId) return;
-            loadRoomData();
-            loadRoomMessages();
-        });
+        function switchLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('sourcejet_lang', lang);
 
-        async function loadRoomData() {
-            const { data, error } = await supabaseClient.from('inspections').select('*').eq('id', inspectionId).single();
-            if (error || !data) return;
+            document.getElementById('btn-ru').className = lang === 'ru' ? 'px-2.5 py-1 rounded-lg transition bg-purple-600 text-white font-bold' : 'px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white';
+            document.getElementById('btn-en').className = lang === 'en' ? 'px-2.5 py-1 rounded-lg transition bg-purple-600 text-white font-bold' : 'px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white';
 
-            document.getElementById('roomLocation').innerText = `${data.country || 'Китай'} • ${data.city || 'Город'}`;
-            document.getElementById('roomFactory').innerText = data.factory_name || 'Фабрика';
-            document.getElementById('roomProduct').innerText = data.product_name || 'Товар';
-            document.getElementById('roomInspector').innerText = data.inspector_name || 'Не назначен';
-            document.getElementById('roomStatus').innerText = (data.status || 'new').toUpperCase();
+            document.querySelectorAll('[data-ru]').forEach(el => {
+                const text = el.getAttribute(`data-${lang}`);
+                if (text) el.innerText = text;
+            });
         }
 
-        async function loadRoomMessages() {
-            const { data } = await supabaseClient.from('inspection_messages').select('*').eq('inspection_id', inspectionId);
-            const container = document.getElementById('roomMessages');
-            if (!data || data.length === 0) {
-                container.innerHTML = `<div class="text-center text-slate-500 py-6">Нет сообщений в чате сделки.</div>`;
+        // Загрузка данных конкретной инспекции по ID из URL
+        async function loadRoomData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            currentInspectionId = urlParams.get('id');
+
+            if (!currentInspectionId) {
+                document.getElementById('roomTitle').innerText = currentLang === 'ru' ? 'ID партии не указан' : 'Shipment ID not specified';
+                document.getElementById('roomSubtitle').innerText = currentLang === 'ru' ? 'Вернитесь в Портал импортера и выберите партию.' : 'Return to Importer Portal and select a shipment.';
                 return;
             }
-            let html = '';
-            data.forEach(msg => {
-                html += `<div class="p-3 rounded-2xl bg-purple-950/60 border border-purple-900/40"><div class="text-slate-200">${msg.message}</div></div>`;
-            });
-            container.innerHTML = html;
+
+            const { data, error } = await supabaseClient
+                .from('inspections')
+                .select('*')
+                .eq('id', currentInspectionId)
+                .single();
+
+            if (error || !data) {
+                document.getElementById('roomTitle').innerText = currentLang === 'ru' ? 'Партия не найдена в базе' : 'Shipment not found';
+                return;
+            }
+
+            document.getElementById('roomTitle').innerText = data.factory_name || 'Фабрика';
+            document.getElementById('roomSubtitle').innerText = `📦 ${data.product_name || 'Товар'} • 📍 ${data.country || 'Китай'}, ${data.city || 'Город'}`;
+            document.getElementById('roomStatusBadge').innerText = data.status || 'ESCROW ACTIVE';
+            document.getElementById('infoFactory').innerText = data.factory_name || '-';
+            document.getElementById('infoType').innerText = data.inspection_type || 'PSI';
         }
 
-        async function sendRoomMessage() {
-            const input = document.getElementById('roomMessageInput');
-            if (!input.value.trim()) return;
-            await supabaseClient.from('inspection_messages').insert([{ inspection_id: inspectionId, message: input.value, sender: 'Importer' }]);
-            input.value = '';
-            loadRoomMessages();
+        // Обновление статуса сделки (принятие или спор)
+        async function updateEscrowStatus(newStatus) {
+            if (!currentInspectionId) {
+                alert('ID партии не определен!');
+                return;
+            }
+
+            const statusDiv = document.getElementById('actionStatus');
+            statusDiv.className = 'text-center text-xs font-mono text-purple-400';
+            statusDiv.innerText = currentLang === 'ru' ? 'Синхронизация смарт-контракта с блокчейном...' : 'Synchronizing smart contract...';
+
+            const { error } = await supabaseClient
+                .from('inspections')
+                .update({ status: newStatus })
+                .eq('id', currentInspectionId);
+
+            if (error) {
+                statusDiv.className = 'text-center text-xs font-mono text-rose-400';
+                statusDiv.innerText = 'Ошибка: ' + error.message;
+                return;
+            }
+
+            statusDiv.className = 'text-center text-xs font-mono text-emerald-400';
+            if (newStatus === 'released') {
+                statusDiv.innerText = currentLang === 'ru' ? '✓ Средства успешно разморожены и отправлены поставщику!' : '✓ Funds successfully released to supplier!';
+            } else {
+                statusDiv.innerText = currentLang === 'ru' ? '⚡ Спор успешно открыт! Менеджер арбитража SourceJet подключен к сделке.' : '⚡ Dispute opened! SourceJet arbitration manager assigned.';
+            }
+
+            setTimeout(() => {
+                window.location.href = 'importer_dashboard.html';
+            }, 2500);
         }
 
-        function openDispute() {
-            alert('Спор по сделке инициирован. Средства надежно заморожены на Escrow-счете до завершения арбитража SourceJet AI.');
-        }
+        window.onload = () => {
+            switchLanguage(currentLang);
+            loadRoomData();
+        };
     </script>
 </body>
 </html>
