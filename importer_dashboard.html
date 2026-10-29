@@ -46,7 +46,7 @@
     <!-- Main Workspace -->
     <main class="max-w-7xl mx-auto px-6 py-10 flex-1 w-full space-y-10">
         
-        <!-- Верхние стат-карточки ("Горящие лампочки") -->
+        <!-- Верхние стат-карточки -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="glass-panel p-6 rounded-3xl border border-purple-900/40 flex items-center gap-4">
                 <div class="w-12 h-12 rounded-2xl bg-purple-950 border border-purple-800 flex items-center justify-center text-purple-400 font-black text-xl">📦</div>
@@ -71,48 +71,41 @@
             </div>
         </div>
 
-        <!-- База инспекторов в Китае -->
-        <section class="space-y-4">
-            <div class="flex justify-between items-center">
-                <h2 class="text-xl font-black text-white" data-ru="База инспекторов и гидов в КНР" data-en="China Inspectors & Guides Network">База инспекторов и гидов в КНР</h2>
-                <span class="text-xs text-purple-400 font-mono" data-ru="Доступны для выезда" data-en="Ready for Audit">Доступны для выезда</span>
+        <!-- AI Sourcing Advisor & Аналитик -->
+        <section class="glass-panel p-6 md:p-8 rounded-3xl border border-purple-900/40 space-y-4 shadow-xl">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-cyan-950 border border-cyan-800 flex items-center justify-center text-cyan-400 text-lg">🤖</div>
+                    <div>
+                        <h3 class="font-bold text-white text-base" data-ru="AI Sourcing Advisor & Аналитик" data-en="AI Sourcing Advisor & Analytics">AI Sourcing Advisor & Аналитик</h3>
+                        <p class="text-xs text-slate-400" data-ru="Интеллектуальный помощник по контрактам, логистике и инспекциям в КНР" data-en="Smart assistant for contracts, logistics, and China factory audits">Интеллектуальный помощник по контрактам, логистике и инспекциям в КНР</p>
+                    </div>
+                </div>
+                <span class="text-[10px] font-mono bg-cyan-950 text-cyan-300 border border-cyan-800 px-3 py-1 rounded-full uppercase font-bold">ONLINE AI V3</span>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="glass-panel p-6 rounded-3xl space-y-4 border border-purple-900/40 shadow-xl">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <h3 class="font-bold text-white text-base">Ван Вэй (Wang Wei)</h3>
-                            <p class="text-xs text-slate-400">📍 Иу / Чжэцзян (Yiwu)</p>
-                        </div>
-                        <span class="bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">★ 4.98</span>
-                    </div>
-                    <p class="text-xs text-slate-300" data-ru="Специализация: Электроника, Упаковка, Потребительские товары." data-en="Specs: Electronics, Packaging, Consumer Goods.">Специализация: Электроника, Упаковка, Потребительские товары.</p>
-                    <button onclick="alert(currentLang === 'ru' ? 'Инспектор назначен на фабрику!' : 'Inspector assigned!')" class="w-full bg-purple-600/30 hover:bg-purple-600 text-purple-200 hover:text-white border border-purple-800 rounded-xl py-2 text-xs font-bold uppercase transition" data-ru="Назначить на фабрику" data-en="Assign to Factory">Назначить на фабрику</button>
-                </div>
 
-                <div class="glass-panel p-6 rounded-3xl space-y-4 border border-purple-900/40 shadow-xl">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <h3 class="font-bold text-white text-base">Ли Цзян (Li Jiang)</h3>
-                            <p class="text-xs text-slate-400">📍 Шэньчжэнь / Гуанчжоу</p>
-                        </div>
-                        <span class="bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">★ 4.95</span>
+            <div id="aiChatBox" class="bg-slate-950/80 border border-purple-900/40 rounded-2xl p-4 h-48 overflow-y-auto space-y-3 text-xs">
+                <div class="flex items-start gap-2.5">
+                    <div class="w-6 h-6 rounded-lg bg-purple-600 flex items-center justify-center text-white text-[10px] font-bold shrink-0">AI</div>
+                    <div class="bg-purple-950/60 border border-purple-900/40 p-3 rounded-2xl text-slate-200 max-w-xl">
+                        <span data-ru="Здравствуйте! Я ваш персональный AI-ассистент по закупкам. Я проанализировал ваши активные партии и готов ответить на вопросы по фрахту, таможне, стандартам AQL или помочь составить ТЗ для инспектора в Китае. Чем могу помочь?" data-en="Hello! I am your personal AI sourcing assistant. I've analyzed your active shipments and ready to help with logistics, Bishkek customs, AQL standards, or factory audits. What can I assist you with?">
+                            Здравствуйте! Я ваш персональный AI-ассистент по закупкам. Я проанализировал ваши активные партии и готов ответить на вопросы по фрахту, таможне, стандартам AQL или помочь составить ТЗ для инспектора в Китае. Чем могу помочь?
+                        </span>
                     </div>
-                    <p class="text-xs text-slate-300" data-ru="Специализация: Сложная техника, Компоненты, AQL-тесты." data-en="Specs: Complex Hardware, Components, AQL Inspections.">Специализация: Сложная техника, Компоненты, AQL-тесты.</p>
-                    <button onclick="alert(currentLang === 'ru' ? 'Инспектор назначен на фабрику!' : 'Inspector assigned!')" class="w-full bg-purple-600/30 hover:bg-purple-600 text-purple-200 hover:text-white border border-purple-800 rounded-xl py-2 text-xs font-bold uppercase transition" data-ru="Назначить на фабрику" data-en="Assign to Factory">Назначить на фабрику</button>
                 </div>
+            </div>
 
-                <div class="glass-panel p-6 rounded-3xl space-y-4 border border-purple-900/40 shadow-xl">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <h3 class="font-bold text-white text-base">Чэнь Мин (Chen Ming)</h3>
-                            <p class="text-xs text-slate-400">📍 Нинбо / Шанхай</p>
-                        </div>
-                        <span class="bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">★ 4.91</span>
-                    </div>
-                    <p class="text-xs text-slate-300" data-ru="Специализация: Текстиль, Одежда, Аудит фабрик перед оплатой." data-en="Specs: Textiles, Garments, Pre-shipment Factory Audits.">Специализация: Текстиль, Одежда, Аудит фабрик перед оплатой.</p>
-                    <button onclick="alert(currentLang === 'ru' ? 'Инспектор назначен на фабрику!' : 'Inspector assigned!')" class="w-full bg-purple-600/30 hover:bg-purple-600 text-purple-200 hover:text-white border border-purple-800 rounded-xl py-2 text-xs font-bold uppercase transition" data-ru="Назначить на фабрику" data-en="Assign to Factory">Назначить на фабрику</button>
-                </div>
+            <div class="flex gap-2">
+                <input type="text" id="aiInput" 
+                    data-ru-ph="Спросите AI про логистику, риски или статус инспекции..." 
+                    data-en-ph="Ask AI about logistics, risks, or audit status..." 
+                    placeholder="Спросите AI про логистику, риски или статус инспекции..." 
+                    class="flex-1 bg-slate-950 border border-purple-900/60 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-cyan-500"
+                    onkeydown="if(event.key === 'Enter') askAiAdvisor()">
+                
+                <button onclick="askAiAdvisor()" class="bg-gradient-to-r from-purple-600 to-cyan-500 text-white font-bold px-6 py-3 rounded-xl text-xs uppercase transition hover:opacity-90 shadow-lg">
+                    <span data-ru="Спросить AI" data-en="Ask AI">Спросить AI</span>
+                </button>
             </div>
         </section>
 
@@ -201,7 +194,8 @@
                                 </div>
                                 <p class="text-xs text-slate-400 mt-0.5">📦 ${item.product_name || 'Товар'} • 📍 ${item.country || 'Китай'}, ${item.city || 'Город'} • 👤 ${item.inspector_name || 'Инспектор'}</p>
                             </div>
-                            <a href="seller_room.html?id=${item.id}" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition shadow-lg hover:opacity-90">
+                            <!-- Ссылка строго на importer_room.html (исправлено) -->
+                            <a href="importer_room.html?id=${item.id}" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition shadow-lg hover:opacity-90">
                                 ${currentLang === 'ru' ? 'Открыть комнату (Escrow)' : 'Open Escrow Room'} →
                             </a>
                         </div>
@@ -241,6 +235,47 @@
                 `;
             });
             container.innerHTML = html;
+        }
+
+        function askAiAdvisor() {
+            const input = document.getElementById('aiInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const chatBox = document.getElementById('aiChatBox');
+
+            chatBox.innerHTML += `
+                <div class="flex items-start gap-2.5 justify-end">
+                    <div class="bg-purple-900/50 border border-purple-700/50 p-3 rounded-2xl text-slate-100 max-w-xl">${text}</div>
+                    <div class="w-6 h-6 rounded-lg bg-cyan-600 flex items-center justify-center text-white text-[10px] font-bold shrink-0">Вы</div>
+                </div>
+            `;
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            setTimeout(() => {
+                let aiReply = currentLang === 'ru' 
+                    ? "Анализирую базу данных фабрик и логистический трек... Рисков по текущим контрактам не обнаружено. Рекомендуем проверить уровень брака по стандарту AQL 2.5 перед подписанием акта приема-передачи на Escrow."
+                    : "Analyzing factory database and logistics track... No active risks detected on your shipments. We recommend verifying defect rates under AQL 2.5 before releasing Escrow funds.";
+
+                if (text.toLowerCase().includes('логистик') || text.toLowerCase().includes('фрахт') || text.toLowerCase().includes('доставк')) {
+                    aiReply = currentLang === 'ru' 
+                        ? "📦 По маршруту Нинбо/Гуанчжоу — Бишкек текущий срок контейнерной доставки составляет 18–25 дней. Ставки фрахта стабильны (-4.2% за последний месяц)."
+                        : "📦 For Ningbo/Guangzhou — Bishkek route, container transit time is 18–25 days. Freight rates are currently stable (-4.2% MoM).";
+                } else if (text.toLowerCase().includes('инспекц') || text.toLowerCase().includes('брак') || text.toLowerCase().includes('aql')) {
+                    aiReply = currentLang === 'ru'
+                        ? "🛡️ Инспекторы в КНР проводят аудит строго по протоколу ISO 2859-1. При обнаружении критических дефектов средства автоматически замораживаются в Escrow-комнате."
+                        : "🛡️ Inspectors in China follow ISO 2859-1 protocol. If critical defects are found, funds remain locked in the Escrow dispute room.";
+                }
+
+                chatBox.innerHTML += `
+                    <div class="flex items-start gap-2.5">
+                        <div class="w-6 h-6 rounded-lg bg-purple-600 flex items-center justify-center text-white text-[10px] font-bold shrink-0">AI</div>
+                        <div class="bg-purple-950/60 border border-purple-900/40 p-3 rounded-2xl text-slate-200 max-w-xl">${aiReply}</div>
+                    </div>
+                `;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 800);
         }
 
         window.onload = () => {
