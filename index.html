@@ -64,10 +64,10 @@
                     <button onclick="switchLanguage('ru')" id="btn-ru" class="px-2.5 py-1 rounded-lg transition bg-purple-600 text-white">RU</button>
                     <button onclick="switchLanguage('en')" id="btn-en" class="px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white">EN</button>
                 </div>
-                <!-- Верхняя кнопка заказа инспекции ведет СТРОГО на форму -->
-                <a href="inspection_request.html" class="hidden sm:inline-block bg-gradient-to-r from-purple-600 to-cyan-500 text-white font-bold px-5 py-2.5 rounded-xl text-xs uppercase transition shadow-lg shadow-purple-600/30 hover:opacity-90 text-center leading-normal" data-ru="Заказать инспекцию" data-en="Request Inspection">
+                <!-- Верхняя кнопка заказа инспекции через принудительный JS переход на форму -->
+                <button onclick="window.location.href='inspection_request.html'" class="hidden sm:inline-block bg-gradient-to-r from-purple-600 to-cyan-500 text-white font-bold px-5 py-2.5 rounded-xl text-xs uppercase transition shadow-lg shadow-purple-600/30 hover:opacity-90 text-center leading-normal cursor-pointer" data-ru="Заказать инспекцию" data-en="Request Inspection">
                     Заказать инспекцию
-                </a>
+                </button>
             </div>
         </div>
     </header>
@@ -128,9 +128,9 @@
                     </div>
                     <p class="text-xs text-slate-400 mt-1" data-ru="Мониторинг фрахта, себестоимости сырья и индексации фабричных цен в реальном времени" data-en="Real-time freight rates, raw materials pricing, and factory cost indexes">Мониторинг фрахта, себестоимости сырья и индексации фабричных цен в реальном времени</p>
                 </div>
-                <a href="inspection_request.html?factory=AI%20Price%20Report" class="bg-purple-900/50 hover:bg-purple-800/80 border border-purple-700/50 text-purple-200 text-xs font-bold px-4 py-2.5 rounded-xl transition text-center" data-ru="Запросить кастомный AI-отчет" data-en="Request Custom AI Report">
+                <button onclick="window.location.href='inspection_request.html?factory=AI%20Price%20Report'" class="bg-purple-900/50 hover:bg-purple-800/80 border border-purple-700/50 text-purple-200 text-xs font-bold px-4 py-2.5 rounded-xl transition text-center cursor-pointer" data-ru="Запросить кастомный AI-отчет" data-en="Request Custom AI Report">
                     Запросить кастомный AI-отчет
-                </a>
+                </button>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
@@ -299,11 +299,11 @@
                             </div>
                         </div>
 
-                        <!-- Перенаправление строго на страницу полной формы заказа инспекции -->
-                        <a href="inspection_request.html?factory=${encodeURIComponent(s.name)}" 
-                            class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-xs font-bold uppercase py-3 rounded-2xl transition hover:opacity-90 text-center block">
+                        <!-- Принудительный JS переход на форму инспекции через onclick -->
+                        <button onclick="window.location.href='inspection_request.html?factory=${encodeURIComponent(s.name)}'" 
+                            class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-xs font-bold uppercase py-3 rounded-2xl transition hover:opacity-90 text-center block cursor-pointer">
                             ${currentLang === 'ru' ? 'Заказать инспекцию' : 'Request Inspection'}
-                        </a>
+                        </button>
                     </div>
                 `;
             });
