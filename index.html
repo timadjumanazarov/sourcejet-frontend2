@@ -328,7 +328,7 @@
             });
         }
 
-        // Интеграция с Supabase Edge Function (Вариант Б)
+        // Интеграция с серверной Supabase Edge Function (ai-sourcing)
         async function triggerAiSearch() {
             const searchQuery = document.getElementById('searchInput').value.trim();
             if (!searchQuery) return;
@@ -357,12 +357,13 @@
 
                 console.log("AI Sourcing Success:", data);
 
-                // Перезагружаем список фабрик из базы
+                // Перезагружаем список фабрик из базы данных
                 await loadSuppliers();
 
             } catch (err) {
                 console.error("AI Edge Function Error:", err);
                 alert("Ошибка AI-агента: " + (err.message || 'Не удалось выполнить запрос'));
+                promptBox.classList.remove('hidden');
             } finally {
                 loader.classList.add('hidden');
             }
