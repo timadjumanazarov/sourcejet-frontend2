@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seller Escrow & Dispute Room — SourceJet AI</title>
+    <title>Importer Escrow & Dispute Room — SourceJet AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -28,10 +28,10 @@
                 <div class="w-11 h-11 bg-gradient-to-tr from-purple-600 via-indigo-600 to-cyan-400 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-xl shadow-purple-500/25">⚡</div>
                 <div>
                     <span class="font-black text-xl tracking-wider text-white">SourceJet <span class="ai-gradient-text">AI</span></span>
-                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase">Escrow & Dispute Room</p>
+                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase" data-ru="Комната Escrow & Арбитража" data-en="Importer Escrow & Dispute Room">Комната Escrow & Арбитража</p>
                 </div>
             </div>
-            <a href="seller_dashboard.html" class="text-xs text-purple-400 hover:text-purple-300 font-bold transition">← Назад в кабинет селлера</a>
+            <a href="seller_dashboard.html" class="text-xs text-purple-400 hover:text-purple-300 font-bold transition" data-ru="← Назад в Портал импортера" data-en="← Back to Importer Portal">← Назад в Портал импортера</a>
         </div>
     </header>
 
@@ -46,20 +46,20 @@
                         <span id="roomLocation" class="text-xs font-mono text-purple-400 uppercase font-bold">Китай • Загрузка...</span>
                         <h1 id="roomFactory" class="text-2xl font-black text-white mt-1">Загрузка данных...</h1>
                     </div>
-                    <span class="bg-amber-950 text-amber-300 border border-amber-800 text-xs font-bold px-3 py-1 rounded-full uppercase">Escrow Held</span>
+                    <span class="bg-amber-950 text-amber-300 border border-amber-800 text-xs font-bold px-3 py-1 rounded-full uppercase" data-ru="Escrow заморожен" data-en="Escrow Held">Escrow заморожен</span>
                 </div>
 
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4 pt-2 border-t border-purple-900/30 text-xs">
                     <div>
-                        <span class="text-slate-500 block">Товар / Партия</span>
+                        <span class="text-slate-500 block" data-ru="Товар / Партия" data-en="Product / Batch">Товар / Партия</span>
                         <span id="roomProduct" class="font-bold text-cyan-300">—</span>
                     </div>
                     <div>
-                        <span class="text-slate-500 block">Инспектор</span>
+                        <span class="text-slate-500 block" data-ru="Инспектор" data-en="Inspector">Инспектор</span>
                         <span id="roomInspector" class="font-bold text-slate-200">—</span>
                     </div>
                     <div>
-                        <span class="text-slate-500 block">Статус проверки</span>
+                        <span class="text-slate-500 block" data-ru="Статус проверки" data-en="Audit Status">Статус проверки</span>
                         <span id="roomStatus" class="font-bold text-emerald-400">—</span>
                     </div>
                 </div>
@@ -67,10 +67,10 @@
                 <!-- 48-часовой таймер споров -->
                 <div class="bg-amber-950/40 p-4 rounded-2xl border border-amber-800/60 flex items-center justify-between">
                     <div>
-                        <div class="text-[10px] uppercase font-bold text-amber-400">⏱️ Окно подачи спора / Арбитража Escrow:</div>
-                        <div id="disputeTimer" class="text-lg font-black text-white">47ч 59мин до автовыплаты фабрике</div>
+                        <div class="text-[10px] uppercase font-bold text-amber-400" data-ru="⏱️ Окно подачи спора / Арбитража Escrow:" data-en="⏱️ Escrow Dispute & Arbitration Window:">⏱️ Окно подачи спора / Арбитража Escrow:</div>
+                        <div id="disputeTimer" class="text-lg font-black text-white" data-ru="47ч 59мин до автовыплаты фабрике" data-en="47h 59m until factory payout">47ч 59мин до автовыплаты фабрике</div>
                     </div>
-                    <button onclick="openDispute()" class="bg-rose-600 hover:bg-rose-500 text-white font-bold px-4 py-2 rounded-xl text-xs uppercase transition shadow-lg">
+                    <button onclick="openDispute()" class="bg-rose-600 hover:bg-rose-500 text-white font-bold px-4 py-2 rounded-xl text-xs uppercase transition shadow-lg" data-ru="⚠️ Подать спор" data-en="⚠️ Raise Dispute">
                         ⚠️ Подать спор
                     </button>
                 </div>
@@ -78,9 +78,9 @@
 
             <!-- Секция отчета и документов -->
             <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 space-y-4">
-                <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">📄 Инспекционный отчет & AQL (ISO 2859-1)</h3>
-                <p class="text-xs text-slate-300">Полный Enterprise-отчет с фотографиями дефектов с фабрики, подписью инспектора и результатами проверки.</p>
-                <button onclick="alert('Генерация официального PDF-отчета SourceJet AI...')" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 py-3 rounded-xl text-xs uppercase tracking-wider transition shadow-lg">
+                <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300" data-ru="📄 Инспекционный отчет & AQL (ISO 2859-1)" data-en="📄 Inspection Report & AQL (ISO 2859-1)">📄 Инспекционный отчет & AQL (ISO 2859-1)</h3>
+                <p class="text-xs text-slate-300" data-ru="Полный Enterprise-отчет с фотографиями дефектов с фабрики, подписью инспектора и результатами проверки." data-en="Enterprise audit report including factory defect photography, inspector verification, and compliance metrics.">Полный Enterprise-отчет с фотографиями дефектов с фабрики, подписью инспектора и результатами проверки.</p>
+                <button onclick="alert('Генерация официального Enterprise PDF-отчета SourceJet AI...')" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 py-3 rounded-xl text-xs uppercase tracking-wider transition shadow-lg" data-ru="📥 Скачать Enterprise PDF-отчет" data-en="📥 Download Enterprise PDF Report">
                     📥 Скачать Enterprise PDF-отчет
                 </button>
             </div>
@@ -88,13 +88,13 @@
 
         <!-- Правая колонка: Чат комнаты -->
         <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 flex flex-col h-[650px]">
-            <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300 mb-4">💬 Чат сделки & Арбитраж</h3>
+            <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300 mb-4" data-ru="💬 Чат сделки & Арбитраж" data-en="💬 Deal Chat & Arbitration">💬 Чат сделки & Арбитраж</h3>
             <div id="roomMessages" class="flex-1 overflow-y-auto space-y-3 pr-2 text-xs mb-4">
-                <div class="text-center text-slate-500 py-10">Загрузка сообщений...</div>
+                <div class="text-center text-slate-500 py-10" data-ru="Загрузка сообщений..." data-en="Loading messages...">Загрузка сообщений...</div>
             </div>
             <div class="flex gap-2 pt-2 border-t border-purple-900/30">
-                <input type="text" id="roomMessageInput" placeholder="Сообщение по сделке..." class="flex-1 bg-slate-950 border border-purple-900/60 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-purple-500" onkeydown="if(event.key === 'Enter') sendRoomMessage()">
-                <button onclick="sendRoomMessage()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 rounded-xl text-xs uppercase transition">Отправить</button>
+                <input type="text" id="roomMessageInput" data-ru-ph="Сообщение по сделке..." data-en-ph="Deal message..." placeholder="Сообщение по сделке..." class="flex-1 bg-slate-950 border border-purple-900/60 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-purple-500" onkeydown="if(event.key === 'Enter') sendRoomMessage()">
+                <button onclick="sendRoomMessage()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 rounded-xl text-xs uppercase transition" data-ru="Отправить" data-en="Send">Отправить</button>
             </div>
         </div>
 
@@ -142,13 +142,13 @@
         async function sendRoomMessage() {
             const input = document.getElementById('roomMessageInput');
             if (!input.value.trim()) return;
-            await supabaseClient.from('inspection_messages').insert([{ inspection_id: inspectionId, message: input.value, sender: 'Seller' }]);
+            await supabaseClient.from('inspection_messages').insert([{ inspection_id: inspectionId, message: input.value, sender: 'Importer' }]);
             input.value = '';
             loadRoomMessages();
         }
 
         function openDispute() {
-            alert('Спор по сделке инициирован. Средства заморожены на Escrow-счете до решения арбитража SourceJet AI.');
+            alert('Спор по сделке инициирован. Средства надежно заморожены на Escrow-счете до завершения арбитража SourceJet AI.');
         }
     </script>
 </body>
