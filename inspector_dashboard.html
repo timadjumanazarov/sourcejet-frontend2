@@ -38,6 +38,9 @@
                     <button onclick="switchLanguage('ru')" id="btn-ru" class="px-2.5 py-1 rounded-lg transition bg-purple-600 text-white">RU</button>
                     <button onclick="switchLanguage('en')" id="btn-en" class="px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white">EN</button>
                 </div>
+                <button onclick="createTestInspection()" class="bg-purple-600/40 hover:bg-purple-600 text-purple-200 hover:text-white border border-purple-800 px-3 py-1.5 rounded-xl text-xs font-bold transition">
+                    + <span data-ru="Создать тест" data-en="Create Test">Создать тест</span>
+                </button>
                 <a href="index.html" class="text-xs text-purple-400 hover:text-purple-300 font-bold transition" data-ru="← На главную" data-en="← Main Catalog">← На главную</a>
             </div>
         </div>
@@ -49,12 +52,12 @@
         <!-- Верхняя аналитика инспектора -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="glass-panel p-6 rounded-3xl border border-purple-900/40">
-                <span class="text-xs text-slate-400 font-bold uppercase" data-ru="Назначено аудитов" data-en="Assigned Audits">Назначено аудитов</span>
+                <span class="text-xs text-slate-400 font-bold uppercase" data-ru="Всего заявок" data-en="Total Requests">Всего заявок</span>
                 <div id="statAssigned" class="text-3xl font-black text-white mt-2">0</div>
             </div>
             <div class="glass-panel p-6 rounded-3xl border border-purple-900/40">
-                <span class="text-xs text-slate-400 font-bold uppercase" data-ru="Выполнено проверок" data-en="Completed Audits">Выполнено проверок</span>
-                <div id="statCompleted" class="text-3xl font-black text-emerald-400 mt-2">0</div>
+                <span class="text-xs text-slate-400 font-bold uppercase" data-ru="В работе / Ожидание" data-en="Active / Pending">В работе / Ожидание</span>
+                <div id="statActive" class="text-3xl font-black text-amber-400 mt-2">0</div>
             </div>
             <div class="glass-panel p-6 rounded-3xl border border-purple-900/40">
                 <span class="text-xs text-slate-400 font-bold uppercase" data-ru="Статус терминала" data-en="Terminal Status">Статус терминала</span>
@@ -77,7 +80,7 @@
                             <th class="p-4" data-ru="Локация в КНР" data-en="China Location">Локация в КНР</th>
                             <th class="p-4" data-ru="Заказчик" data-en="Client">Заказчик</th>
                             <th class="p-4" data-ru="Статус" data-en="Status">Статус</th>
-                            <th class="p-4 text-right" data-ru="Полевой терминал" data-en="Field Terminal">Полевой терминал</th>
+                            <th class="p-4 text-right" data-ru="Действие" data-en="Action">Действие</th>
                         </tr>
                     </thead>
                     <tbody id="inspectorInspectionsBody" class="divide-y divide-purple-900/20">
@@ -92,7 +95,7 @@
     </main>
 
     <footer class="border-t border-purple-900/30 bg-slate-900/80 py-6 text-center text-xs text-slate-500">
-        <p>© 2026 SourceJet AI. Inspector Field Terminal.</p>
+        <p>© 2026 SourceJet AI. Inspector Dispatch Dashboard.</p>
     </footer>
 
     <script>
@@ -123,13 +126,13 @@
                 .order('created_at', { ascending: false });
 
             if (error || !data) {
-                document.getElementById('inspectorInspectionsBody').innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-400">Database error</td></tr>`;
+                document.getElementById('inspectorInspectionsBody').innerHTML = `<tr><td colspan="5" class="p-8 text-center text-rose-400">Ошибка загрузки из базы данных</td></tr>`;
                 return;
             }
 
             window.loadedInspections = data;
             document.getElementById('statAssigned').innerText = data.length;
-            document.getElementById('statCompleted').innerText = data.filter(i => i.status === 'completed' || i.status === 'inspected').length;
+            document.getElementById('statActive').innerText = data.filter(i => i.status !== 'completed').length;
             
             renderInspectorQueue(data);
         }
@@ -137,7 +140,7 @@
         function renderInspectorQueue(data) {
             const tbody = document.getElementById('inspectorInspectionsBody');
             if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-500">${currentLang === 'ru' ? 'Нет назначенных инспекций' : 'No inspections assigned'}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-500">${currentLang === 'ru' ? 'Нет активных заявок в базе. Нажмите «Создать тест» вверху.' : 'No active requests. Click «Create Test» above.'}</td></tr>`;
                 return;
             }
 
@@ -150,12 +153,12 @@
                             <div class="font-bold text-white">${item.factory_name || 'Фабрика'}</div>
                             <div class="text-[10px] text-slate-400">${item.product_name || 'Товар / Лот'}</div>
                         </td>
-                        <td class="p-4 text-slate-300">${item.country || 'Китай'}, ${item.city || 'Город'}</td>
-                        <td class="p-4 text-cyan-300 font-medium">${item.client_name || 'Клиент'}</td>
+                        <td class="p-4 text-slate-300">${item.country || 'Китай'}, ${item.city || 'Иу'}</td>
+                        <td class="p-4 text-cyan-300 font-medium">${item.client_name || 'Темирлан'}</td>
                         <td class="p-4"><span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-950 text-purple-300 border border-purple-800">${status}</span></td>
-                        <td class="p-4 text-right">
+                        <td class="p-4 text-right space-x-2">
                             <a href="inspector_room.html?id=${item.id}" class="inline-block bg-gradient-to-r from-purple-600 to-cyan-500 hover:opacity-90 text-white font-bold px-4 py-2 rounded-xl transition text-xs shadow-lg">
-                                📋 ${currentLang === 'ru' ? 'Открыть терминал' : 'Open Terminal'}
+                                📋 ${currentLang === 'ru' ? 'Терминал' : 'Terminal'}
                             </a>
                         </td>
                     </tr>
@@ -163,6 +166,27 @@
             });
 
             tbody.innerHTML = html;
+        }
+
+        async function createTestInspection() {
+            const { error } = await supabaseClient.from('inspections').insert([{
+                factory_name: 'Yiwu Smart Electronics Ltd',
+                product_name: 'Bluetooth Earbuds TWS',
+                country: 'Китай',
+                city: 'Иу',
+                client_name: 'Темирлан',
+                inspector_name: 'Ван Вэй',
+                status: 'new',
+                escrow_status: 'held',
+                dispute_deadline: new Date(Date.now() + 48*3600*1000).toISOString(),
+                requirements: { notes: 'Проверить упаковку и серийные номера.' }
+            }]);
+
+            if (error) {
+                alert('Ошибка создания: ' + error.message);
+            } else {
+                loadInspectorInspections();
+            }
         }
 
         window.onload = () => {
