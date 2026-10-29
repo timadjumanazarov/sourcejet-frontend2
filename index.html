@@ -328,7 +328,7 @@
             });
         }
 
-        // Логика авто-поиска ИИ при отсутствии результатов
+        // Интеграция с Supabase Edge Function (Вариант Б)
         async function triggerAiSearch() {
             const searchQuery = document.getElementById('searchInput').value.trim();
             if (!searchQuery) return;
@@ -340,35 +340,29 @@
             loader.classList.remove('hidden');
 
             try {
-                // Имитация сканирования глобальной сети ИИ-агентом
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                const currentCategory = document.getElementById('categorySelect').value;
 
-                const currentCategory = document.getElementById('categorySelect').value !== 'ALL' 
-                    ? document.getElementById('categorySelect').value 
-                    : 'Электроника';
+                // Вызов серверной Edge Function в Supabase
+                const { data, error } = await supabaseClient.functions.invoke('ai-sourcing', {
+                    body: { 
+                        query: searchQuery, 
+                        category: currentCategory, 
+                        lang: currentLang 
+                    }
+                });
 
-                const formattedQuery = searchQuery.charAt(0).toUpperCase() + searchQuery.slice(1);
+                if (error) {
+                    throw error;
+                }
 
-                // ИИ формирует двуязычные карточки фабрик под конкретный запрос
-                const newAiSupplier = {
-                    name: currentLang === 'ru' ? `${formattedQuery} — Промышленный Холдинг` : `${formattedQuery} Global Manufacturing Co.`,
-                    category: currentCategory,
-                    location: 'Shenzhen / Yiwu, China',
-                    moq: '500 pcs',
-                    rating: 4.95,
-                    verified: true
-                };
+                console.log("AI Sourcing Success:", data);
 
-                // Автоматически сохраняем найденную ИИ фабрику в Supabase
-                const { error } = await supabaseClient.from('suppliers').insert([newAiSupplier]);
-                
-                if (error) console.warn("Supabase insert notice:", error);
-
-                // Перезагружаем список фабрик
+                // Перезагружаем список фабрик из базы
                 await loadSuppliers();
 
             } catch (err) {
-                console.error("AI Search Error:", err);
+                console.error("AI Edge Function Error:", err);
+                alert("Ошибка AI-агента: " + (err.message || 'Не удалось выполнить запрос'));
             } finally {
                 loader.classList.add('hidden');
             }
