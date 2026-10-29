@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inspector Dispatch Dashboard — SourceJet AI</title>
+    <title>Inspector Workspace — SourceJet AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -24,175 +24,166 @@
     <!-- Header -->
     <header class="border-b border-purple-900/30 bg-slate-900/80 backdrop-blur-xl sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-3.5">
+            <a href="index.html" class="flex items-center gap-3.5">
                 <div class="w-11 h-11 bg-gradient-to-tr from-purple-600 via-indigo-600 to-cyan-400 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-xl shadow-purple-500/25">⚡</div>
                 <div>
                     <span class="font-black text-xl tracking-wider text-white">SourceJet <span class="ai-gradient-text">AI</span></span>
-                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase" data-ru="Панель Инспектора & Терминал" data-en="Inspector Terminal & Hub">Панель Инспектора & Терминал</p>
+                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase">Inspector Terminal</p>
                 </div>
-            </div>
-
-            <!-- Языковой переключатель и навигация -->
-            <div class="flex items-center gap-4">
-                <div class="bg-slate-900 border border-purple-900/50 rounded-xl p-1 flex items-center gap-1 text-xs font-bold">
-                    <button onclick="switchLanguage('ru')" id="btn-ru" class="px-2.5 py-1 rounded-lg transition bg-purple-600 text-white">RU</button>
-                    <button onclick="switchLanguage('en')" id="btn-en" class="px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white">EN</button>
-                </div>
-                <button onclick="createTestInspection()" class="bg-purple-600/40 hover:bg-purple-600 text-purple-200 hover:text-white border border-purple-800 px-3 py-1.5 rounded-xl text-xs font-bold transition">
-                    + <span data-ru="Создать тест" data-en="Create Test">Создать тест</span>
-                </button>
-                <a href="index.html" class="text-xs text-purple-400 hover:text-purple-300 font-bold transition" data-ru="← На главную" data-en="← Main Catalog">← На главную</a>
+            </a>
+            
+            <div class="flex items-center gap-2">
+                <button id="lang-ru" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-600 text-white">RU</button>
+                <button id="lang-en" class="px-2.5 py-1 rounded-lg text-xs font-bold text-slate-400">EN</button>
             </div>
         </div>
     </header>
 
     <!-- Main Workspace -->
-    <main class="max-w-7xl mx-auto px-6 py-10 flex-1 w-full space-y-10">
+    <main class="max-w-6xl mx-auto px-6 py-10 flex-1 w-full space-y-8">
         
-        <!-- Верхняя аналитика инспектора -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="glass-panel p-6 rounded-3xl border border-purple-900/40">
-                <span class="text-xs text-slate-400 font-bold uppercase" data-ru="Всего заявок" data-en="Total Requests">Всего заявок</span>
-                <div id="statAssigned" class="text-3xl font-black text-white mt-2">0</div>
+        <!-- Filter Bar -->
+        <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div>
+                <h1 class="text-xl font-bold text-white" data-ru="Панель локального инспектора" data-en="Local Inspector Dashboard">Панель локального инспектора</h1>
+                <p class="text-xs text-slate-400 mt-1" data-ru="Все активные заказы по инспекциям в Китае" data-en="All active inspection tasks in China">Все активные заказы по инспекциям в Китае</p>
             </div>
-            <div class="glass-panel p-6 rounded-3xl border border-purple-900/40">
-                <span class="text-xs text-slate-400 font-bold uppercase" data-ru="В работе / Ожидание" data-en="Active / Pending">В работе / Ожидание</span>
-                <div id="statActive" class="text-3xl font-black text-amber-400 mt-2">0</div>
-            </div>
-            <div class="glass-panel p-6 rounded-3xl border border-purple-900/40">
-                <span class="text-xs text-slate-400 font-bold uppercase" data-ru="Статус терминала" data-en="Terminal Status">Статус терминала</span>
-                <div class="text-3xl font-black text-cyan-400 mt-2">Online 🟢</div>
+
+            <div class="flex items-center gap-3 w-full md:w-auto">
+                <select id="inspectorCity" class="bg-slate-950 border border-purple-900/60 rounded-xl px-4 py-2 text-xs font-bold text-cyan-300 focus:outline-none">
+                    <option value="Yiwu">📍 Yiwu (Иу)</option>
+                    <option value="Guangzhou">📍 Guangzhou (Гуанчжоу)</option>
+                    <option value="Shenzhen">📍 Shenzhen (Шэньчжэнь)</option>
+                    <option value="Foshan">📍 Foshan (Фошань)</option>
+                    <option value="Ningbo">📍 Ningbo (Нинбо)</option>
+                </select>
+
+                <button id="refreshBtn" class="bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition">
+                    🔄 <span data-ru="Обновить" data-en="Refresh">Обновить</span>
+                </button>
             </div>
         </div>
 
-        <!-- Список назначенных инспекций для полевой работы -->
-        <section class="space-y-4">
-            <div class="flex justify-between items-center">
-                <h2 class="text-xl font-black text-white" data-ru="Очередь инспекций на фабриках" data-en="Factory Inspection Queue">Очередь инспекций на фабриках</h2>
-                <span class="text-xs text-purple-400 font-mono" data-ru="ISO 2859-1 AQL Ready" data-en="ISO 2859-1 AQL Ready">ISO 2859-1 AQL Ready</span>
-            </div>
-            
-            <div class="glass-panel rounded-3xl border border-purple-900/50 overflow-hidden shadow-2xl">
-                <table class="w-full text-left text-xs">
-                    <thead class="bg-slate-900/90 border-b border-purple-900/40 text-slate-400 font-bold uppercase">
-                        <tr>
-                            <th class="p-4" data-ru="Фабрика / Заказ" data-en="Factory / Order">Фабрика / Заказ</th>
-                            <th class="p-4" data-ru="Локация в КНР" data-en="China Location">Локация в КНР</th>
-                            <th class="p-4" data-ru="Заказчик" data-en="Client">Заказчик</th>
-                            <th class="p-4" data-ru="Статус" data-en="Status">Статус</th>
-                            <th class="p-4 text-right" data-ru="Действие" data-en="Action">Действие</th>
-                        </tr>
-                    </thead>
-                    <tbody id="inspectorInspectionsBody" class="divide-y divide-purple-900/20">
-                        <tr>
-                            <td colspan="5" class="p-8 text-center text-slate-500" data-ru="Загрузка очереди инспекций..." data-en="Loading inspection queue...">Загрузка очереди инспекций...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
+        <!-- Orders Grid -->
+        <div id="ordersList" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Сюда подгружаются заказы из Supabase -->
+        </div>
 
     </main>
 
-    <footer class="border-t border-purple-900/30 bg-slate-900/80 py-6 text-center text-xs text-slate-500">
-        <p>© 2026 SourceJet AI. Inspector Dispatch Dashboard.</p>
+    <footer class="border-t border-purple-900/30 bg-slate-900/80 py-8 text-center text-xs text-slate-500">
+        <p>© 2026 SourceJet AI. Inspector Dispatch & Field Ops.</p>
     </footer>
 
     <script>
-        let currentLang = localStorage.getItem('sourcejet_lang') || 'ru';
         const SUPABASE_URL = 'https://ozpskokidbhqtoeykyzf.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_Zpkfm-iDWB7WuHrAp1jDtQ_1w_QU8s0';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        function switchLanguage(lang) {
-            currentLang = lang;
-            localStorage.setItem('sourcejet_lang', lang);
+        let currentLang = 'ru';
 
-            document.getElementById('btn-ru').className = lang === 'ru' ? 'px-2.5 py-1 rounded-lg transition bg-purple-600 text-white font-bold' : 'px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white';
-            document.getElementById('btn-en').className = lang === 'en' ? 'px-2.5 py-1 rounded-lg transition bg-purple-600 text-white font-bold' : 'px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white';
+        function switchLang(lang) {
+            currentLang = lang;
+            document.getElementById('lang-ru').className = lang === 'ru' ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-600 text-white' : 'px-2.5 py-1 rounded-lg text-xs font-bold text-slate-400';
+            document.getElementById('lang-en').className = lang === 'en' ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-600 text-white' : 'px-2.5 py-1 rounded-lg text-xs font-bold text-slate-400';
 
             document.querySelectorAll('[data-ru]').forEach(el => {
                 const text = el.getAttribute(`data-${lang}`);
                 if (text) el.innerText = text;
             });
 
-            if (window.loadedInspections) renderInspectorQueue(window.loadedInspections);
+            loadOrders();
         }
 
-        async function loadInspectorInspections() {
+        async function loadOrders() {
+            const container = document.getElementById('ordersList');
+            container.innerHTML = '<div class="col-span-full text-center text-slate-500 py-10">Загрузка всех заказов из базы...</div>';
+
             const { data, error } = await supabaseClient
                 .from('inspections')
                 .select('*')
                 .order('created_at', { ascending: false });
 
-            if (error || !data) {
-                document.getElementById('inspectorInspectionsBody').innerHTML = `<tr><td colspan="5" class="p-8 text-center text-rose-400">Ошибка загрузки из базы данных</td></tr>`;
+            if (error) {
+                container.innerHTML = `<div class="col-span-full text-center text-rose-400 py-10">Ошибка: ${error.message}</div>`;
                 return;
             }
 
-            window.loadedInspections = data;
-            document.getElementById('statAssigned').innerText = data.length;
-            document.getElementById('statActive').innerText = data.filter(i => i.status !== 'completed').length;
-            
-            renderInspectorQueue(data);
-        }
-
-        function renderInspectorQueue(data) {
-            const tbody = document.getElementById('inspectorInspectionsBody');
-            if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-500">${currentLang === 'ru' ? 'Нет активных заявок в базе. Нажмите «Создать тест» вверху.' : 'No active requests. Click «Create Test» above.'}</td></tr>`;
+            if (!data || data.length === 0) {
+                container.innerHTML = `<div class="col-span-full text-center text-slate-500 py-10">В базе данных пока нет ни одной заявки. Создайте новую через форму!</div>`;
                 return;
             }
 
             let html = '';
-            data.forEach(item => {
-                const status = (item.status || 'new').toUpperCase();
+            data.forEach(order => {
+                const isInProgress = order.status === 'in_progress';
+
                 html += `
-                    <tr class="hover:bg-purple-950/20 transition">
-                        <td class="p-4">
-                            <div class="font-bold text-white">${item.factory_name || 'Фабрика'}</div>
-                            <div class="text-[10px] text-slate-400">${item.product_name || 'Товар / Лот'}</div>
-                        </td>
-                        <td class="p-4 text-slate-300">${item.country || 'Китай'}, ${item.city || 'Иу'}</td>
-                        <td class="p-4 text-cyan-300 font-medium">${item.client_name || 'Темирлан'}</td>
-                        <td class="p-4"><span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-950 text-purple-300 border border-purple-800">${status}</span></td>
-                        <td class="p-4 text-right space-x-2">
-                            <a href="inspector_room.html?id=${item.id}" class="inline-block bg-gradient-to-r from-purple-600 to-cyan-500 hover:opacity-90 text-white font-bold px-4 py-2 rounded-xl transition text-xs shadow-lg">
-                                📋 ${currentLang === 'ru' ? 'Терминал' : 'Terminal'}
-                            </a>
-                        </td>
-                    </tr>
+                    <div class="glass-panel p-6 rounded-3xl border ${isInProgress ? 'border-amber-500/40' : 'border-purple-900/40'} space-y-4 flex flex-col justify-between">
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-start gap-2">
+                                <div>
+                                    <span class="text-[10px] font-mono text-purple-400 uppercase font-bold">Город: ${order.city}</span>
+                                    <h3 class="text-lg font-bold text-white mt-0.5">${order.factory_name || 'Фабрика'}</h3>
+                                </div>
+                                <span class="text-[10px] px-2.5 py-1 rounded-full font-bold uppercase ${isInProgress ? 'bg-amber-950 text-amber-300 border border-amber-800' : 'bg-purple-950 text-purple-300 border border-purple-800'}">
+                                    ${order.status || 'new'}
+                                </span>
+                            </div>
+
+                            <div class="space-y-1.5 text-xs text-slate-300">
+                                <p><strong>📍 Адрес:</strong> ${order.address_chinese || 'Не указан'}</p>
+                                <p><strong>📅 Дата проверки:</strong> ${order.scheduled_date || 'По договоренности'}</p>
+                                <p><strong>📋 Тип:</strong> <span class="text-cyan-400 font-bold">${order.inspection_type || 'Стандарт'}</span></p>
+                                <p><strong>👤 Клиент:</strong> ${order.client_name || 'Не указан'}</p>
+                                <p class="text-[10px] text-slate-500 font-mono">ID: ${order.id}</p>
+                            </div>
+                        </div>
+
+                        <div class="pt-2">
+                            ${isInProgress ? `
+                                <button onclick="openChat('${order.id}')" class="w-full bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold py-3 rounded-xl uppercase tracking-wider transition flex items-center justify-center gap-2">
+                                    💬 <span>В комнату инспекции</span>
+                                </button>
+                            ` : `
+                                <button onclick="claimOrder('${order.id}')" class="w-full bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold py-3 rounded-xl uppercase tracking-wider transition">
+                                    Принять заказ на выезд
+                                </button>
+                            `}
+                        </div>
+                    </div>
                 `;
             });
-
-            tbody.innerHTML = html;
+            container.innerHTML = html;
         }
 
-        async function createTestInspection() {
-            const { error } = await supabaseClient.from('inspections').insert([{
-                factory_name: 'Yiwu Smart Electronics Ltd',
-                product_name: 'Bluetooth Earbuds TWS',
-                country: 'Китай',
-                city: 'Иу',
-                client_name: 'Темирлан',
-                inspector_name: 'Ван Вэй',
-                status: 'new',
-                escrow_status: 'held',
-                dispute_deadline: new Date(Date.now() + 48*3600*1000).toISOString(),
-                requirements: { notes: 'Проверить упаковку и серийные номера.' }
-            }]);
-
-            if (error) {
-                alert('Ошибка создания: ' + error.message);
-            } else {
-                loadInspectorInspections();
+        async function claimOrder(id) {
+            try {
+                await supabaseClient
+                    .from('inspections')
+                    .update({ 
+                        status: 'in_progress',
+                        inspector_name: 'Китайский инспектор'
+                    })
+                    .eq('id', id);
+            } catch (err) {
+                console.warn("Update notice:", err);
             }
+            window.location.href = `inspection_room.html?id=${id}`;
         }
 
-        window.onload = () => {
-            switchLanguage(currentLang);
-            loadInspectorInspections();
-        };
+        function openChat(id) {
+            window.location.href = `inspection_room.html?id=${id}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('lang-ru').addEventListener('click', () => switchLang('ru'));
+            document.getElementById('lang-en').addEventListener('click', () => switchLang('en'));
+            document.getElementById('inspectorCity').addEventListener('change', loadOrders);
+            document.getElementById('refreshBtn').addEventListener('click', loadOrders);
+
+            loadOrders();
+        });
     </script>
 </body>
 </html>
