@@ -48,6 +48,7 @@
 
             <nav class="hidden md:flex items-center gap-6 text-xs font-semibold uppercase tracking-wider text-slate-300">
                 <a href="#search-section" class="hover:text-purple-400 transition" data-ru="Поиск фабрик" data-en="Suppliers Hub">Поиск фабрик</a>
+                <button onclick="openDatabaseModal()" class="hover:text-purple-400 transition text-cyan-300 font-bold cursor-pointer" data-ru="📁 Вся база фабрик" data-en="📁 Full Database">📁 Вся база фабрик</button>
                 <a href="cargo_tracker.html" class="hover:text-purple-400 transition" data-ru="Трекинг грузов" data-en="Cargo Tracking">Трекинг грузов</a>
                 <a href="#analytics" class="hover:text-purple-400 transition" data-ru="Аналитика цен" data-en="AI Analytics">Аналитика цен</a>
                 
@@ -55,8 +56,6 @@
                     <span data-ru="База инспекторов" data-en="Inspectors Network">База инспекторов</span>
                     <span class="text-[7px] bg-purple-950 text-purple-300 border border-purple-800 px-1.5 py-0.5 rounded-full font-bold -translate-y-1">GLOBAL</span>
                 </a>
-
-                <a href="importer_dashboard.html" class="hover:text-purple-400 transition text-cyan-300 font-bold" data-ru="Кабинет импортера" data-en="Importer Portal">Кабинет импортера</a>
             </nav>
 
             <div class="flex items-center gap-4">
@@ -82,38 +81,9 @@
             <span data-ru="Поиск поставщиков и аудит фабрик" data-en="Next-Gen AI Sourcing & Verification">Поиск поставщиков и аудит фабрик</span> <br>
             <span class="ai-gradient-text" data-ru="для глобального бизнеса" data-en="for Global Trade Ecosystems">для глобального бизнеса</span>
         </h1>
-        <p class="text-slate-400 text-sm max-w-2xl mx-auto" data-ru="Автоматизированный аудит заводов, сквозной контроль качества, верификация юрлиц и живой логистический трекинг." data-en="Automated factory audits, smart quality inspections, enterprise-grade supplier vetting, and real-time logistics tracking.">
-            Автоматизированный аудит заводов, сквозной контроль качества, верификация юрлиц и живой логистический трекинг.
+        <p class="text-slate-400 text-sm max-w-2xl mx-auto" data-ru="Введите поисковый запрос, чтобы активировать AI Sourcing Agent и мгновенно найти нужные заводы." data-en="Enter your search query to activate AI Sourcing Agent and instantly find matching factories.">
+            Введите поисковый запрос, чтобы активировать AI Sourcing Agent и мгновенно найти нужные заводы.
         </p>
-
-        <!-- Dynamic Live Widgets -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto pt-2 text-left">
-            <div class="glass-panel p-4 rounded-2xl flex items-center justify-between border border-purple-900/40">
-                <div>
-                    <div class="text-[10px] uppercase font-bold text-slate-400" data-ru="AI-Индекс Безопасности Сделок" data-en="AI Risk Mitigation Index">AI-Индекс Безопасности Сделок</div>
-                    <div class="text-2xl font-black text-cyan-400 mt-1">99.4%</div>
-                    <div class="text-[9px] text-emerald-400 mt-0.5">● Live Verification Active</div>
-                </div>
-                <div class="flex items-end gap-1.5 h-10 w-20">
-                    <div class="w-3 bg-purple-500 rounded-t animate-bar-1"></div>
-                    <div class="w-3 bg-indigo-500 rounded-t animate-bar-2"></div>
-                    <div class="w-3 bg-cyan-400 rounded-t animate-bar-3"></div>
-                    <div class="w-3 bg-emerald-400 rounded-t animate-bar-4"></div>
-                </div>
-            </div>
-
-            <div class="glass-panel p-4 rounded-2xl flex items-center justify-between border border-purple-900/40">
-                <div>
-                    <div class="text-[10px] uppercase font-bold text-slate-400" data-ru="Мониторинг Поставок в Пути" data-en="Active Supply Lines Tracked">Мониторинг Поставок в Пути</div>
-                    <div class="text-2xl font-black text-purple-400 mt-1">$14.2M+</div>
-                    <div class="text-[9px] text-purple-300 mt-0.5" data-ru="Объем грузов под контролем" data-en="Cargo Volume Under Management">Объем грузов под контролем</div>
-                </div>
-                <div class="relative w-10 h-10 flex items-center justify-center">
-                    <span class="absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-25 animate-ping"></span>
-                    <span class="relative inline-flex rounded-full h-6 w-6 bg-purple-600 border-2 border-cyan-400"></span>
-                </div>
-            </div>
-        </div>
     </section>
 
     <!-- SEARCH & CATALOG -->
@@ -121,9 +91,9 @@
         <div class="glass-panel p-6 rounded-3xl space-y-4">
             <div class="flex flex-col md:flex-row gap-4">
                 <input type="text" id="searchInput" oninput="renderSuppliers()" 
-                    data-ru-ph="Поиск по названию фабрики, городу или категории..."
+                    data-ru-ph="Например: ткани для сумок, электроника, упаковка..."
                     data-en-ph="Search by factory name, city, or category..."
-                    placeholder="Поиск по названию фабрики, городу или категории..." 
+                    placeholder="Например: ткани для сумок, электроника, упаковка..." 
                     class="w-full bg-slate-950/90 border border-purple-900/60 rounded-2xl px-5 py-4 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-sm">
                 
                 <select id="categorySelect" onchange="renderSuppliers()" 
@@ -133,10 +103,6 @@
                     <option value="Текстиль">Текстиль / Textiles</option>
                     <option value="Упаковка">Упаковка / Packaging</option>
                 </select>
-            </div>
-            
-            <div class="flex justify-between items-center text-xs text-slate-400 px-1 pt-1">
-                <span id="resultsCount">Загрузка...</span>
             </div>
 
             <!-- Блок с предложением AI-поиска, если результаты не найдены -->
@@ -158,70 +124,37 @@
 
         <div class="flex justify-between items-end">
             <h2 class="text-2xl font-bold text-white flex items-center gap-3">
-                <span data-ru="Проверенные производители" data-en="Verified Manufacturers Hub">Проверенные производители</span>
-                <span class="text-[9px] font-mono bg-indigo-950 text-indigo-300 border border-indigo-800 px-2.5 py-1 rounded-full uppercase">OPENAI PROXY LIVE</span>
+                <span data-ru="Результаты поиска" data-en="Search Results">Результаты поиска</span>
+                <span id="resultsCount" class="text-[9px] font-mono bg-indigo-950 text-indigo-300 border border-indigo-800 px-2.5 py-1 rounded-full uppercase">0 фабрик</span>
             </h2>
         </div>
 
-        <div id="suppliersGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
-    </section>
-
-    <!-- AI Price Analytics Section -->
-    <section id="analytics" class="max-w-7xl mx-auto px-6 pb-20 w-full">
-        <div class="glass-panel p-8 rounded-3xl border border-purple-900/40 space-y-6">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                    <div class="flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
-                        <h2 class="text-xl font-bold text-white uppercase tracking-wider" data-ru="AI Аналитика Цен и Динамика Рынка" data-en="AI Price Intelligence & Market Trends">AI Аналитика Цен и Динамика Рынка</h2>
-                    </div>
-                    <p id="analyticsSubtitle" class="text-xs text-slate-400 mt-1" data-ru="Мониторинг фрахта, себестоимости сырья и индексации фабричных цен в реальном времени" data-en="Real-time freight rates, raw materials pricing, and factory cost indexes">Мониторинг фрахта, себестоимости сырья и индексации фабричных цен в реальном времени</p>
-                </div>
-                <button onclick="window.location.href='inspection_request.html?factory=AI%20Price%20Report'" class="bg-purple-900/50 hover:bg-purple-800/80 border border-purple-700/50 text-purple-200 text-xs font-bold px-4 py-2.5 rounded-xl transition text-center cursor-pointer" data-ru="Запросить кастомный AI-отчет" data-en="Request Custom AI Report">
-                    Запросить кастомный AI-отчет
-                </button>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
-                <div class="bg-slate-950/80 border border-purple-900/40 p-5 rounded-2xl space-y-3">
-                    <div class="flex justify-between items-center">
-                        <span class="text-xs font-semibold text-slate-400" data-ru="Контейнерный фрахт (40ft HQ)" data-en="Container Freight (40ft HQ)">Контейнерный фрахт (40ft HQ)</span>
-                        <span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded-full font-bold">-4.2%</span>
-                    </div>
-                    <div class="text-2xl font-black text-white">$3,850 <span class="text-xs font-normal text-slate-500">/ Ningbo-Bishkek</span></div>
-                    <div class="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden">
-                        <div class="bg-gradient-to-r from-purple-500 to-cyan-400 h-full w-[65%]" style="width: 65%;"></div>
-                    </div>
-                    <p class="text-[10px] text-slate-500" data-ru="Стабильный тренд на снижение стоимости логистики" data-en="Stable downward trend in logistics costs">Стабильный тренд на снижение стоимости логистики</p>
-                </div>
-
-                <!-- Динамическая карточка цен под поисковый запрос -->
-                <div class="bg-slate-950/80 border border-purple-900/40 p-5 rounded-2xl space-y-3">
-                    <div class="flex justify-between items-center">
-                        <span id="dynamicMetricTitle" class="text-xs font-semibold text-slate-400" data-ru="Индекс Себестоимости Товара" data-en="Product Cost Index">Индекс Себестоимости Товара</span>
-                        <span class="text-[10px] bg-amber-950 text-amber-400 border border-amber-800 px-2 py-0.5 rounded-full font-bold">LIVE AI</span>
-                    </div>
-                    <div id="dynamicMetricValue" class="text-2xl font-black text-white">124.5 <span class="text-xs font-normal text-slate-500">pts</span></div>
-                    <div class="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden">
-                        <div class="bg-gradient-to-r from-amber-500 to-purple-500 h-full w-[78%]" style="width: 78%;"></div>
-                    </div>
-                    <p id="dynamicMetricDesc" class="text-[10px] text-slate-500" data-ru="Динамика цен на основе активных карточек в базе" data-en="Price dynamics based on active database cards">Динамика цен на основе активных карточек в базе</p>
-                </div>
-
-                <div class="bg-slate-950/80 border border-purple-900/40 p-5 rounded-2xl space-y-3">
-                    <div class="flex justify-between items-center">
-                        <span class="text-xs font-semibold text-slate-400" data-ru="Средняя маржинальность опта" data-en="Average Wholesale Margin">Средняя маржинальность опта</span>
-                        <span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded-full font-bold">+28%</span>
-                    </div>
-                    <div class="text-2xl font-black text-white">3.4x <span class="text-xs font-normal text-slate-500">/ ROI</span></div>
-                    <div class="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden">
-                        <div class="bg-gradient-to-r from-cyan-400 to-indigo-500 h-full w-[42%]" style="width: 42%;"></div>
-                    </div>
-                    <p class="text-[10px] text-slate-500" data-ru="Высокий потенциал рентабельности при заказе от фабрик" data-en="High ROI potential when ordering directly from factories">Высокий потенциал рентабельности при заказе от фабрик</p>
-                </div>
+        <!-- Сетка результатов поиска (пустая до ввода запроса) -->
+        <div id="suppliersGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="col-span-3 text-center py-16 glass-panel rounded-3xl text-slate-400 text-xs">
+                ✨ Введите поисковый запрос выше, чтобы найти или сгенерировать через ИИ проверенные заводы.
             </div>
         </div>
     </section>
+
+    <!-- Modal: Full Database Directory -->
+    <div id="databaseModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md">
+        <div class="glass-panel border border-purple-500/30 rounded-3xl max-w-5xl w-full p-6 sm:p-8 space-y-6 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeDatabaseModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white font-bold text-xl cursor-pointer">✕</button>
+
+            <div class="flex justify-between items-center pr-8">
+                <div>
+                    <h3 class="text-2xl font-black text-white" data-ru="📁 Полная База Производителей" data-en="📁 Full Manufacturers Database">📁 Полная База Производителей</h3>
+                    <p class="text-xs text-slate-400 mt-1" data-ru="Все верифицированные заводы и поставщики, разделенные по категориям" data-en="All verified factories and suppliers categorized">Все верифицированные заводы и поставщики, разделенные по категориям</p>
+                </div>
+                <input type="text" id="modalSearchInput" oninput="renderModalDatabase()" placeholder="Поиск в базе..." 
+                    class="bg-slate-950 border border-purple-900/60 rounded-xl px-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 w-64">
+            </div>
+
+            <!-- Список категорий внутри модалки -->
+            <div id="modalSuppliersGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-4"></div>
+        </div>
+    </div>
 
     <!-- Modal: AI Factory Audit & Risk Profile -->
     <div id="factoryModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
@@ -237,36 +170,34 @@
                 <p id="modalLocation" class="text-xs text-slate-400"></p>
             </div>
 
-            <!-- Risk Index Gauge -->
             <div class="bg-slate-900/90 border border-purple-900/50 p-4 rounded-2xl flex items-center justify-between">
                 <div>
-                    <div class="text-[10px] uppercase font-bold text-slate-400" data-ru="AI Индекс Надежности" data-en="AI Reliability Rating">AI Индекс Надежности</div>
+                    <div class="text-[10px] uppercase font-bold text-slate-400">AI Индекс Надежности</div>
                     <div class="text-2xl font-black text-cyan-400 mt-1">99.1%</div>
                 </div>
                 <div class="text-right">
-                    <div class="text-[10px] uppercase font-bold text-slate-400" data-ru="Уровень Риска" data-en="Risk Level">Уровень Риска</div>
+                    <div class="text-[10px] uppercase font-bold text-slate-400">Уровень Риска</div>
                     <div class="text-xs font-bold text-emerald-400 mt-1">● Низкий / Low</div>
                 </div>
             </div>
 
-            <!-- Detailed Specifications -->
             <div class="space-y-3 text-xs text-slate-300">
-                <h4 class="font-bold text-slate-100 uppercase tracking-wider text-[11px]" data-ru="Спецификации и Мощности" data-en="Capabilities & Specs">Спецификации и Мощности</h4>
+                <h4 class="font-bold text-slate-100 uppercase tracking-wider text-[11px]">Спецификации и Мощности</h4>
                 <div class="grid grid-cols-2 gap-3 bg-slate-950/60 p-4 rounded-2xl border border-purple-900/30">
-                    <div><span class="text-slate-500" data-ru="Категория:" data-en="Category:">Категория:</span> <span id="modalCategory" class="font-bold text-purple-400"></span></div>
-                    <div><span class="text-slate-500" data-ru="Мин. Заказ:" data-en="MOQ:">Мин. Заказ:</span> <span id="modalMoq" class="font-mono"></span></div>
-                    <div><span class="text-slate-500" data-ru="Юр. Статус KHR:" data-en="Legal Status:">Юр. Статус:</span> <span class="text-emerald-400 font-bold" data-ru="Зарегистрирован" data-en="Active & Registered">Зарегистрирован</span></div>
-                    <div><span class="text-slate-500" data-ru="Экспортная лицензия:" data-en="Export License:">Экспортная лицензия:</span> <span class="text-cyan-400 font-bold" data-ru="Да (Class A)" data-en="Active (Class A)">Да (Class A)</span></div>
+                    <div><span class="text-slate-500">Категория:</span> <span id="modalCategory" class="font-bold text-purple-400"></span></div>
+                    <div><span class="text-slate-500">Мин. Заказ:</span> <span id="modalMoq" class="font-mono"></span></div>
+                    <div><span class="text-slate-500">Юр. Статус:</span> <span class="text-emerald-400 font-bold">Зарегистрирован</span></div>
+                    <div><span class="text-slate-500">Экспортная лицензия:</span> <span class="text-cyan-400 font-bold">Да (Class A)</span></div>
                 </div>
             </div>
 
             <div class="space-y-2 text-xs text-slate-400">
-                <h4 class="font-bold text-slate-100 uppercase tracking-wider text-[11px]" data-ru="Заключение AI-Агента" data-en="AI Agent Verdict">Заключение AI-Агента</h4>
+                <h4 class="font-bold text-slate-100 uppercase tracking-wider text-[11px]">Заключение AI-Агента</h4>
                 <p id="modalVerdict" class="bg-slate-950/60 p-4 rounded-2xl border border-purple-900/30 leading-relaxed text-slate-300"></p>
             </div>
 
             <div class="pt-2 flex gap-3">
-                <button id="modalActionBtn" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-xs font-bold uppercase py-3.5 rounded-2xl transition hover:opacity-90 text-center cursor-pointer" data-ru="Заказать Инспекцию Фабрики" data-en="Request Factory Inspection">
+                <button id="modalActionBtn" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-xs font-bold uppercase py-3.5 rounded-2xl transition hover:opacity-90 text-center cursor-pointer">
                     Заказать Инспекцию Фабрики
                 </button>
             </div>
@@ -297,8 +228,6 @@
                 const text = el.getAttribute(`data-${lang}-ph`);
                 if (text) el.placeholder = text;
             });
-
-            if (rawSuppliers.length > 0) renderSuppliers();
         }
 
         const SUPABASE_URL = 'https://ozpskokidbhqtoeykyzf.supabase.co';
@@ -306,19 +235,12 @@
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         async function loadSuppliers() {
-            const grid = document.getElementById('suppliersGrid');
-            grid.innerHTML = `<div class="col-span-3 text-center py-12 text-slate-500 font-mono">${currentLang === 'ru' ? 'Загрузка базы фабрик...' : 'Loading suppliers...'}</div>`;
-
             const { data, error } = await supabaseClient.from('suppliers').select('*');
-            if (error || !data) {
-                grid.innerHTML = `<div class="col-span-3 text-center py-12 text-red-400 font-mono">Database error</div>`;
-                return;
-            }
-
+            if (error || !data) return;
             rawSuppliers = data;
-            renderSuppliers();
         }
 
+        // Рендер результатов строго по поисковому запросу
         function renderSuppliers() {
             const searchInputEl = document.getElementById('searchInput');
             const search = searchInputEl.value.trim().toLowerCase();
@@ -327,7 +249,17 @@
             const countLabel = document.getElementById('resultsCount');
             const aiPrompt = document.getElementById('aiSearchPrompt');
 
-            updatePriceAnalytics(searchInputEl.value.trim());
+            // Если строка поиска пуста, очищаем главную витрину
+            if (!search) {
+                grid.innerHTML = `
+                    <div class="col-span-3 text-center py-16 glass-panel rounded-3xl text-slate-400 text-xs">
+                        ✨ Введите поисковый запрос выше, чтобы найти или сгенерировать через ИИ проверенные заводы.
+                    </div>
+                `;
+                countLabel.innerText = `0 фабрик`;
+                aiPrompt.classList.add('hidden');
+                return;
+            }
 
             const filtered = rawSuppliers.filter(s => {
                 const sCat = s.category ? String(s.category) : '';
@@ -335,18 +267,16 @@
                 const sLoc = s.location ? String(s.location).toLowerCase() : '';
 
                 const matchesCat = (category === 'ALL') || (sCat === category);
-                const matchesSearch = !search || sName.includes(search) || sLoc.includes(search) || sCat.toLowerCase().includes(search);
+                const matchesSearch = sName.includes(search) || sLoc.includes(search) || sCat.toLowerCase().includes(search);
                 return matchesCat && matchesSearch;
             });
 
-            countLabel.innerText = currentLang === 'ru' 
-                ? `Найдено фабрик: ${filtered.length} из ${rawSuppliers.length}` 
-                : `Showing ${filtered.length} of ${rawSuppliers.length} manufacturers`;
+            countLabel.innerText = `${filtered.length} фабрик`;
 
             if (filtered.length === 0) {
                 grid.innerHTML = `
                     <div class="col-span-3 text-center py-12 glass-panel rounded-3xl">
-                        <p class="text-slate-300 font-bold">${currentLang === 'ru' ? 'Ничего не найдено в локальной базе' : 'No local suppliers found'}</p>
+                        <p class="text-slate-300 font-bold">Ничего не найдено в локальной базе</p>
                     </div>
                 `;
                 aiPrompt.classList.remove('hidden');
@@ -357,58 +287,80 @@
 
             grid.innerHTML = '';
             filtered.forEach((s, idx) => {
-                grid.innerHTML += `
-                    <div class="glass-panel p-6 rounded-3xl flex flex-col justify-between space-y-6 border border-purple-900/30 hover:border-purple-500/50 transition cursor-pointer" onclick="openModal(${s.id || idx})">
-                        <div class="space-y-4">
-                            <div class="flex justify-between items-start gap-2">
-                                <h3 class="font-bold text-lg text-white hover:text-purple-300 transition">${s.name}</h3>
-                                ${s.verified ? `<span class="text-[9px] font-mono bg-emerald-950 text-emerald-400 border border-emerald-800 px-2.5 py-1 rounded-full font-bold uppercase">AI Verified</span>` : ''}
-                            </div>
-                            <p class="text-xs text-slate-400">📍 ${s.location}</p>
-                            
-                            <div class="space-y-2 text-xs text-slate-300 pt-3 border-t border-purple-950">
-                                <div class="flex justify-between"><span class="text-slate-500">${currentLang === 'ru' ? 'Категория:' : 'Category:'}</span> <strong class="text-purple-400">${s.category}</strong></div>
-                                <div class="flex justify-between"><span class="text-slate-500">${currentLang === 'ru' ? 'Мин. заказ:' : 'MOQ:'}</span> <span class="font-mono text-slate-200">${s.moq}</span></div>
-                                <div class="flex justify-between"><span class="text-slate-500">${currentLang === 'ru' ? 'Рейтинг:' : 'Rating:'}</span> <span class="font-bold text-amber-400">⭐ ${s.rating}</span></div>
-                            </div>
-                        </div>
+                grid.innerHTML += createSupplierCard(s, idx);
+            });
+        }
 
-                        <div class="flex gap-2">
-                            <button onclick="event.stopPropagation(); window.location.href='inspection_request.html?factory=${encodeURIComponent(s.name)}'" 
-                                class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-xs font-bold uppercase py-3 rounded-2xl transition hover:opacity-90 text-center cursor-pointer">
-                                ${currentLang === 'ru' ? 'Заказать инспекцию' : 'Request Inspection'}
-                            </button>
+        function createSupplierCard(s, idx) {
+            return `
+                <div class="glass-panel p-6 rounded-3xl flex flex-col justify-between space-y-6 border border-purple-900/30 hover:border-purple-500/50 transition cursor-pointer" onclick="openModal(${s.id || idx})">
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-start gap-2">
+                            <h3 class="font-bold text-lg text-white hover:text-purple-300 transition">${s.name}</h3>
+                            ${s.verified ? `<span class="text-[9px] font-mono bg-emerald-950 text-emerald-400 border border-emerald-800 px-2.5 py-1 rounded-full font-bold uppercase">AI Verified</span>` : ''}
+                        </div>
+                        <p class="text-xs text-slate-400">📍 ${s.location}</p>
+                        
+                        <div class="space-y-2 text-xs text-slate-300 pt-3 border-t border-purple-950">
+                            <div class="flex justify-between"><span class="text-slate-500">Категория:</span> <strong class="text-purple-400">${s.category}</strong></div>
+                            <div class="flex justify-between"><span class="text-slate-500">Мин. заказ:</span> <span class="font-mono text-slate-200">${s.moq}</span></div>
+                            <div class="flex justify-between"><span class="text-slate-500">Рейтинг:</span> <span class="font-bold text-amber-400">⭐ ${s.rating}</span></div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button onclick="event.stopPropagation(); window.location.href='inspection_request.html?factory=${encodeURIComponent(s.name)}'" 
+                            class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-xs font-bold uppercase py-3 rounded-2xl transition hover:opacity-90 text-center cursor-pointer">
+                            Заказать инспекцию
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Модальное окно «Вся база фабрик»
+        async function openDatabaseModal() {
+            await loadSuppliers();
+            renderModalDatabase();
+            document.getElementById('databaseModal').classList.remove('hidden');
+        }
+
+        function closeDatabaseModal() {
+            document.getElementById('databaseModal').classList.add('hidden');
+        }
+
+        function renderModalDatabase() {
+            const search = document.getElementById('modalSearchInput').value.trim().toLowerCase();
+            const grid = document.getElementById('modalSuppliersGrid');
+
+            const filtered = rawSuppliers.filter(s => {
+                const sName = s.name ? String(s.name).toLowerCase() : '';
+                const sLoc = s.location ? String(s.location).toLowerCase() : '';
+                const sCat = s.category ? String(s.category).toLowerCase() : '';
+                return !search || sName.includes(search) || sLoc.includes(search) || sCat.includes(search);
+            });
+
+            grid.innerHTML = '';
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-3 text-center py-8 text-slate-500 text-xs">Ничего не найдено в базе</div>`;
+                return;
+            }
+
+            filtered.forEach((s, idx) => {
+                grid.innerHTML += `
+                    <div class="bg-slate-950/80 p-4 rounded-2xl border border-purple-900/40 space-y-3 cursor-pointer hover:border-purple-500/50 transition" onclick="closeDatabaseModal(); openModal(${s.id || idx})">
+                        <div class="flex justify-between items-start">
+                            <h4 class="font-bold text-sm text-white">${s.name}</h4>
+                            <span class="text-[9px] bg-purple-950 text-purple-300 border border-purple-800 px-2 py-0.5 rounded-full">${s.category || 'Общая'}</span>
+                        </div>
+                        <p class="text-[11px] text-slate-400">📍 ${s.location}</p>
+                        <div class="flex justify-between text-[11px] text-slate-300 pt-2 border-t border-slate-900">
+                            <span>MOQ: <strong>${s.moq}</strong></span>
+                            <span class="text-amber-400 font-bold">⭐ ${s.rating}</span>
                         </div>
                     </div>
                 `;
             });
-        }
-
-        function updatePriceAnalytics(query) {
-            const titleEl = document.getElementById('dynamicMetricTitle');
-            const valueEl = document.getElementById('dynamicMetricValue');
-            const descEl = document.getElementById('dynamicMetricDesc');
-            const subtitleEl = document.getElementById('analyticsSubtitle');
-
-            if (query.length > 0) {
-                const formatted = query.charAt(0).toUpperCase() + query.slice(1);
-                subtitleEl.innerText = currentLang === 'ru' 
-                    ? `Живой мониторинг цен и рынка для запроса: "${formatted}"` 
-                    : `Live price & market monitoring for query: "${formatted}"`;
-                
-                titleEl.innerText = currentLang === 'ru' ? `Индекс цен на: "${formatted}"` : `Price Index for "${formatted}"`;
-                const randomPrice = (Math.abs(query.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)) % 800 + 120) / 10;
-                valueEl.innerHTML = `$${randomPrice.toFixed(2)} <span class="text-xs font-normal text-slate-500">/ avg unit</span>`;
-                descEl.innerText = currentLang === 'ru' ? `Оценка оптовой стоимости на фабриках КНР` : `Estimated wholesale factory cost in China`;
-            } else {
-                subtitleEl.innerText = currentLang === 'ru' 
-                    ? `Мониторинг фрахта, себестоимости сырья и индексации фабричных цен в реальном времени` 
-                    : `Real-time freight rates, raw materials pricing, and factory cost indexes`;
-                
-                titleEl.innerText = currentLang === 'ru' ? `Чипы и Электроника (Индекс)` : `Electronics & Components Index`;
-                valueEl.innerHTML = `124.5 <span class="text-xs font-normal text-slate-500">pts</span>`;
-                descEl.innerText = currentLang === 'ru' ? `Сезонный рост спроса на полупроводники` : `Seasonal increase in semiconductor demand`;
-            }
         }
 
         function openModal(id) {
@@ -419,11 +371,7 @@
             document.getElementById('modalLocation').innerText = '📍 ' + supplier.location;
             document.getElementById('modalCategory').innerText = supplier.category;
             document.getElementById('modalMoq').innerText = supplier.moq;
-            
-            const defaultVerdictRu = `Завод ${supplier.name} успешно прошел комплексный AI-аудит по коммерческим реестрам КНР. Уставный капитал верифицирован, экспортная лицензия активна (Class A). Производственные линии полностью адаптированы под выпуск заказанной продукции.`;
-            const defaultVerdictEn = `Factory ${supplier.name} successfully passed comprehensive AI audit against China corporate registries. Capital verified, Class A export license active. Production lines fully optimized for requested output.`;
-
-            document.getElementById('modalVerdict').innerText = supplier.verdict || (currentLang === 'ru' ? defaultVerdictRu : defaultVerdictEn);
+            document.getElementById('modalVerdict').innerText = supplier.verdict || `Завод ${supplier.name} успешно прошел комплексный AI-аудит по коммерческим реестрам КНР. Уставный капитал верифицирован, экспортная лицензия активна (Class A).`;
             document.getElementById('modalActionBtn').onclick = () => {
                 window.location.href = `inspection_request.html?factory=${encodeURIComponent(supplier.name)}`;
             };
@@ -435,7 +383,7 @@
             document.getElementById('factoryModal').classList.add('hidden');
         }
 
-        // НАСТОЯЩИЙ ИИ-ПОИСК ЧЕРЕЗ CORS-ПРОКСИ С ВСТРОЕННЫМ КЛЮЧОМ
+        // ИИ-поиск через AllOrigins прокси
         async function triggerAiSearch() {
             const searchQuery = document.getElementById('searchInput').value.trim();
             if (!searchQuery) return;
@@ -451,8 +399,6 @@
                     ? document.getElementById('categorySelect').value 
                     : 'Электроника';
 
-                console.log("⚡ Отправка запроса в OpenAI API через прокси для поиска:", searchQuery);
-
                 const OPENAI_API_KEY = "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".trim();
 
                 const systemPrompt = `You are a B2B Sourcing AI. Generate a JSON object with an array of 3 realistic verified manufacturing factories in China for "${searchQuery}". 
@@ -465,7 +411,7 @@ Return ONLY raw valid JSON matching this exact structure, with no markdown code 
 }`;
 
                 const targetUrl = 'https://api.openai.com/v1/chat/completions';
-                const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
+                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
 
                 const openAiRes = await fetch(proxyUrl, {
                     method: 'POST',
@@ -506,8 +452,8 @@ Return ONLY raw valid JSON matching this exact structure, with no markdown code 
 
                 if (error) throw error;
 
-                console.log("✅ ИИ успешно сгенерировал и сохранил фабрики!", data);
                 await loadSuppliers();
+                renderSuppliers();
 
             } catch (err) {
                 console.error("Критическая ошибка AI-поиска:", err);
