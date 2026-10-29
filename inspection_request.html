@@ -31,9 +31,12 @@
                     <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase">Factory Inspection Hub</p>
                 </div>
             </a>
-            <div class="flex items-center gap-2">
-                <button onclick="switchLang('ru')" id="lang-ru" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-600 text-white">RU</button>
-                <button onclick="switchLang('en')" id="lang-en" class="px-2.5 py-1 rounded-lg text-xs font-bold text-slate-400">EN</button>
+            <div class="flex items-center gap-4">
+                <a href="importer_dashboard.html" class="text-xs text-cyan-300 font-bold hover:underline" data-ru="Кабинет импортера" data-en="Importer Portal">Кабинет импортера</a>
+                <div class="flex items-center gap-1">
+                    <button onclick="switchLang('ru')" id="lang-ru" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-600 text-white">RU</button>
+                    <button onclick="switchLang('en')" id="lang-en" class="px-2.5 py-1 rounded-lg text-xs font-bold text-slate-400">EN</button>
+                </div>
             </div>
         </div>
     </header>
@@ -66,8 +69,8 @@
                 <div class="space-y-2">
                     <label class="text-xs font-bold uppercase tracking-wider text-purple-300" data-ru="Страна производства" data-en="Manufacturing Country">Страна производства</label>
                     <select id="country" class="w-full bg-slate-950/90 border border-purple-900/60 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500">
-    <option value="China">Китай (China)</option>
-</select>
+                        <option value="China">Китай (China)</option>
+                    </select>
                 </div>
                 <div class="space-y-2">
                     <label class="text-xs font-bold uppercase tracking-wider text-purple-300" data-ru="Город / Промышленный хаб" data-en="City / Industrial Hub">Город / Промышленный хаб</label>
@@ -125,23 +128,22 @@
 
         let currentLang = 'ru';
 
-        // Замени блок селектора стран и городов в JS:
-const citiesData = {
-    China: ['Yiwu', 'Guangzhou', 'Shenzhen', 'Foshan', 'Ningbo', 'Hangzhou', 'Shanghai', 'Qingdao']
-};
+        const citiesData = {
+            China: ['Yiwu', 'Guangzhou', 'Shenzhen', 'Foshan', 'Ningbo', 'Hangzhou', 'Shanghai', 'Qingdao']
+        };
 
-function updateCities() {
-    const citySelect = document.getElementById('city');
-    citySelect.innerHTML = '';
-    
-    citiesData.China.forEach(city => {
-        const opt = document.createElement('option');
-        opt.value = city;
-        opt.textContent = city;
-        citySelect.appendChild(opt);
-    });
-}
-    
+        function updateCities() {
+            const citySelect = document.getElementById('city');
+            citySelect.innerHTML = '';
+            
+            citiesData.China.forEach(city => {
+                const opt = document.createElement('option');
+                opt.value = city;
+                opt.textContent = city;
+                citySelect.appendChild(opt);
+            });
+        }
+        
         function switchLang(lang) {
             currentLang = lang;
             document.getElementById('lang-ru').className = lang === 'ru' ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-600 text-white' : 'px-2.5 py-1 rounded-lg text-xs font-bold text-slate-400';
@@ -163,20 +165,31 @@ function updateCities() {
             statusDiv.className = 'text-center text-xs font-mono text-purple-400';
             statusDiv.innerText = currentLang === 'ru' ? 'Маршрутизация заявки локальным инспекторам...' : 'Routing to local inspectors...';
 
+            const clientNameVal = document.getElementById('client_name').value.trim();
+            const factoryVal = document.getElementById('factory_name').value.trim();
+            const notesVal = document.getElementById('requirements_notes').value.trim();
+            const inspectionTypeVal = document.getElementById('inspection_type').value;
+            const countryVal = document.getElementById('country').value;
+            const cityVal = document.getElementById('city').value;
+
             const payload = {
-                client_name: document.getElementById('client_name').value.trim(),
-                factory_name: document.getElementById('factory_name').value.trim(),
-                country: document.getElementById('country').value,
-                city: document.getElementById('city').value,
+                client_name: clientNameVal,
+                factory_name: factoryVal,
+                product_name: notesVal ? `${notesVal} (${inspectionTypeVal})` : `Инспекция фабрики (${inspectionTypeVal})`,
+                country: countryVal,
+                city: cityVal,
                 address_chinese: document.getElementById('address_chinese').value.trim(),
-                inspection_type: document.getElementById('inspection_type').value,
+                inspection_type: inspectionTypeVal,
                 scheduled_date: document.getElementById('scheduled_date').value,
-                status: 'searching_inspector',
+                status: 'new',
+                escrow_status: 'held',
+                dispute_deadline: new Date(Date.now() + 48*3600*1000).toISOString(),
                 requirements: {
-                    notes: document.getElementById('requirements_notes').value.trim()
+                    notes: notesVal
                 }
             };
 
+            // 1. Сохранение в Supabase
             const { data, error } = await supabaseClient
                 .from('inspections')
                 .insert([payload])
@@ -190,21 +203,40 @@ function updateCities() {
                 return;
             }
 
+            // 2. Отправка уведомления в Telegram-бот
+            const botToken = '9251200369:AAEs1Tuxt3smms34wrP30SbFyhy5-Ona9RY';
+            const chatId = '247632305';
+            const tgMessage = `⚡ *ПОЛНЫЙ ЗАКАЗ ИНСПЕКЦИИ (SOURCEJET AI)* ⚡\n\n🏭 *Фабрика:* ${factoryVal} (${cityVal})\n📋 *Тип:* ${inspectionTypeVal}\n👤 *Имя / Компания:* ${clientNameVal}\n📝 *ТЗ:* ${notesVal || 'Стандарт'}`;
+
+            try {
+                await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: chatId, text: tgMessage, parse_mode: 'Markdown' })
+                });
+            } catch (err) {
+                console.error('Telegram notification error:', err);
+            }
+
             statusDiv.className = 'text-center text-xs font-mono text-emerald-400';
-            statusDiv.innerText = currentLang === 'ru' ? '✓ Заявка успешно создана! Инспектора в выбранном регионе уведомлены.' : '✓ Request created successfully! Local inspectors notified.';
+            statusDiv.innerText = currentLang === 'ru' ? '✓ Заявка успешно создана! Перенаправляем в Портал Импортера...' : '✓ Request created successfully! Redirecting to Importer Portal...';
             
+            // 3. Автоматический бесшовный переход в Портал Импортера
             setTimeout(() => {
-                document.getElementById('inspectionForm').reset();
-                updateCities();
-                btn.disabled = false;
-                btn.innerText = currentLang === 'ru' ? 'Отправить заявку местным инспекторам' : 'Dispatch Request to Local Inspectors';
-                statusDiv.innerText = '';
-            }, 3000);
+                window.location.href = 'importer_dashboard.html';
+            }, 1500);
         });
 
-        // Инициализация городов при загрузке
+        // Инициализация при загрузке страницы
         window.onload = () => {
             updateCities();
+            
+            // Автоматическое заполнение названия фабрики, если перешли из каталога (?factory=...)
+            const urlParams = new URLSearchParams(window.location.search);
+            const factoryParam = urlParams.get('factory');
+            if (factoryParam) {
+                document.getElementById('factory_name').value = decodeURIComponent(factoryParam);
+            }
         };
     </script>
 </body>
