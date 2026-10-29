@@ -435,7 +435,7 @@
             document.getElementById('factoryModal').classList.add('hidden');
         }
 
-        // НАСТОЯЩИЙ ИИ-ПОИСК: Прямой запрос к OpenAI API через ключ key_9F6SpnVt9tLNqEC4
+        // НАСТОЯЩИЙ ИИ-ПОИСК: Прямой запрос к OpenAI API с встроенным ключом
         async function triggerAiSearch() {
             const searchQuery = document.getElementById('searchInput').value.trim();
             if (!searchQuery) return;
@@ -453,8 +453,8 @@
 
                 console.log("⚡ Отправка запроса в OpenAI API для поиска фабрик по запросу:", searchQuery);
 
-                // Интегрированный ключ OpenAI
-                const OPENAI_API_KEY = "key_9F6SpnVt9tLNqEC4".trim();
+                // Интегрированный реальный ключ OpenAI
+                const OPENAI_API_KEY = "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".trim();
 
                 const systemPrompt = `You are a B2B Sourcing AI. Generate a JSON object with an array of 3 realistic verified manufacturing factories in China for "${searchQuery}". 
 Fields required per supplier object: name, category ("${currentCategory}"), location, moq, rating (4.85-4.99), verdict (detailed audit in ${currentLang}).
@@ -497,7 +497,6 @@ Return ONLY raw valid JSON matching this exact structure, with no markdown code 
                     verdict: s.verdict
                 }));
 
-                // Сохраняем сгенерированные ИИ заводы в Supabase
                 const { data, error } = await supabaseClient
                     .from('suppliers')
                     .insert(factoriesToInsert)
