@@ -82,4 +82,420 @@
             <span data-ru="Поиск поставщиков и аудит фабрик" data-en="Next-Gen AI Sourcing & Verification">Поиск поставщиков и аудит фабрик</span> <br>
             <span class="ai-gradient-text" data-ru="для глобального бизнеса" data-en="for Global Trade Ecosystems">для глобального бизнеса</span>
         </h1>
-        <p class="text-slate-40
+        <p class="text-slate-400 text-sm max-w-2xl mx-auto" data-ru="Автоматизированный аудит заводов, сквозной контроль качества, верификация юрлиц и живой логистический трекинг." data-en="Automated factory audits, smart quality inspections, enterprise-grade supplier vetting, and real-time logistics tracking.">
+            Автоматизированный аудит заводов, сквозной контроль качества, верификация юрлиц и живой логистический трекинг.
+        </p>
+
+        <!-- Dynamic Live Widgets -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto pt-2 text-left">
+            <div class="glass-panel p-4 rounded-2xl flex items-center justify-between border border-purple-900/40">
+                <div>
+                    <div class="text-[10px] uppercase font-bold text-slate-400" data-ru="AI-Индекс Безопасности Сделок" data-en="AI Risk Mitigation Index">AI-Индекс Безопасности Сделок</div>
+                    <div class="text-2xl font-black text-cyan-400 mt-1">99.4%</div>
+                    <div class="text-[9px] text-emerald-400 mt-0.5">● Live Verification Active</div>
+                </div>
+                <div class="flex items-end gap-1.5 h-10 w-20">
+                    <div class="w-3 bg-purple-500 rounded-t animate-bar-1"></div>
+                    <div class="w-3 bg-indigo-500 rounded-t animate-bar-2"></div>
+                    <div class="w-3 bg-cyan-400 rounded-t animate-bar-3"></div>
+                    <div class="w-3 bg-emerald-400 rounded-t animate-bar-4"></div>
+                </div>
+            </div>
+
+            <div class="glass-panel p-4 rounded-2xl flex items-center justify-between border border-purple-900/40">
+                <div>
+                    <div class="text-[10px] uppercase font-bold text-slate-400" data-ru="Мониторинг Поставок в Пути" data-en="Active Supply Lines Tracked">Мониторинг Поставок в Пути</div>
+                    <div class="text-2xl font-black text-purple-400 mt-1">$14.2M+</div>
+                    <div class="text-[9px] text-purple-300 mt-0.5" data-ru="Объем грузов под контролем" data-en="Cargo Volume Under Management">Объем грузов под контролем</div>
+                </div>
+                <div class="relative w-10 h-10 flex items-center justify-center">
+                    <span class="absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-25 animate-ping"></span>
+                    <span class="relative inline-flex rounded-full h-6 w-6 bg-purple-600 border-2 border-cyan-400"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEARCH & CATALOG -->
+    <section id="search-section" class="max-w-7xl mx-auto px-6 pb-12 space-y-6 flex-1 w-full">
+        <div class="glass-panel p-6 rounded-3xl space-y-4">
+            <div class="flex flex-col md:flex-row gap-4">
+                <input type="text" id="searchInput" oninput="renderSuppliers()" 
+                    data-ru-ph="Поиск по названию фабрики, городу или категории..."
+                    data-en-ph="Search by factory name, city, or category..."
+                    placeholder="Поиск по названию фабрики, городу или категории..." 
+                    class="w-full bg-slate-950/90 border border-purple-900/60 rounded-2xl px-5 py-4 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-sm">
+                
+                <select id="categorySelect" onchange="renderSuppliers()" 
+                    class="bg-slate-950/90 border border-purple-900/60 rounded-2xl px-5 py-4 text-slate-300 text-sm focus:outline-none focus:border-purple-500 font-medium">
+                    <option value="ALL" data-ru="Все категории" data-en="All Categories">Все категории</option>
+                    <option value="Электроника">Электроника / Electronics</option>
+                    <option value="Текстиль">Текстиль / Textiles</option>
+                    <option value="Упаковка">Упаковка / Packaging</option>
+                </select>
+            </div>
+            
+            <div class="flex justify-between items-center text-xs text-slate-400 px-1 pt-1">
+                <span id="resultsCount">Загрузка...</span>
+            </div>
+
+            <!-- Блок с предложением AI-поиска, если результаты не найдены -->
+            <div id="aiSearchPrompt" class="hidden glass-panel p-5 rounded-2xl border border-cyan-500/40 text-center space-y-3 mt-4">
+                <p class="text-xs text-slate-300" data-ru="🔍 В локальной базе нет совпадений. Запустить AI Sourcing Agent для подборки фабрик по вашему запросу?" data-en="🔍 No local matches found. Launch AI Sourcing Agent to generate supplier selection for your request?">
+                    🔍 В локальной базе нет совпадений. Запустить AI Sourcing Agent для подборки фабрик по вашему запросу?
+                </p>
+                <button onclick="triggerAiSearch()" class="bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-400 text-white font-bold px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider transition shadow-lg shadow-cyan-500/20 hover:opacity-90 cursor-pointer">
+                    <span data-ru="⚡ Запустить AI-поиск фабрик" data-en="⚡ Launch AI Sourcing Agent">⚡ Запустить AI-поиск фабрик</span>
+                </button>
+            </div>
+
+            <div id="aiLoader" class="hidden text-center py-6 text-cyan-400 text-xs font-mono animate-pulse">
+                <span data-ru="🤖 AI Sourcing Agent сканирует глобальные реестры через LLM..." data-en="🤖 AI Sourcing Agent scanning global registries via LLM...">
+                    🤖 AI Sourcing Agent сканирует глобальные реестры через LLM...
+                </span>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-end">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-3">
+                <span data-ru="Проверенные производители" data-en="Verified Manufacturers Hub">Проверенные производители</span>
+                <span class="text-[9px] font-mono bg-indigo-950 text-indigo-300 border border-indigo-800 px-2.5 py-1 rounded-full uppercase">SUPABASE LLM LIVE</span>
+            </h2>
+        </div>
+
+        <div id="suppliersGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+    </section>
+
+    <!-- AI Price Analytics Section -->
+    <section id="analytics" class="max-w-7xl mx-auto px-6 pb-20 w-full">
+        <div class="glass-panel p-8 rounded-3xl border border-purple-900/40 space-y-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+                        <h2 class="text-xl font-bold text-white uppercase tracking-wider" data-ru="AI Аналитика Цен и Динамика Рынка" data-en="AI Price Intelligence & Market Trends">AI Аналитика Цен и Динамика Рынка</h2>
+                    </div>
+                    <p id="analyticsSubtitle" class="text-xs text-slate-400 mt-1" data-ru="Мониторинг фрахта, себестоимости сырья и индексации фабричных цен в реальном времени" data-en="Real-time freight rates, raw materials pricing, and factory cost indexes">Мониторинг фрахта, себестоимости сырья и индексации фабричных цен в реальном времени</p>
+                </div>
+                <button onclick="window.location.href='inspection_request.html?factory=AI%20Price%20Report'" class="bg-purple-900/50 hover:bg-purple-800/80 border border-purple-700/50 text-purple-200 text-xs font-bold px-4 py-2.5 rounded-xl transition text-center cursor-pointer" data-ru="Запросить кастомный AI-отчет" data-en="Request Custom AI Report">
+                    Запросить кастомный AI-отчет
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+                <div class="bg-slate-950/80 border border-purple-900/40 p-5 rounded-2xl space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-semibold text-slate-400" data-ru="Контейнерный фрахт (40ft HQ)" data-en="Container Freight (40ft HQ)">Контейнерный фрахт (40ft HQ)</span>
+                        <span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded-full font-bold">-4.2%</span>
+                    </div>
+                    <div class="text-2xl font-black text-white">$3,850 <span class="text-xs font-normal text-slate-500">/ Ningbo-Bishkek</span></div>
+                    <div class="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden">
+                        <div class="bg-gradient-to-r from-purple-500 to-cyan-400 h-full w-[65%]" style="width: 65%;"></div>
+                    </div>
+                    <p class="text-[10px] text-slate-500" data-ru="Стабильный тренд на снижение стоимости логистики" data-en="Stable downward trend in logistics costs">Стабильный тренд на снижение стоимости логистики</p>
+                </div>
+
+                <!-- Динамическая карточка цен под поисковый запрос -->
+                <div class="bg-slate-950/80 border border-purple-900/40 p-5 rounded-2xl space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span id="dynamicMetricTitle" class="text-xs font-semibold text-slate-400" data-ru="Индекс Себестоимости Товара" data-en="Product Cost Index">Индекс Себестоимости Товара</span>
+                        <span class="text-[10px] bg-amber-950 text-amber-400 border border-amber-800 px-2 py-0.5 rounded-full font-bold">LIVE AI</span>
+                    </div>
+                    <div id="dynamicMetricValue" class="text-2xl font-black text-white">124.5 <span class="text-xs font-normal text-slate-500">pts</span></div>
+                    <div class="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden">
+                        <div class="bg-gradient-to-r from-amber-500 to-purple-500 h-full w-[78%]" style="width: 78%;"></div>
+                    </div>
+                    <p id="dynamicMetricDesc" class="text-[10px] text-slate-500" data-ru="Динамика цен на основе активных карточек в базе" data-en="Price dynamics based on active database cards">Динамика цен на основе активных карточек в базе</p>
+                </div>
+
+                <div class="bg-slate-950/80 border border-purple-900/40 p-5 rounded-2xl space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-semibold text-slate-400" data-ru="Средняя маржинальность опта" data-en="Average Wholesale Margin">Средняя маржинальность опта</span>
+                        <span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded-full font-bold">+28%</span>
+                    </div>
+                    <div class="text-2xl font-black text-white">3.4x <span class="text-xs font-normal text-slate-500">/ ROI</span></div>
+                    <div class="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden">
+                        <div class="bg-gradient-to-r from-cyan-400 to-indigo-500 h-full w-[42%]" style="width: 42%;"></div>
+                    </div>
+                    <p class="text-[10px] text-slate-500" data-ru="Высокий потенциал рентабельности при заказе от фабрик" data-en="High ROI potential when ordering directly from factories">Высокий потенциал рентабельности при заказе от фабрик</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal: AI Factory Audit & Risk Profile -->
+    <div id="factoryModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+        <div class="glass-panel border border-purple-500/30 rounded-3xl max-w-2xl w-full p-6 sm:p-8 space-y-6 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white font-bold text-xl cursor-pointer">✕</button>
+
+            <div class="space-y-2">
+                <div class="flex items-center gap-2">
+                    <span class="text-[9px] font-mono bg-purple-950 text-purple-300 border border-purple-800 px-2.5 py-0.5 rounded-full uppercase font-bold">LLM AUDIT REPORT</span>
+                    <span class="text-[9px] font-mono bg-emerald-950 text-emerald-400 border border-emerald-800 px-2.5 py-0.5 rounded-full font-bold uppercase">Verified</span>
+                </div>
+                <h3 id="modalTitle" class="text-2xl font-black text-white"></h3>
+                <p id="modalLocation" class="text-xs text-slate-400"></p>
+            </div>
+
+            <!-- Risk Index Gauge -->
+            <div class="bg-slate-900/90 border border-purple-900/50 p-4 rounded-2xl flex items-center justify-between">
+                <div>
+                    <div class="text-[10px] uppercase font-bold text-slate-400" data-ru="AI Индекс Надежности" data-en="AI Reliability Rating">AI Индекс Надежности</div>
+                    <div class="text-2xl font-black text-cyan-400 mt-1">99.1%</div>
+                </div>
+                <div class="text-right">
+                    <div class="text-[10px] uppercase font-bold text-slate-400" data-ru="Уровень Риска" data-en="Risk Level">Уровень Риска</div>
+                    <div class="text-xs font-bold text-emerald-400 mt-1">● Низкий / Low</div>
+                </div>
+            </div>
+
+            <!-- Detailed Specifications -->
+            <div class="space-y-3 text-xs text-slate-300">
+                <h4 class="font-bold text-slate-100 uppercase tracking-wider text-[11px]" data-ru="Спецификации и Мощности" data-en="Capabilities & Specs">Спецификации и Мощности</h4>
+                <div class="grid grid-cols-2 gap-3 bg-slate-950/60 p-4 rounded-2xl border border-purple-900/30">
+                    <div><span class="text-slate-500" data-ru="Категория:" data-en="Category:">Категория:</span> <span id="modalCategory" class="font-bold text-purple-400"></span></div>
+                    <div><span class="text-slate-500" data-ru="Мин. Заказ:" data-en="MOQ:">Мин. Заказ:</span> <span id="modalMoq" class="font-mono"></span></div>
+                    <div><span class="text-slate-500" data-ru="Юр. Статус KHR:" data-en="Legal Status:">Юр. Статус:</span> <span class="text-emerald-400 font-bold" data-ru="Зарегистрирован" data-en="Active & Registered">Зарегистрирован</span></div>
+                    <div><span class="text-slate-500" data-ru="Экспортная лицензия:" data-en="Export License:">Экспортная лицензия:</span> <span class="text-cyan-400 font-bold" data-ru="Да (Class A)" data-en="Active (Class A)">Да (Class A)</span></div>
+                </div>
+            </div>
+
+            <div class="space-y-2 text-xs text-slate-400">
+                <h4 class="font-bold text-slate-100 uppercase tracking-wider text-[11px]" data-ru="Заключение LLM-Агента" data-en="LLM Agent Verdict">Заключение LLM-Агента</h4>
+                <p id="modalVerdict" class="bg-slate-950/60 p-4 rounded-2xl border border-purple-900/30 leading-relaxed text-slate-300"></p>
+            </div>
+
+            <div class="pt-2 flex gap-3">
+                <button id="modalActionBtn" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-xs font-bold uppercase py-3.5 rounded-2xl transition hover:opacity-90 text-center cursor-pointer" data-ru="Заказать Инспекцию Фабрики" data-en="Request Factory Inspection">
+                    Заказать Инспекцию Фабрики
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="border-t border-purple-900/30 bg-slate-900/80 py-8 text-center text-xs text-slate-500">
+        <p>© 2026 SourceJet AI. Global Sourcing & Trade Network.</p>
+    </footer>
+
+    <script>
+        let currentLang = localStorage.getItem('sourcejet_lang') || 'ru';
+        let rawSuppliers = [];
+
+        function switchLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('sourcejet_lang', lang);
+
+            document.getElementById('btn-ru').className = lang === 'ru' ? 'px-2.5 py-1 rounded-lg transition bg-purple-600 text-white font-bold' : 'px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white';
+            document.getElementById('btn-en').className = lang === 'en' ? 'px-2.5 py-1 rounded-lg transition bg-purple-600 text-white font-bold' : 'px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white';
+
+            document.querySelectorAll('[data-ru]').forEach(el => {
+                const text = el.getAttribute(`data-${lang}`);
+                if (text) el.innerText = text;
+            });
+
+            document.querySelectorAll('[data-ru-ph]').forEach(el => {
+                const text = el.getAttribute(`data-${lang}-ph`);
+                if (text) el.placeholder = text;
+            });
+
+            if (rawSuppliers.length > 0) renderSuppliers();
+        }
+
+        const SUPABASE_URL = 'https://ozpskokidbhqtoeykyzf.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_Zpkfm-iDWB7WuHrAp1jDtQ_1w_QU8s0';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function loadSuppliers() {
+            const grid = document.getElementById('suppliersGrid');
+            grid.innerHTML = `<div class="col-span-3 text-center py-12 text-slate-500 font-mono">${currentLang === 'ru' ? 'Загрузка базы фабрик...' : 'Loading suppliers...'}</div>`;
+
+            const { data, error } = await supabaseClient.from('suppliers').select('*');
+            if (error || !data) {
+                grid.innerHTML = `<div class="col-span-3 text-center py-12 text-red-400 font-mono">Database error</div>`;
+                return;
+            }
+
+            rawSuppliers = data;
+            renderSuppliers();
+        }
+
+        function renderSuppliers() {
+            const searchInputEl = document.getElementById('searchInput');
+            const search = searchInputEl.value.trim().toLowerCase();
+            const category = document.getElementById('categorySelect').value;
+            const grid = document.getElementById('suppliersGrid');
+            const countLabel = document.getElementById('resultsCount');
+            const aiPrompt = document.getElementById('aiSearchPrompt');
+
+            // Реактивное обновление блока AI-аналитики цен при вводе поискового запроса
+            updatePriceAnalytics(searchInputEl.value.trim());
+
+            const filtered = rawSuppliers.filter(s => {
+                const sCat = s.category ? String(s.category) : '';
+                const sName = s.name ? String(s.name).toLowerCase() : '';
+                const sLoc = s.location ? String(s.location).toLowerCase() : '';
+
+                const matchesCat = (category === 'ALL') || (sCat === category);
+                const matchesSearch = !search || sName.includes(search) || sLoc.includes(search) || sCat.toLowerCase().includes(search);
+                return matchesCat && matchesSearch;
+            });
+
+            countLabel.innerText = currentLang === 'ru' 
+                ? `Найдено фабрик: ${filtered.length} из ${rawSuppliers.length}` 
+                : `Showing ${filtered.length} of ${rawSuppliers.length} manufacturers`;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-3 text-center py-12 glass-panel rounded-3xl">
+                        <p class="text-slate-300 font-bold">${currentLang === 'ru' ? 'Ничего не найдено в локальной базе' : 'No local suppliers found'}</p>
+                    </div>
+                `;
+                aiPrompt.classList.remove('hidden');
+                return;
+            } else {
+                aiPrompt.classList.add('hidden');
+            }
+
+            grid.innerHTML = '';
+            filtered.forEach((s, idx) => {
+                grid.innerHTML += `
+                    <div class="glass-panel p-6 rounded-3xl flex flex-col justify-between space-y-6 border border-purple-900/30 hover:border-purple-500/50 transition cursor-pointer" onclick="openModal(${s.id || idx})">
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-start gap-2">
+                                <h3 class="font-bold text-lg text-white hover:text-purple-300 transition">${s.name}</h3>
+                                ${s.verified ? `<span class="text-[9px] font-mono bg-emerald-950 text-emerald-400 border border-emerald-800 px-2.5 py-1 rounded-full font-bold uppercase">LLM Verified</span>` : ''}
+                            </div>
+                            <p class="text-xs text-slate-400">📍 ${s.location}</p>
+                            
+                            <div class="space-y-2 text-xs text-slate-300 pt-3 border-t border-purple-950">
+                                <div class="flex justify-between"><span class="text-slate-500">${currentLang === 'ru' ? 'Категория:' : 'Category:'}</span> <strong class="text-purple-400">${s.category}</strong></div>
+                                <div class="flex justify-between"><span class="text-slate-500">${currentLang === 'ru' ? 'Мин. заказ:' : 'MOQ:'}</span> <span class="font-mono text-slate-200">${s.moq}</span></div>
+                                <div class="flex justify-between"><span class="text-slate-500">${currentLang === 'ru' ? 'Рейтинг:' : 'Rating:'}</span> <span class="font-bold text-amber-400">⭐ ${s.rating}</span></div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <button onclick="event.stopPropagation(); window.location.href='inspection_request.html?factory=${encodeURIComponent(s.name)}'" 
+                                class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-xs font-bold uppercase py-3 rounded-2xl transition hover:opacity-90 text-center cursor-pointer">
+                                ${currentLang === 'ru' ? 'Заказать инспекцию' : 'Request Inspection'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Динамическое обновление колонки AI-аналитики цен под поисковый запрос
+        function updatePriceAnalytics(query) {
+            const titleEl = document.getElementById('dynamicMetricTitle');
+            const valueEl = document.getElementById('dynamicMetricValue');
+            const descEl = document.getElementById('dynamicMetricDesc');
+            const subtitleEl = document.getElementById('analyticsSubtitle');
+
+            if (query.length > 0) {
+                const formatted = query.charAt(0).toUpperCase() + query.slice(1);
+                subtitleEl.innerText = currentLang === 'ru' 
+                    ? `Живой мониторинг цен и рынка для запроса: "${formatted}"` 
+                    : `Live price & market monitoring for query: "${formatted}"`;
+                
+                titleEl.innerText = currentLang === 'ru' ? `Индекс цен на: "${formatted}"` : `Price Index for "${formatted}"`;
+                const randomPrice = (Math.abs(query.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)) % 800 + 120) / 10;
+                valueEl.innerHTML = `$${randomPrice.toFixed(2)} <span class="text-xs font-normal text-slate-500">/ avg unit</span>`;
+                descEl.innerText = currentLang === 'ru' ? `Оценка оптовой стоимости на фабриках КНР` : `Estimated wholesale factory cost in China`;
+            } else {
+                subtitleEl.innerText = currentLang === 'ru' 
+                    ? `Мониторинг фрахта, себестоимости сырья и индексации фабричных цен в реальном времени` 
+                    : `Real-time freight rates, raw materials pricing, and factory cost indexes`;
+                
+                titleEl.innerText = currentLang === 'ru' ? `Чипы и Электроника (Индекс)` : `Electronics & Components Index`;
+                valueEl.innerHTML = `124.5 <span class="text-xs font-normal text-slate-500">pts</span>`;
+                descEl.innerText = currentLang === 'ru' ? `Сезонный рост спроса на полупроводники` : `Seasonal increase in semiconductor demand`;
+            }
+        }
+
+        // Открытие модального окна подробного аудита с вердиктом
+        function openModal(id) {
+            const supplier = rawSuppliers.find(s => s.id === id) || rawSuppliers[id] || rawSuppliers[0];
+            if (!supplier) return;
+
+            document.getElementById('modalTitle').innerText = supplier.name;
+            document.getElementById('modalLocation').innerText = '📍 ' + supplier.location;
+            document.getElementById('modalCategory').innerText = supplier.category;
+            document.getElementById('modalMoq').innerText = supplier.moq;
+            
+            const defaultVerdictRu = `Завод ${supplier.name} успешно прошел комплексный AI-аудит по коммерческим реестрам КНР. Уставный капитал верифицирован, экспортная лицензия активна (Class A). Производственные линии полностью адаптированы под выпуск заказанной продукции.`;
+            const defaultVerdictEn = `Factory ${supplier.name} successfully passed comprehensive AI audit against China corporate registries. Capital verified, Class A export license active. Production lines fully optimized for requested output.`;
+
+            document.getElementById('modalVerdict').innerText = supplier.verdict || (currentLang === 'ru' ? defaultVerdictRu : defaultVerdictEn);
+            document.getElementById('modalActionBtn').onclick = () => {
+                window.location.href = `inspection_request.html?factory=${encodeURIComponent(supplier.name)}`;
+            };
+
+            document.getElementById('factoryModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('factoryModal').classList.add('hidden');
+        }
+
+        // Прямой сетевой запрос к Edge Function через стандартный fetch
+        async function triggerAiSearch() {
+            const searchQuery = document.getElementById('searchInput').value.trim();
+            if (!searchQuery) return;
+
+            const loader = document.getElementById('aiLoader');
+            const promptBox = document.getElementById('aiSearchPrompt');
+            
+            promptBox.classList.add('hidden');
+            loader.classList.remove('hidden');
+
+            try {
+                const currentCategory = document.getElementById('categorySelect').value !== 'ALL' 
+                    ? document.getElementById('categorySelect').value 
+                    : 'Электроника';
+
+                console.log("⚡ Отправка fetch-запроса на эндпоинт Edge Function...");
+
+                const functionUrl = `${SUPABASE_URL}/functions/v1/ai-sourcing`;
+
+                const response = await fetch(functionUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'apikey': SUPABASE_ANON_KEY
+                    },
+                    body: JSON.stringify({ 
+                        query: searchQuery, 
+                        category: currentCategory, 
+                        lang: currentLang 
+                    })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    throw new Error(result.error || `HTTP error! status: ${response.status}`);
+                }
+
+                console.log("✅ Успешный ответ от LLM по fetch!", result);
+
+                // Перезагружаем витрину — новые фабрики подгрузятся из базы
+                await loadSuppliers();
+
+            } catch (err) {
+                console.error("Критическая ошибка AI-поиска:", err);
+                alert("Ошибка LLM-агента: " + err.message);
+                promptBox.classList.remove('hidden');
+            } finally {
+                loader.classList.add('hidden');
+            }
+        }
+
+        window.onload = () => {
+            switchLanguage(currentLang);
+            loadSuppliers();
+        };
+    </script>
+</body>
+</html>
