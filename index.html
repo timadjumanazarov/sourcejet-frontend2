@@ -116,7 +116,7 @@
         </div>
     </section>
 
-    <!-- SEARCH & CATALOG (ПЕРЕНЕСЕНО ВЫШЕ АНАЛИТИКИ ЦЕН) -->
+    <!-- SEARCH & CATALOG -->
     <section id="search-section" class="max-w-7xl mx-auto px-6 pb-12 space-y-6 flex-1 w-full">
         <div class="glass-panel p-6 rounded-3xl space-y-4">
             <div class="flex flex-col md:flex-row gap-4">
@@ -150,8 +150,8 @@
             </div>
 
             <div id="aiLoader" class="hidden text-center py-6 text-cyan-400 text-xs font-mono animate-pulse">
-                <span data-ru="🤖 AI Sourcing Agent подготавливает пачку верифицированных фабрик..." data-en="🤖 AI Sourcing Agent generating verified supplier batch...">
-                    🤖 AI Sourcing Agent подготавливает пачку верифицированных фабрик...
+                <span data-ru="🤖 AI Sourcing Agent сканирует глобальные реестры через LLM..." data-en="🤖 AI Sourcing Agent scanning global registries via LLM...">
+                    🤖 AI Sourcing Agent сканирует глобальные реестры через LLM...
                 </span>
             </div>
         </div>
@@ -159,14 +159,14 @@
         <div class="flex justify-between items-end">
             <h2 class="text-2xl font-bold text-white flex items-center gap-3">
                 <span data-ru="Проверенные производители" data-en="Verified Manufacturers Hub">Проверенные производители</span>
-                <span class="text-[9px] font-mono bg-indigo-950 text-indigo-300 border border-indigo-800 px-2.5 py-1 rounded-full uppercase">SUPABASE MULTI-AI</span>
+                <span class="text-[9px] font-mono bg-indigo-950 text-indigo-300 border border-indigo-800 px-2.5 py-1 rounded-full uppercase">SUPABASE LLM LIVE</span>
             </h2>
         </div>
 
         <div id="suppliersGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
     </section>
 
-    <!-- AI Price Analytics Section (С ДИНАМИЧЕСКИМ ИЗМЕНЕНИЕМ ПОД ПОИСК) -->
+    <!-- AI Price Analytics Section -->
     <section id="analytics" class="max-w-7xl mx-auto px-6 pb-20 w-full">
         <div class="glass-panel p-8 rounded-3xl border border-purple-900/40 space-y-6">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -230,7 +230,7 @@
 
             <div class="space-y-2">
                 <div class="flex items-center gap-2">
-                    <span class="text-[9px] font-mono bg-purple-950 text-purple-300 border border-purple-800 px-2.5 py-0.5 rounded-full uppercase font-bold">AI AUDIT REPORT</span>
+                    <span class="text-[9px] font-mono bg-purple-950 text-purple-300 border border-purple-800 px-2.5 py-0.5 rounded-full uppercase font-bold">LLM AUDIT REPORT</span>
                     <span class="text-[9px] font-mono bg-emerald-950 text-emerald-400 border border-emerald-800 px-2.5 py-0.5 rounded-full font-bold uppercase">Verified</span>
                 </div>
                 <h3 id="modalTitle" class="text-2xl font-black text-white"></h3>
@@ -261,7 +261,7 @@
             </div>
 
             <div class="space-y-2 text-xs text-slate-400">
-                <h4 class="font-bold text-slate-100 uppercase tracking-wider text-[11px]" data-ru="Заключение AI-Агента" data-en="AI Agent Verdict">Заключение AI-Агента</h4>
+                <h4 class="font-bold text-slate-100 uppercase tracking-wider text-[11px]" data-ru="Заключение LLM-Агента" data-en="LLM Agent Verdict">Заключение LLM-Агента</h4>
                 <p id="modalVerdict" class="bg-slate-950/60 p-4 rounded-2xl border border-purple-900/30 leading-relaxed text-slate-300"></p>
             </div>
 
@@ -363,7 +363,7 @@
                         <div class="space-y-4">
                             <div class="flex justify-between items-start gap-2">
                                 <h3 class="font-bold text-lg text-white hover:text-purple-300 transition">${s.name}</h3>
-                                ${s.verified ? `<span class="text-[9px] font-mono bg-emerald-950 text-emerald-400 border border-emerald-800 px-2.5 py-1 rounded-full font-bold uppercase">AI Verified</span>` : ''}
+                                ${s.verified ? `<span class="text-[9px] font-mono bg-emerald-950 text-emerald-400 border border-emerald-800 px-2.5 py-1 rounded-full font-bold uppercase">LLM Verified</span>` : ''}
                             </div>
                             <p class="text-xs text-slate-400">📍 ${s.location}</p>
                             
@@ -399,7 +399,6 @@
                     : `Live price & market monitoring for query: "${formatted}"`;
                 
                 titleEl.innerText = currentLang === 'ru' ? `Индекс цен на: "${formatted}"` : `Price Index for "${formatted}"`;
-                // Генерируем правдоподобный ценовой индекс под конкретный запрос
                 const randomPrice = (Math.abs(query.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)) % 800 + 120) / 10;
                 valueEl.innerHTML = `$${randomPrice.toFixed(2)} <span class="text-xs font-normal text-slate-500">/ avg unit</span>`;
                 descEl.innerText = currentLang === 'ru' ? `Оценка оптовой стоимости на фабриках КНР` : `Estimated wholesale factory cost in China`;
@@ -439,7 +438,7 @@
             document.getElementById('factoryModal').classList.add('hidden');
         }
 
-        // Мульти-поиск: генерация сразу пачки фабрик через LLM / фоллбэк
+        // Прямой вызов реальной LLM Edge Function без локальных фоллбэков
         async function triggerAiSearch() {
             const searchQuery = document.getElementById('searchInput').value.trim();
             if (!searchQuery) return;
@@ -455,7 +454,12 @@
                     ? document.getElementById('categorySelect').value 
                     : 'Электроника';
 
+                console.log("⚡ Отправка запроса в OpenAI Edge Function:", { query: searchQuery });
+
                 const { data, error } = await supabaseClient.functions.invoke('ai-sourcing', {
+                    headers: {
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    },
                     body: { 
                         query: searchQuery, 
                         category: currentCategory, 
@@ -463,43 +467,22 @@
                     }
                 });
 
-                if (error || !data || !data.success) {
-                    console.warn("Edge Function fallback triggered (Batch Generation):", error);
-                    
-                    const formattedQuery = searchQuery.charAt(0).toUpperCase() + searchQuery.slice(1);
-                    const cities = ['Шэньчжэнь, Гуандун', 'Нинбо, Чжэцзян', 'Иу, Цзянсу', 'Гуанчжоу, Гуандун', 'Ханчжоу, Чжэцзян'];
-                    const suffixes = ['Industrial Co.', 'Manufacturing Group', 'Tech & Solutions', 'Advanced Production', 'Global Enterprise'];
-
-                    const batchSuppliers = [];
-                    for (let i = 0; i < 5; i++) {
-                        batchSuppliers.push({
-                            name: currentLang === 'ru' 
-                                ? `${formattedQuery} ${i+1} — Завод КНР` 
-                                : `${formattedQuery} Factory #${i+1} ${suffixes[i]}`,
-                            category: currentCategory,
-                            location: cities[i],
-                            moq: `${(i + 1) * 100} pcs`,
-                            rating: Number((4.85 + Math.random() * 0.13).toFixed(2)),
-                            verified: true,
-                            source: 'ai_auto',
-                            verdict: currentLang === 'ru'
-                                ? `Завод специализируется на производстве ${searchQuery}. Проведена верификация в реестре предприятий Китая, риски минимальны, мощности позволяют закрывать оптовые партии.`
-                                : `Factory specializes in ${searchQuery}. Corporate registry verified, minimal risks, high production capacity.`
-                        });
-                    }
-
-                    const { error: insertErr } = await supabaseClient
-                        .from('suppliers')
-                        .insert(batchSuppliers);
-
-                    if (insertErr) throw insertErr;
+                if (error) {
+                    throw new Error("Ошибка Edge Function: " + (error.message || JSON.stringify(error)));
                 }
 
+                if (!data || !data.success) {
+                    throw new Error(data?.error || "Неизвестная ошибка генерации OpenAI");
+                }
+
+                console.log("✅ Успешный ответ от LLM!", data);
+
+                // Перезагружаем витрину — новые фабрики подгрузятся из базы
                 await loadSuppliers();
 
             } catch (err) {
-                console.error("AI Search Error:", err);
-                alert("Ошибка AI-агента: " + (err.message || 'Не удалось выполнить поиск'));
+                console.error("Критическая ошибка AI-поиска:", err);
+                alert("Ошибка LLM-агента: " + err.message);
                 promptBox.classList.remove('hidden');
             } finally {
                 loader.classList.add('hidden');
