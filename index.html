@@ -50,11 +50,14 @@
                 <a href="index.html" class="hover:text-purple-400 transition" data-ru="Поиск фабрик" data-en="Suppliers Hub">Поиск фабрик</a>
                 <a href="cargo_tracker.html" class="hover:text-purple-400 transition" data-ru="Трекинг грузов" data-en="Cargo Tracking">Трекинг грузов</a>
                 <a href="#analytics" class="hover:text-purple-400 transition" data-ru="Аналитика цен" data-en="AI Analytics">Аналитика цен</a>
-                <a href="#inspectors" onclick="openRFQModal('General Inspection')" class="hover:text-purple-400 transition flex items-center gap-1">
-                    <a href="inspector_dashboard.html" class="hover:text-purple-400 transition" data-ru="База инспекторов" data-en="Inspectors Network">База инспекторов</a>
-                    <span class="text-[8px] bg-purple-950 text-purple-300 border border-purple-800 px-1.5 py-0.5 rounded-full">GLOBAL</span>
-                 </nav>
+                
+                <!-- База инспекторов с прижатым бейджем GLOBAL -->
+                <a href="inspector_dashboard.html" class="hover:text-purple-400 transition flex items-center gap-1">
+                    <span data-ru="База инспекторов" data-en="Inspectors Network">База инспекторов</span>
+                    <span class="text-[7px] bg-purple-950 text-purple-300 border border-purple-800 px-1.5 py-0.5 rounded-full font-bold -translate-y-1">GLOBAL</span>
                 </a>
+
+                <a href="seller_dashboard.html" class="hover:text-purple-400 transition text-cyan-300 font-bold" data-ru="Кабинет селлера" data-en="Seller Dashboard">Кабинет селлера</a>
             </nav>
 
             <div class="flex items-center gap-4">
@@ -62,9 +65,8 @@
                     <button onclick="switchLanguage('ru')" id="btn-ru" class="px-2.5 py-1 rounded-lg transition bg-purple-600 text-white">RU</button>
                     <button onclick="switchLanguage('en')" id="btn-en" class="px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white">EN</button>
                 </div>
-<a href="inspection_request.html" class="hidden sm:inline-block bg-gradient-to-r from-purple-600 to-cyan-500 text-white font-bold px-5 py-2.5 rounded-xl text-xs uppercase transition shadow-lg shadow-purple-600/30 hover:opacity-90" data-ru="Заказать инспекцию" data-en="Request Inspection">
-    Заказать инспекцию
-</a>
+                <button onclick="openRFQModal('General Inspection')" class="hidden sm:inline-block bg-gradient-to-r from-purple-600 to-cyan-500 text-white font-bold px-5 py-2.5 rounded-xl text-xs uppercase transition shadow-lg shadow-purple-600/30 hover:opacity-90" data-ru="Заказать инспекцию" data-en="Request Inspection">
+                    Заказать инспекцию
                 </button>
             </div>
         </div>
@@ -132,7 +134,6 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
-                <!-- Card 1 -->
                 <div class="bg-slate-950/80 border border-purple-900/40 p-5 rounded-2xl space-y-3">
                     <div class="flex justify-between items-center">
                         <span class="text-xs font-semibold text-slate-400" data-ru="Контейнерный фрахт (40ft HQ)" data-en="Container Freight (40ft HQ)">Контейнерный фрахт (40ft HQ)</span>
@@ -140,12 +141,11 @@
                     </div>
                     <div class="text-2xl font-black text-white">$3,850 <span class="text-xs font-normal text-slate-500">/ Ningbo-Bishkek</span></div>
                     <div class="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden">
-                        <div class="bg-gradient-to-r from-purple-500 to-cyan-400 h-full w-[65%]"></div>
+                        <div class="bg-gradient-to-r from-purple-500 to-cyan-400 h-full w-[65%]" style="width: 65%;"></div>
                     </div>
                     <p class="text-[10px] text-slate-500" data-ru="Стабильный тренд на снижение стоимости логистики" data-en="Stable downward trend in logistics costs">Стабильный тренд на снижение стоимости логистики</p>
                 </div>
 
-                <!-- Card 2 -->
                 <div class="bg-slate-950/80 border border-purple-900/40 p-5 rounded-2xl space-y-3">
                     <div class="flex justify-between items-center">
                         <span class="text-xs font-semibold text-slate-400" data-ru="Чипы и Электроника (Индекс)" data-en="Electronics & Components Index">Чипы и Электроника (Индекс)</span>
@@ -153,12 +153,11 @@
                     </div>
                     <div class="text-2xl font-black text-white">124.5 <span class="text-xs font-normal text-slate-500">pts</span></div>
                     <div class="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden">
-                        <div class="bg-gradient-to-r from-amber-500 to-purple-500 h-full w-[78%]"></div>
+                        <div class="bg-gradient-to-r from-amber-500 to-purple-500 h-full w-[78%]" style="width: 78%;"></div>
                     </div>
                     <p class="text-[10px] text-slate-500" data-ru="Сезонный рост спроса на полупроводники" data-en="Seasonal increase in semiconductor demand">Сезонный рост спроса на полупроводники</p>
                 </div>
 
-                <!-- Card 3 -->
                 <div class="bg-slate-950/80 border border-purple-900/40 p-5 rounded-2xl space-y-3">
                     <div class="flex justify-between items-center">
                         <span class="text-xs font-semibold text-slate-400" data-ru="Текстиль и Полимеры" data-en="Textiles & Polymers">Текстиль и Полимеры</span>
@@ -166,7 +165,7 @@
                     </div>
                     <div class="text-2xl font-black text-white">$1.42 <span class="text-xs font-normal text-slate-500">/ kg</span></div>
                     <div class="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden">
-                        <div class="bg-gradient-to-r from-cyan-400 to-indigo-500 h-full w-[42%]"></div>
+                        <div class="bg-gradient-to-r from-cyan-400 to-indigo-500 h-full w-[42%]" style="width: 42%;"></div>
                     </div>
                     <p class="text-[10px] text-slate-500" data-ru="Благоприятная цена на сырье для фабрик" data-en="Favorable raw material pricing for production">Благоприятная цена на сырье для фабрик</p>
                 </div>
@@ -362,18 +361,37 @@
             const btn = document.getElementById('submitBtn');
             btn.innerText = currentLang === 'ru' ? 'Отправка...' : 'Submitting...';
 
-            const leadData = {
-                target: document.getElementById('factoryTarget').value,
-                name: document.getElementById('leadName').value,
-                contact: document.getElementById('leadContact').value,
-                details: document.getElementById('leadDetails').value
-            };
+            const targetName = document.getElementById('factoryTarget').value;
+            const leadName = document.getElementById('leadName').value;
+            const leadContact = document.getElementById('leadContact').value;
+            const leadDetails = document.getElementById('leadDetails').value;
 
-            await supabaseClient.from('leads').insert([leadData]);
+            // 1. Сохраняем лид в таблицу leads
+            await supabaseClient.from('leads').insert([{
+                target: targetName,
+                name: leadName,
+                contact: leadContact,
+                details: leadDetails
+            }]);
 
+            // 2. Создаем инспекцию в таблице inspections для селлера
+            await supabaseClient.from('inspections').insert([{
+                factory_name: targetName,
+                product_name: leadDetails || 'Заказ с витрины',
+                country: 'Китай',
+                city: 'Yiwu',
+                client_name: leadName,
+                inspector_name: 'Ожидает назначения',
+                status: 'new',
+                escrow_status: 'held',
+                dispute_deadline: new Date(Date.now() + 48*3600*1000).toISOString(),
+                requirements: { notes: leadDetails, contact: leadContact }
+            }]);
+
+            // 3. Telegram уведомление
             const botToken = '9251200369:AAEs1Tuxt3smms34wrP30SbFyhy5-Ona9RY';
             const chatId = '247632305';
-            const message = `⚡ *НОВАЯ ЗАЯВКА SOURCEJET AI* ⚡\n\n📌 *Цель:* ${leadData.target}\n👤 *Имя:* ${leadData.name}\n📞 *Контакты:* ${leadData.contact}\n📝 *Детали:* ${leadData.details || 'Нет деталей'}`;
+            const message = `⚡ *НОВАЯ ЗАЯВКА SOURCEJET AI* ⚡\n\n📌 *Цель:* ${targetName}\n👤 *Имя:* ${leadName}\n📞 *Контакты:* ${leadContact}\n📝 *Детали:* ${leadDetails || 'Нет деталей'}`;
 
             try {
                 await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
@@ -389,11 +407,10 @@
                 console.error('Telegram notification error:', err);
             }
 
-            alert(currentLang === 'ru' ? 'Заявка успешно отправлена! Мы свяжемся с вами в течение 15 минут.' : 'Request successfully submitted! Our team will contact you shortly.');
+            alert(currentLang === 'ru' ? 'Заявка принята! Перенаправляем в ваш кабинет селлера...' : 'Request submitted! Redirecting to your seller dashboard...');
             
-            document.getElementById('rfqForm').reset();
-            closeRFQModal();
-            btn.innerText = currentLang === 'ru' ? 'Отправить заявку' : 'Submit Application';
+            // Переход в кабинет селлера
+            window.location.href = 'seller_dashboard.html';
         }
 
         window.onload = () => {
