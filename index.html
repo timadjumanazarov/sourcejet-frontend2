@@ -159,7 +159,7 @@
         <div class="flex justify-between items-end">
             <h2 class="text-2xl font-bold text-white flex items-center gap-3">
                 <span data-ru="Проверенные производители" data-en="Verified Manufacturers Hub">Проверенные производители</span>
-                <span class="text-[9px] font-mono bg-indigo-950 text-indigo-300 border border-indigo-800 px-2.5 py-1 rounded-full uppercase">OPENAI REALTIME LIVE</span>
+                <span class="text-[9px] font-mono bg-indigo-950 text-indigo-300 border border-indigo-800 px-2.5 py-1 rounded-full uppercase">OPENAI PROXY LIVE</span>
             </h2>
         </div>
 
@@ -435,7 +435,7 @@
             document.getElementById('factoryModal').classList.add('hidden');
         }
 
-        // НАСТОЯЩИЙ ИИ-ПОИСК: Прямой запрос к OpenAI API с встроенным ключом
+        // НАСТОЯЩИЙ ИИ-ПОИСК ЧЕРЕЗ CORS-ПРОКСИ С ВСТРОЕННЫМ КЛЮЧОМ
         async function triggerAiSearch() {
             const searchQuery = document.getElementById('searchInput').value.trim();
             if (!searchQuery) return;
@@ -451,9 +451,8 @@
                     ? document.getElementById('categorySelect').value 
                     : 'Электроника';
 
-                console.log("⚡ Отправка запроса в OpenAI API для поиска фабрик по запросу:", searchQuery);
+                console.log("⚡ Отправка запроса в OpenAI API через прокси для поиска:", searchQuery);
 
-                // Интегрированный реальный ключ OpenAI
                 const OPENAI_API_KEY = "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".trim();
 
                 const systemPrompt = `You are a B2B Sourcing AI. Generate a JSON object with an array of 3 realistic verified manufacturing factories in China for "${searchQuery}". 
@@ -465,7 +464,10 @@ Return ONLY raw valid JSON matching this exact structure, with no markdown code 
   ]
 }`;
 
-                const openAiRes = await fetch('https://api.openai.com/v1/chat/completions', {
+                const targetUrl = 'https://api.openai.com/v1/chat/completions';
+                const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
+
+                const openAiRes = await fetch(proxyUrl, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${OPENAI_API_KEY}`,
