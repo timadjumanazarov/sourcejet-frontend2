@@ -66,9 +66,9 @@
                     <button onclick="switchLanguage('ru')" id="btn-ru" class="px-2.5 py-1 rounded-lg transition bg-purple-600 text-white">RU</button>
                     <button onclick="switchLanguage('en')" id="btn-en" class="px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white">EN</button>
                 </div>
-                <button onclick="openRFQModal('General Inspection')" class="hidden sm:inline-block bg-gradient-to-r from-purple-600 to-cyan-500 text-white font-bold px-5 py-2.5 rounded-xl text-xs uppercase transition shadow-lg shadow-purple-600/30 hover:opacity-90" data-ru="Заказать инспекцию" data-en="Request Inspection">
-                    Заказать инспекцию
-                </button>
+                <a href="inspection_request.html" class="hidden sm:inline-block bg-gradient-to-r from-purple-600 to-cyan-500 text-white font-bold px-5 py-2.5 rounded-xl text-xs uppercase transition shadow-lg shadow-purple-600/30 hover:opacity-90 text-center leading-normal" data-ru="Заказать инспекцию" data-en="Request Inspection">
+    Заказать инспекцию
+</a>
             </div>
         </div>
     </header>
@@ -345,11 +345,9 @@
         }
 
         function openRFQModal(targetName) {
-            document.getElementById('factoryTarget').value = targetName;
-            const modal = document.getElementById('rfqModal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        }
+    // Вместо маленького окна сразу перенаправляем на полную форму с передачей имени фабрики в параметре URL
+    window.location.href = `inspection_request.html?factory=${encodeURIComponent(targetName)}`;
+}
 
         function closeRFQModal() {
             const modal = document.getElementById('rfqModal');
