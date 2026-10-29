@@ -64,6 +64,7 @@
                     <button onclick="switchLanguage('ru')" id="btn-ru" class="px-2.5 py-1 rounded-lg transition bg-purple-600 text-white">RU</button>
                     <button onclick="switchLanguage('en')" id="btn-en" class="px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white">EN</button>
                 </div>
+                <!-- Верхняя кнопка заказа инспекции ведет СТРОГО на форму -->
                 <a href="inspection_request.html" class="hidden sm:inline-block bg-gradient-to-r from-purple-600 to-cyan-500 text-white font-bold px-5 py-2.5 rounded-xl text-xs uppercase transition shadow-lg shadow-purple-600/30 hover:opacity-90 text-center leading-normal" data-ru="Заказать инспекцию" data-en="Request Inspection">
                     Заказать инспекцию
                 </a>
@@ -298,7 +299,7 @@
                             </div>
                         </div>
 
-                        <!-- Перенаправление на страницу заказа инспекции с передачей фабрики -->
+                        <!-- Перенаправление строго на страницу полной формы заказа инспекции -->
                         <a href="inspection_request.html?factory=${encodeURIComponent(s.name)}" 
                             class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-xs font-bold uppercase py-3 rounded-2xl transition hover:opacity-90 text-center block">
                             ${currentLang === 'ru' ? 'Заказать инспекцию' : 'Request Inspection'}
