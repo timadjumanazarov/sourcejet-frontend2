@@ -52,7 +52,7 @@
     <!-- Main Workspace -->
     <main class="max-w-7xl mx-auto px-6 py-10 flex-1 w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        <!-- Левая колонка: Данные фабрики и чек-лист -->
+        <!-- Левая колонка: Данные фабрики, Escrow и чек-лист -->
         <div class="lg:col-span-2 space-y-6">
             
             <!-- Информация о заказе -->
@@ -87,6 +87,42 @@
                 <div class="bg-slate-950/80 p-4 rounded-2xl border border-purple-900/30 text-xs space-y-1">
                     <span class="text-purple-400 font-bold uppercase tracking-wider text-[10px]">Техническое задание (ТЗ):</span>
                     <p id="requirementsText" class="text-slate-300">Загрузка требований...</p>
+                </div>
+            </div>
+
+            <!-- Блок Безопасная сделка (Escrow) и 48-часовое окно Dispute -->
+            <div id="escrow-dispute-card" class="glass-panel p-6 rounded-3xl border border-purple-900/50 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">🛡️ Безопасная сделка (Escrow & Dispute)</h3>
+                    <span id="escrowBadge" class="px-3 py-1 text-xs font-medium rounded-full bg-amber-950 text-amber-300 border border-amber-800">Средства заморожены</span>
+                </div>
+
+                <div class="text-xs text-slate-300 space-y-3">
+                    <p class="text-slate-400">
+                        После завершения проверки средства удерживаются на защищенном эскроу-счете. У вас есть 48 часов на проверку отчета и подачу апелляции (спора).
+                    </p>
+
+                    <!-- Таймер обратного отсчета -->
+                    <div class="bg-slate-950/90 p-4 rounded-2xl border border-purple-900/40 flex items-center justify-between">
+                        <div>
+                            <div class="text-[10px] text-slate-400 font-bold uppercase">Окно подачи арбитражного спора:</div>
+                            <div id="disputeTimer" class="text-lg font-mono font-black text-cyan-300">47:59:45</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-[10px] text-slate-400 font-bold uppercase">Дедлайн:</div>
+                            <div id="disputeDeadlineDate" class="text-xs font-semibold text-slate-200">—</div>
+                        </div>
+                    </div>
+
+                    <!-- Кнопки управления эскроу -->
+                    <div class="flex gap-3 pt-2">
+                        <button onclick="openDisputeModal()" class="flex-1 bg-rose-950/60 hover:bg-rose-900/60 border border-rose-800/60 text-rose-300 py-2.5 px-4 rounded-xl font-bold uppercase tracking-wider transition text-xs">
+                            ⚠️ Открыть спор (Dispute)
+                        </button>
+                        <button onclick="manualReleaseEscrow()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-2.5 px-4 rounded-xl font-bold uppercase tracking-wider transition text-xs">
+                            ✓ Подтвердить приемку
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -239,6 +275,35 @@
 
     </main>
 
+    <!-- Модальное окно подачи спора (Dispute) -->
+    <div id="disputeModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
+        <div class="glass-panel p-6 rounded-3xl max-w-lg w-full border border-purple-900/50 space-y-4 shadow-2xl">
+            <h3 class="text-lg font-black text-white">⚠️ Подача арбитражного спора (Dispute)</h3>
+            <p class="text-xs text-slate-400">Опишите причину несогласия с результатами инспекции. Средства останутся на эскроу-счете до решения арбитража SourceJet.</p>
+            
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-slate-400 mb-1">Причина спора</label>
+                    <select id="disputeReason" class="w-full bg-slate-950 border border-purple-900/60 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-purple-500">
+                        <option value="wrong_defect_count">Неверный расчет процента брака (AQL)</option>
+                        <option value="inspector_bias">Предвзятое отношение или ошибка инспектора</option>
+                        <option value="factory_closed">Фабрика заявляет о другом объеме партии</option>
+                        <option value="other">Другая причина</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Комментарий и доказательства</label>
+                    <textarea id="disputeComment" rows="3" class="w-full bg-slate-950 border border-purple-900/60 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-purple-500" placeholder="Укажите детали и приложите ссылки на фото/видео..."></textarea>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-2">
+                <button onclick="closeDisputeModal()" class="px-4 py-2 text-xs text-slate-400 hover:text-white transition">Отмена</button>
+                <button onclick="submitDispute()" class="bg-rose-600 hover:bg-rose-500 text-white font-bold px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition">Отправить в арбитраж</button>
+            </div>
+        </div>
+    </div>
+
     <footer class="border-t border-purple-900/30 bg-slate-900/80 py-6 text-center text-xs text-slate-500">
         <p>© 2026 SourceJet AI. Inspection Room Live Channel.</p>
     </footer>
@@ -251,6 +316,9 @@
         const urlParams = new URLSearchParams(window.location.search);
         const inspectionId = urlParams.get('id');
         const accessToken = urlParams.get('token');
+        window.currentInspectionId = inspectionId;
+
+        let currentInspectionData = null;
 
         document.addEventListener('DOMContentLoaded', () => {
             if (!inspectionId) {
@@ -277,9 +345,14 @@
                 return;
             }
 
+            currentInspectionData = data;
             fillInspectionData(data);
             loadMessages();
             setupRealtimeSubscription();
+
+            if (data.dispute_deadline) {
+                initDisputeTimer(data.dispute_deadline);
+            }
         }
 
         function showAccessDenied(message) {
@@ -331,7 +404,6 @@
                         filter: `inspection_id=eq.${inspectionId}`
                     },
                     (payload) => {
-                        console.log('Новое сообщение через WebSocket:', payload.new);
                         loadMessages();
                     }
                 )
@@ -344,11 +416,96 @@
                         filter: `id=eq.${inspectionId}`
                     },
                     (payload) => {
-                        console.log('Статус инспекции обновлен через WebSocket:', payload.new);
                         validateAndLoadInspection();
                     }
                 )
                 .subscribe();
+        }
+
+        // --- 48h Dispute Timer & Escrow Functions ---
+        function initDisputeTimer(deadlineIsoString) {
+            const deadline = new Date(deadlineIsoString).getTime();
+
+            const interval = setInterval(() => {
+                const now = new Date().getTime();
+                const distance = deadline - now;
+
+                if (distance < 0) {
+                    clearInterval(interval);
+                    document.getElementById("disputeTimer").innerHTML = "Окно спора закрыто";
+                    document.getElementById("escrowBadge").className = "px-3 py-1 text-xs font-medium rounded-full bg-emerald-950 text-emerald-300 border border-emerald-800";
+                    document.getElementById("escrowBadge").innerText = "Средства выплачены фабрике";
+                    return;
+                }
+
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById("disputeTimer").innerHTML = 
+                    `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }, 1000);
+
+            document.getElementById("disputeDeadlineDate").innerText = new Date(deadlineIsoString).toLocaleString();
+        }
+
+        function openDisputeModal() {
+            document.getElementById("disputeModal").classList.remove("hidden");
+        }
+
+        function closeDisputeModal() {
+            document.getElementById("disputeModal").classList.add("hidden");
+        }
+
+        async function submitDispute() {
+            const reason = document.getElementById("disputeReason").value;
+            const comment = document.getElementById("disputeComment").value;
+            
+            const { error } = await supabaseClient
+                .from('disputes')
+                .insert([{
+                    inspection_id: inspectionId,
+                    seller_id: currentInspectionData?.client_name || 'seller_client',
+                    reason: reason,
+                    admin_notes: comment,
+                    status: 'open'
+                }]);
+
+            if (error) {
+                alert("Ошибка при открытии спора: " + error.message);
+            } else {
+                alert("Спор успешно открыт! Средства заморожены до решения арбитража.");
+                closeDisputeModal();
+                location.reload();
+            }
+        }
+
+        async function manualReleaseEscrow() {
+            if (!confirm("Вы подтверждаете приемку товара? Средства будут переведены фабрике.")) return;
+            
+            const { error } = await supabaseClient
+                .from('inspections')
+                .update({ escrow_status: 'released', status: 'completed' })
+                .eq('id', inspectionId);
+
+            if (!error) {
+                alert("Сделка успешно завершена!");
+                location.reload();
+            }
+        }
+
+        async function setVerdict(statusValue) {
+            const { error } = await supabaseClient
+                .from('inspections')
+                .update({ status: statusValue })
+                .eq('id', inspectionId);
+
+            if (error) {
+                alert('Ошибка обновления вердикта: ' + error.message);
+            } else {
+                alert('Вердикт успешно обновлен: ' + statusValue.toUpperCase());
+                location.reload();
+            }
         }
 
         async function saveInspectionParameters() {
@@ -580,236 +737,117 @@
                 }
 
                 statusDiv.className = 'text-xs font-mono text-emerald-400';
-                statusDiv.innerText = '✓ Все файлы успешно сжаты и загружены!';
+                statusDiv.innerText = '✓ Все файлы успешно загружены!';
                 fileInput.value = '';
-                setTimeout(() => { statusDiv.innerText = ''; }, 4000);
+                setTimeout(() => { statusDiv.innerText = ''; }, 3500);
 
             } catch (err) {
-                console.error("Upload error:", err);
                 statusDiv.className = 'text-xs font-mono text-rose-400';
                 statusDiv.innerText = 'Ошибка: ' + err.message;
             }
         }
 
-        async function setVerdict(status) {
-            const verdictText = status === 'completed' ? 'PASS (Одобрено)' : 'FAIL (Найден брак)';
-            if (!confirm(`Подтвердить вердикт проверки: ${verdictText}?`)) return;
-
-            const { error } = await supabaseClient
-                .from('inspections')
-                .update({ status: status })
-                .eq('id', inspectionId);
-
-            if (error) {
-                alert('Ошибка сохранения вердикта: ' + error.message);
-            } else {
-                alert('Вердикт успешно сохранен и отправлен клиенту!');
-            }
-        }
-
+        // --- Генерация Enterprise PDF-отчета ---
         async function generateEnterprisePDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('p', 'mm', 'a4');
-
-            const factoryTitle = document.getElementById('factoryTitle').innerText;
-            const countryCity = document.getElementById('inspectionCountryCity').innerText;
-            const clientName = document.getElementById('clientName').innerText;
-            const inspectorName = document.getElementById('inspectorName').innerText;
-            const scheduledDate = document.getElementById('scheduledDate').innerText;
-            const factoryAddress = document.getElementById('factoryAddress').innerText;
-            const requirements = document.getElementById('requirementsText').innerText;
-            const statusBadge = document.getElementById('inspectionStatusBadge').innerText;
-
-            const sampledQty = document.getElementById('paramSampledQty').value || 'Не указано';
-            const defectsQty = document.getElementById('paramDefectsQty').value || '0';
-            const containerNum = document.getElementById('paramContainerNum').value || 'Не указан';
-
-            const btn = event.currentTarget;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '🛡️ Формирование документа...';
-            btn.disabled = true;
-
-            try {
-                const { data: mediaMessages } = await supabaseClient
-                    .from('inspection_messages')
-                    .select('*')
-                    .eq('inspection_id', inspectionId)
-                    .ilike('message', '%[Фото-отчет с фабрики]%');
-
-                const qrContainer = document.getElementById('qrcode');
-                qrContainer.innerHTML = '';
-                const verifyUrl = `https://sourcejet.ai/verify?id=${inspectionId}`;
-                new QRCode(qrContainer, {
-                    text: verifyUrl,
-                    width: 80,
-                    height: 80
-                });
-
-                await new Promise(r => setTimeout(r, 200));
-                const qrCanvas = qrContainer.querySelector('canvas');
-                const qrImgData = qrCanvas ? qrCanvas.toDataURL('image/png') : null;
-
-                doc.setFillColor(15, 23, 42);
-                doc.rect(0, 0, 210, 44, 'F');
-
-                doc.setTextColor(192, 132, 252);
-                doc.setFont('helvetica', 'bold');
-                doc.setFontSize(20);
-                doc.text('SOURCEJET AI', 15, 18);
-
-                doc.setTextColor(148, 163, 184);
-                doc.setFontSize(8);
-                doc.text('GLOBAL QUALITY CONTROL & FACTORY AUDIT TERMINAL', 15, 25);
-                doc.text('ISO 2859-1 (AQL 2.5) SAMPLING INSPECTION REPORT', 15, 29);
-
-                if (qrImgData) {
-                    doc.addImage(qrImgData, 'PNG', 170, 6, 32, 32);
-                    doc.setFontSize(6);
-                    doc.setTextColor(203, 213, 225);
-                    doc.text('SCAN TO VERIFY', 172, 41);
-                }
-
-                let y = 56;
-                doc.setTextColor(15, 23, 42);
-                doc.setFontSize(14);
-                doc.setFont('helvetica', 'bold');
-                doc.text(`FACTORY: ${factoryTitle.toUpperCase()}`, 15, y);
-
-                y += 6;
-                doc.setFontSize(9);
-                doc.setFont('helvetica', 'normal');
-                doc.setTextColor(100, 116, 139);
-                doc.text(`Scope & Region: ${countryCity}`, 15, y);
-
-                y += 8;
-                doc.setFillColor(248, 250, 252);
-                doc.setDrawColor(226, 232, 240);
-                doc.rect(15, y, 180, 36, 'FD');
-
-                doc.setTextColor(51, 65, 85);
-                doc.setFontSize(8.5);
-                doc.text(`Client Org: ${clientName}`, 20, y + 8);
-                doc.text(`Assigned Inspector: ${inspectorName}`, 20, y + 18);
-                doc.text(`Scheduled Date: ${scheduledDate}`, 110, y + 8);
-                doc.text(`Facility Address: ${factoryAddress}`, 110, y + 18);
-                
-                doc.setFont('helvetica', 'bold');
-                doc.text(`Sampled Qty: ${sampledQty} | Defects: ${defectsQty} | Container: ${containerNum}`, 20, y + 28);
-
-                y += 44;
-                doc.setFont('helvetica', 'bold');
-                doc.setFontSize(10);
-                doc.setTextColor(15, 23, 42);
-                doc.text('1. INSPECTION SPECIFICATIONS & REQS (TZ)', 15, y);
-
-                y += 6;
-                doc.setFont('helvetica', 'normal');
-                doc.setFontSize(8.5);
-                doc.setTextColor(71, 85, 105);
-                const splitReq = doc.splitTextToSize(requirements, 180);
-                doc.text(splitReq, 15, y);
-
-                y += (splitReq.length * 4.5) + 12;
-                doc.setFont('helvetica', 'bold');
-                doc.setFontSize(10);
-                doc.setTextColor(15, 23, 42);
-                doc.text('2. QUALITY AUDIT CHECKLIST (ISO 2859-1 STANDARD)', 15, y);
-
-                y += 6;
-                doc.setFont('helvetica', 'normal');
-                doc.setFontSize(8.5);
-                const checks = [
-                    '[ PASS ] Outer Packaging & Shipping Mark Verification (Cartons, Pallets, Moisture)',
-                    '[ PASS ] Quantity & Mass Reconciliation against Commercial Invoice',
-                    '[ PASS ] Critical & Minor Defect Check (AQL 2.5 Sampling Plan)',
-                    '[ PASS ] Barcode, FBA Labels & Custom Export Compliance Check'
-                ];
-                
-                checks.forEach(check => {
-                    y += 6;
-                    doc.text(check, 18, y);
-                });
-
-                y += 18;
-                const isPass = statusBadge.toUpperCase().includes('COMPLETED') || statusBadge.toUpperCase().includes('PASS');
-                
-                doc.setFillColor(isPass ? 240 : 254, isPass ? 253 : 242, isPass ? 244 : 242);
-                doc.setDrawColor(isPass ? 187 : 254, isPass ? 247 : 202, isPass ? 208 : 202);
-                doc.rect(15, y, 110, 24, 'FD');
-
-                doc.setFont('helvetica', 'bold');
-                doc.setFontSize(10);
-                doc.setTextColor(isPass ? 22 : 153, isPass ? 101 : 27, isPass ? 52 : 27);
-                doc.text(`VERDICT: ${isPass ? 'PASSED / APPROVED FOR SHIPMENT' : 'FAILED / ISSUES DETECTED'}`, 20, y + 14);
-
-                const stampX = 155;
-                const stampY = y + 12;
-                
-                doc.setDrawColor(79, 70, 229);
-                doc.setLineWidth(0.8);
-                doc.circle(stampX, stampY, 14, 'S');
-                doc.circle(stampX, stampY, 12, 'S');
-
-                doc.setFontSize(5.5);
-                doc.setTextColor(79, 70, 229);
-                doc.text('SOURCEJET AI', stampX - 9, stampY - 5);
-                doc.setFont('helvetica', 'bold');
-                doc.text('OFFICIAL SEAL', stampX - 10, stampY + 1);
-                doc.setFont('helvetica', 'normal');
-                doc.text('VERIFIED AUDIT', stampX - 10, stampY + 6);
-
-                if (mediaMessages && mediaMessages.length > 0) {
-                    doc.addPage();
-                    
-                    doc.setFillColor(15, 23, 42);
-                    doc.rect(0, 0, 210, 25, 'F');
-                    doc.setTextColor(192, 132, 252);
-                    doc.setFont('helvetica', 'bold');
-                    doc.setFontSize(14);
-                    doc.text('3. FACTORY PHOTO & MEDIA EVIDENCE', 15, 16);
-
-                    let startX = 15;
-                    let startY = 35;
-                    let imgWidth = 85;
-                    let imgHeight = 60;
-                    let col = 0;
-
-                    for (let i = 0; i < mediaMessages.length; i++) {
-                        let currentX = startX + (col * 95);
-                        let currentY = startY + (Math.floor(i / 2) * 70);
-
-                        if (currentY > 230) {
-                            doc.addPage();
-                            currentY = 35;
-                        }
-
-                        doc.setDrawColor(203, 213, 225);
-                        doc.rect(currentX, currentY, imgWidth, imgHeight, 'S');
-                        
-                        doc.setFontSize(7);
-                        doc.setTextColor(100, 116, 139);
-                        doc.text(`Evidence #${i + 1}`, currentX, currentY + imgHeight + 5);
-
-                        col = col === 1 ? 0 : col + 1;
-                    }
-                }
-
-                doc.setFontSize(6.5);
-                doc.setTextColor(148, 163, 184);
-                doc.text('DISCLAIMER: This report reflects findings at the time and place of inspection only and within the limits of client instructions.', 15, 278);
-                doc.text('SourceJet AI is not liable for transport damages or latent manufacturing defects occurring after field ops intervention.', 15, 282);
-                
-                const cryptoHash = `HASH: ${inspectionId.replaceAll('-', '').toUpperCase().slice(0, 24)}-VERIFIED`;
-                doc.text(`Document Integrity: ${cryptoHash} | Generated via SourceJet Field Ops Terminal.`, 15, 288);
-
-                doc.save(`SourceJet-Report-${inspectionId.slice(0, 8)}.pdf`);
-            } catch (err) {
-                console.error("Enterprise PDF Error:", err);
-                alert('Ошибка генерации защищенного PDF.');
-            } finally {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
+            if (!currentInspectionData) {
+                alert('Данные инспекции еще не загружены!');
+                return;
             }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            // Цветовая палитра для PDF
+            const primaryColor = [79, 70, 229]; // Indigo
+            const darkColor = [15, 23, 42];     // Slate 900
+            const grayColor = [100, 116, 139];  // Slate 500
+
+            // Верхний колонтитул
+            doc.setFillColor(...darkColor);
+            doc.rect(0, 0, 210, 35, 'F');
+
+            doc.setTextColor(255, 255, 255);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(20);
+            doc.text('SourceJet AI', 15, 20);
+
+            doc.setFontSize(10);
+            doc.setTextColor(168, 85, 247);
+            doc.text('OFFICIAL ENTERPRISE INSPECTION REPORT', 145, 20, { align: 'right' });
+
+            // Основная информация
+            let y = 45;
+            doc.setTextColor(...darkColor);
+            doc.setFontSize(14);
+            doc.text(`Фабрика: ${currentInspectionData.factory_name || 'Не указана'}`, 15, y);
+            
+            y += 8;
+            doc.setFontSize(10);
+            doc.setTextColor(...grayColor);
+            doc.text(`Локация: ${currentInspectionData.country || 'Китай'}, ${currentInspectionData.city || 'Город'}`, 15, y);
+            
+            y += 6;
+            doc.text(`Дата инспекции: ${currentInspectionData.scheduled_date || '—'} | Тип: ${currentInspectionData.inspection_type || 'Стандарт'}`, 15, y);
+
+            // Таблица деталей
+            y += 12;
+            doc.setDrawColor(226, 232, 240);
+            doc.line(15, y, 195, y);
+
+            y += 8;
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(...darkColor);
+            doc.text('Детали и метрики партии:', 15, y);
+
+            y += 6;
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9);
+            doc.text(`Клиент: ${currentInspectionData.client_name || '—'}`, 15, y);
+            doc.text(`Инспектор: ${currentInspectionData.inspector_name || '—'}`, 110, y);
+
+            y += 6;
+            const metrics = currentInspectionData.requirements?.metrics || {};
+            doc.text(`Проверено единиц (Sampled): ${metrics.sampled_qty || '—'}`, 15, y);
+            doc.text(`Обнаружено дефектов: ${metrics.defects_qty || '—'}`, 110, y);
+
+            y += 6;
+            doc.text(`Номер контейнера / Лот: ${metrics.container_number || '—'}`, 15, y);
+            doc.text(`Статус сделки Escrow: ${currentInspectionData.escrow_status || 'held'}`, 110, y);
+
+            // Техническое задание
+            y += 12;
+            doc.setFont('helvetica', 'bold');
+            doc.text('Техническое задание / Замечания:', 15, y);
+            
+            y += 6;
+            doc.setFont('helvetica', 'normal');
+            const reqNotes = currentInspectionData.requirements?.notes || 'Примечания отсутствуют.';
+            const splitNotes = doc.splitTextToSize(reqNotes, 180);
+            doc.text(splitNotes, 15, y);
+            y += (splitNotes.length * 5) + 10;
+
+            // Блок вердикта
+            doc.setFillColor(248, 250, 252);
+            doc.roundedRect(15, y, 180, 20, 3, 3, 'F');
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(11);
+            doc.setTextColor(...primaryColor);
+            const verdictText = (currentInspectionData.status === 'completed' || currentInspectionData.status === 'pass') ? 'PASSED (Одобрено к отгрузке)' : 'PENDING / FAILED (Требует внимания)';
+            doc.text(`Вердикт инспекции: ${verdictText}`, 20, y + 13);
+
+            // QR Код и подпись внизу
+            y += 35;
+            doc.setFontSize(8);
+            doc.setTextColor(...grayColor);
+            doc.text('Документ сгенерирован автоматически платформой SourceJet AI.', 15, y);
+            doc.text(`ID отчета: ${inspectionId}`, 15, y + 4);
+            doc.text(`Дата генерации: ${new Date().toLocaleString()}`, 15, y + 8);
+
+            doc.save(`SourceJet_Inspection_${inspectionId.substring(0, 8)}.pdf`);
         }
     </script>
 </body>
