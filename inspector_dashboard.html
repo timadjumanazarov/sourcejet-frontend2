@@ -42,6 +42,41 @@
     <!-- Main Workspace -->
     <main class="max-w-6xl mx-auto px-6 py-10 flex-1 w-full space-y-8">
         
+        <!-- Верхние стат-карточки ("Горящие лампочки" / Аналитика) -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="glass-panel p-5 rounded-3xl border border-purple-900/40 flex items-center gap-4">
+                <div class="w-10 h-10 rounded-2xl bg-purple-950 border border-purple-800 flex items-center justify-center text-purple-400 font-black text-lg">📦</div>
+                <div>
+                    <div class="text-[10px] text-slate-400 font-bold uppercase" data-ru="Всего заказов" data-en="Total Orders">Всего заказов</div>
+                    <div id="statTotal" class="text-2xl font-black text-white mt-0.5">0</div>
+                </div>
+            </div>
+
+            <div class="glass-panel p-5 rounded-3xl border border-purple-900/40 flex items-center gap-4">
+                <div class="w-10 h-10 rounded-2xl bg-amber-950 border border-amber-800 flex items-center justify-center text-amber-400 font-black text-lg">⚡</div>
+                <div>
+                    <div class="text-[10px] text-slate-400 font-bold uppercase" data-ru="В процессе" data-en="In Progress">В процессе</div>
+                    <div id="statInProgress" class="text-2xl font-black text-amber-400 mt-0.5">0</div>
+                </div>
+            </div>
+
+            <div class="glass-panel p-5 rounded-3xl border border-purple-900/40 flex items-center gap-4">
+                <div class="w-10 h-10 rounded-2xl bg-emerald-950 border border-emerald-800 flex items-center justify-center text-emerald-400 font-black text-lg">✓</div>
+                <div>
+                    <div class="text-[10px] text-slate-400 font-bold uppercase" data-ru="Выполнено" data-en="Completed">Выполнено</div>
+                    <div id="statCompleted" class="text-2xl font-black text-emerald-400 mt-0.5">0</div>
+                </div>
+            </div>
+
+            <div class="glass-panel p-5 rounded-3xl border border-purple-900/40 flex items-center gap-4">
+                <div class="w-10 h-10 rounded-2xl bg-cyan-950 border border-cyan-800 flex items-center justify-center text-cyan-400 font-black text-lg">🟢</div>
+                <div>
+                    <div class="text-[10px] text-slate-400 font-bold uppercase" data-ru="Статус терминала" data-en="Terminal Status">Терминал</div>
+                    <div class="text-sm font-black text-cyan-300 mt-1">Online</div>
+                </div>
+            </div>
+        </div>
+
         <!-- Filter Bar -->
         <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 flex flex-col md:flex-row items-center justify-between gap-4">
             <div>
@@ -51,6 +86,7 @@
 
             <div class="flex items-center gap-3 w-full md:w-auto">
                 <select id="inspectorCity" class="bg-slate-950 border border-purple-900/60 rounded-xl px-4 py-2 text-xs font-bold text-cyan-300 focus:outline-none">
+                    <option value="all">📍 Все города / All Cities</option>
                     <option value="Yiwu">📍 Yiwu (Иу)</option>
                     <option value="Guangzhou">📍 Guangzhou (Гуанчжоу)</option>
                     <option value="Shenzhen">📍 Shenzhen (Шэньчжэнь)</option>
@@ -99,31 +135,43 @@
             const container = document.getElementById('ordersList');
             container.innerHTML = '<div class="col-span-full text-center text-slate-500 py-10">Загрузка всех заказов из базы...</div>';
 
-            const { data, error } = await supabaseClient
-                .from('inspections')
-                .select('*')
-                .order('created_at', { ascending: false });
+            const selectedCity = document.getElementById('inspectorCity').value;
+
+            let query = supabaseClient.from('inspections').select('*').order('created_at', { ascending: false });
+            
+            if (selectedCity && selectedCity !== 'all') {
+                query = query.eq('city', selectedCity);
+            }
+
+            const { data, error } = await query;
 
             if (error) {
                 container.innerHTML = `<div class="col-span-full text-center text-rose-400 py-10">Ошибка: ${error.message}</div>`;
                 return;
             }
 
+            // Обновляем верхние счетчики ("горящие лампочки")
+            if (data) {
+                document.getElementById('statTotal').innerText = data.length;
+                document.getElementById('statInProgress').innerText = data.filter(i => i.status === 'in_progress').length;
+                document.getElementById('statCompleted').innerText = data.filter(i => i.status === 'completed' || i.status === 'inspected').length;
+            }
+
             if (!data || data.length === 0) {
-                container.innerHTML = `<div class="col-span-full text-center text-slate-500 py-10">В базе данных пока нет ни одной заявки. Создайте новую через форму!</div>`;
+                container.innerHTML = `<div class="col-span-full text-center text-slate-500 py-10">В базе данных пока нет ни одной заявки для выбранного города.</div>`;
                 return;
             }
 
             let html = '';
             data.forEach(order => {
-                const isInProgress = order.status === 'in_progress';
+                const isInProgress = order.status === 'in_progress' || order.status === 'completed';
 
                 html += `
                     <div class="glass-panel p-6 rounded-3xl border ${isInProgress ? 'border-amber-500/40' : 'border-purple-900/40'} space-y-4 flex flex-col justify-between">
                         <div class="space-y-3">
                             <div class="flex justify-between items-start gap-2">
                                 <div>
-                                    <span class="text-[10px] font-mono text-purple-400 uppercase font-bold">Город: ${order.city}</span>
+                                    <span class="text-[10px] font-mono text-purple-400 uppercase font-bold">Город: ${order.city || 'Китай'}</span>
                                     <h3 class="text-lg font-bold text-white mt-0.5">${order.factory_name || 'Фабрика'}</h3>
                                 </div>
                                 <span class="text-[10px] px-2.5 py-1 rounded-full font-bold uppercase ${isInProgress ? 'bg-amber-950 text-amber-300 border border-amber-800' : 'bg-purple-950 text-purple-300 border border-purple-800'}">
@@ -132,9 +180,9 @@
                             </div>
 
                             <div class="space-y-1.5 text-xs text-slate-300">
-                                <p><strong>📍 Адрес:</strong> ${order.address_chinese || 'Не указан'}</p>
+                                <p><strong>📍 Адрес:</strong> ${order.address || order.address_chinese || 'Не указан'}</p>
                                 <p><strong>📅 Дата проверки:</strong> ${order.scheduled_date || 'По договоренности'}</p>
-                                <p><strong>📋 Тип:</strong> <span class="text-cyan-400 font-bold">${order.inspection_type || 'Стандарт'}</span></p>
+                                <p><strong>📋 Товар:</strong> <span class="text-cyan-400 font-bold">${order.product_name || 'Стандарт'}</span></p>
                                 <p><strong>👤 Клиент:</strong> ${order.client_name || 'Не указан'}</p>
                                 <p class="text-[10px] text-slate-500 font-mono">ID: ${order.id}</p>
                             </div>
@@ -142,11 +190,11 @@
 
                         <div class="pt-2">
                             ${isInProgress ? `
-                                <button onclick="openChat('${order.id}')" class="w-full bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold py-3 rounded-xl uppercase tracking-wider transition flex items-center justify-center gap-2">
+                                <button onclick="openChat('${order.id}')" class="w-full bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold py-3 rounded-xl uppercase tracking-wider transition flex items-center justify-center gap-2 shadow-lg">
                                     💬 <span>В комнату инспекции</span>
                                 </button>
                             ` : `
-                                <button onclick="claimOrder('${order.id}')" class="w-full bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold py-3 rounded-xl uppercase tracking-wider transition">
+                                <button onclick="claimOrder('${order.id}')" class="w-full bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold py-3 rounded-xl uppercase tracking-wider transition shadow-lg">
                                     Принять заказ на выезд
                                 </button>
                             `}
