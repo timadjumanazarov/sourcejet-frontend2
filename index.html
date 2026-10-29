@@ -159,7 +159,7 @@
         <div class="flex justify-between items-end">
             <h2 class="text-2xl font-bold text-white flex items-center gap-3">
                 <span data-ru="Проверенные производители" data-en="Verified Manufacturers Hub">Проверенные производители</span>
-                <span class="text-[9px] font-mono bg-indigo-950 text-indigo-300 border border-indigo-800 px-2.5 py-1 rounded-full uppercase">CLIENT-SIDE LLM LIVE</span>
+                <span class="text-[9px] font-mono bg-indigo-950 text-indigo-300 border border-indigo-800 px-2.5 py-1 rounded-full uppercase">OPENAI EDGE LIVE</span>
             </h2>
         </div>
 
@@ -435,7 +435,7 @@
             document.getElementById('factoryModal').classList.add('hidden');
         }
 
-        // Прямой интеллектуальный генератор фабрик с немедленной записью в Supabase
+        // Вызов Edge Function через стандартный fetch с передачей ключей
         async function triggerAiSearch() {
             const searchQuery = document.getElementById('searchInput').value.trim();
             if (!searchQuery) return;
@@ -451,78 +451,38 @@
                     ? document.getElementById('categorySelect').value 
                     : 'Электроника';
 
-                console.log("⚡ Генерация фабрик через AI Agent...");
+                console.log("⚡ Отправка запроса в Edge Function:", searchQuery);
 
-                // Формируем качественную пачку фабрик на основе поискового запроса
-                const generatedFactories = [
-                    {
-                        name: `${searchQuery.toUpperCase()} Shenzhen Advanced Tech Co., Ltd.`,
-                        category: currentCategory,
-                        location: "Guangdong, Shenzhen",
-                        moq: "300 pcs",
-                        rating: 4.95,
-                        verified: true,
-                        source: "ai_client_direct",
-                        verdict: `Завод специализируется на выпуске и контрактной сборке категории "${searchQuery}". Проведена проверка экспортных лицензий класса А, аудит стандартов ISO 9001 и оценка производственных мощностей в провинции Гуандун.`
+                const functionUrl = `${SUPABASE_URL}/functions/v1/ai-sourcing`;
+
+                const response = await fetch(functionUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'apikey': SUPABASE_ANON_KEY
                     },
-                    {
-                        name: `Zhejiang ${searchQuery.charAt(0).toUpperCase() + searchQuery.slice(1)} Industrial Manufacturing`,
-                        category: currentCategory,
-                        location: "Zhejiang, Ningbo",
-                        moq: "500 pcs",
-                        rating: 4.91,
-                        verified: true,
-                        source: "ai_client_direct",
-                        verdict: `Крупное предприятие в Нинбо с собственными производственными линиями по переработке и сборке "${searchQuery}". Юридический статус активен, финансовый риск отсутствует.`
-                    },
-                    {
-                        name: `Guangzhou Global ${searchQuery} Solutions Ltd.`,
-                        category: currentCategory,
-                        location: "Guangdong, Guangzhou",
-                        moq: "200 pcs",
-                        rating: 4.88,
-                        verified: true,
-                        source: "ai_client_direct",
-                        verdict: `Оптовый поставщик и экспортер с многолетним опытом поставок в Центральную Азию и страны ЕАЭС. Контроль качества осуществляется по международным стандартам.`
-                    },
-                    {
-                        name: `Dongguan Precision ${searchQuery} Factory`,
-                        category: currentCategory,
-                        location: "Guangdong, Dongguan",
-                        moq: "1000 pcs",
-                        rating: 4.97,
-                        verified: true,
-                        source: "ai_client_direct",
-                        verdict: `Автоматизированный завод в Дунгуане. Высокая точность сборки компонентов "${searchQuery}", наличие собственных лабораторий тестирования готовой продукции.`
-                    },
-                    {
-                        name: `Jiangsu Smart ${searchQuery} Corporation`,
-                        category: currentCategory,
-                        location: "Jiangsu, Suzhou",
-                        moq: "400 pcs",
-                        rating: 4.89,
-                        verified: true,
-                        source: "ai_client_direct",
-                        verdict: `Инновационное производство в Сучжоу. Полный цикл контрактного производства от прототипирования до финальной упаковки партии под ключ.`
-                    }
-                ];
+                    body: JSON.stringify({ 
+                        query: searchQuery, 
+                        category: currentCategory, 
+                        lang: currentLang 
+                    })
+                });
 
-                // Пакетная запись сгенерированных фабрик в таблицу Supabase
-                const { data, error } = await supabaseClient
-                    .from('suppliers')
-                    .insert(generatedFactories)
-                    .select();
+                const result = await response.json();
 
-                if (error) throw error;
+                if (!response.ok || !result.success) {
+                    throw new Error(result.error || `HTTP error! status: ${response.status}`);
+                }
 
-                console.log("✅ Фабрики успешно сгенерированы и сохранены в Supabase!", data);
+                console.log("✅ Успешный ответ от OpenAI Edge Function!", result);
 
-                // Перезагружаем витрину с новыми данными
+                // Перезагружаем витрину — новые сгенерированные фабрики подгрузятся из базы
                 await loadSuppliers();
 
             } catch (err) {
                 console.error("Критическая ошибка AI-поиска:", err);
-                alert("Ошибка генерации: " + err.message);
+                alert("Ошибка LLM-агента: " + err.message);
                 promptBox.classList.remove('hidden');
             } finally {
                 loader.classList.add('hidden');
