@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escrow & Dispute Room — SourceJet AI</title>
+    <title>Escrow Room — SourceJet AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -24,21 +24,20 @@
     <!-- Header -->
     <header class="border-b border-purple-900/30 bg-slate-900/80 backdrop-blur-xl sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-3.5">
+            <a href="importer_dashboard.html" class="flex items-center gap-3.5">
                 <div class="w-11 h-11 bg-gradient-to-tr from-purple-600 via-indigo-600 to-cyan-400 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-xl shadow-purple-500/25">🛡️</div>
                 <div>
                     <span class="font-black text-xl tracking-wider text-white">SourceJet <span class="ai-gradient-text">Escrow</span></span>
-                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase" data-ru="Комната арбитража и приемки" data-en="Dispute & Inspection Room">Комната арбитража и приемки</p>
+                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase">Smart Contract & Dispute Resolution</p>
                 </div>
-            </div>
+            </a>
 
             <div class="flex items-center gap-4">
-                <!-- Языковой переключатель -->
-                <div class="bg-slate-900 border border-purple-900/50 rounded-xl p-1 flex items-center gap-1 text-xs font-bold">
-                    <button onclick="switchLanguage('ru')" id="btn-ru" class="px-2.5 py-1 rounded-lg transition bg-purple-600 text-white">RU</button>
-                    <button onclick="switchLanguage('en')" id="btn-en" class="px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white">EN</button>
+                <a href="importer_dashboard.html" class="text-xs text-purple-400 hover:text-purple-300 font-bold transition">← В кабинет импортера</a>
+                <div class="flex items-center gap-1">
+                    <button onclick="switchLang('ru')" id="btn-ru" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-600 text-white">RU</button>
+                    <button onclick="switchLang('en')" id="btn-en" class="px-2.5 py-1 rounded-lg text-xs font-bold text-slate-400">EN</button>
                 </div>
-                <a href="importer_dashboard.html" class="text-xs text-purple-400 hover:text-purple-300 font-bold transition" data-ru="← Назад в Портал" data-en="← Back to Portal">← Назад в Портал</a>
             </div>
         </div>
     </header>
@@ -46,127 +45,118 @@
     <!-- Main Workspace -->
     <main class="max-w-5xl mx-auto px-6 py-10 flex-1 w-full space-y-8">
         
-        <!-- Верхняя инфо-плашка сделки -->
-        <div class="glass-panel p-6 md:p-8 rounded-3xl border border-purple-900/40 space-y-6 shadow-2xl">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-purple-900/30 pb-6">
-                <div>
-                    <div class="flex items-center gap-3">
-                        <h1 id="roomTitle" class="text-2xl font-black text-white">Загрузка данных партии...</h1>
-                        <span id="roomStatusBadge" class="text-[10px] font-mono bg-purple-950 text-purple-300 border border-purple-800 px-3 py-1 rounded-full uppercase font-bold">SECURE ESCROW</span>
+        <!-- Top Status Banner -->
+        <div class="glass-panel p-6 md:p-8 rounded-3xl border border-purple-900/50 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-2xl">
+            <div class="space-y-1">
+                <div class="flex items-center gap-3">
+                    <h1 id="factoryTitle" class="text-2xl font-black text-white">Загрузка данных...</h1>
+                    <span id="escrowBadge" class="text-[10px] font-mono bg-amber-950 text-amber-300 border border-amber-800 px-3 py-1 rounded-full uppercase font-bold">HELD IN ESCROW</span>
+                </div>
+                <p id="inspectionSub" class="text-xs text-slate-400">Партия под защитой AI Escrow смарт-контракта</p>
+            </div>
+
+            <!-- Countdown Timer -->
+            <div class="bg-slate-950/80 border border-purple-900/60 p-4 rounded-2xl text-center min-w-[200px]">
+                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Окно подачи спора (48ч)</div>
+                <div id="disputeTimer" class="text-2xl font-black text-cyan-400 font-mono mt-1">47:59:59</div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Inspection & Contract Details -->
+            <div class="md:col-span-2 space-y-6">
+                <div class="glass-panel p-6 rounded-3xl border border-purple-900/40 space-y-4">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">Детали контракта и инспекции</h3>
+                    
+                    <div class="grid grid-cols-2 gap-4 text-xs">
+                        <div class="bg-slate-950/60 p-3.5 rounded-2xl border border-purple-900/30">
+                            <span class="text-slate-500 block">Заказчик / Компания:</span>
+                            <strong id="clientName" class="text-white">...</strong>
+                        </div>
+                        <div class="bg-slate-950/60 p-3.5 rounded-2xl border border-purple-900/30">
+                            <span class="text-slate-500 block">Локация / Город:</span>
+                            <strong id="locationInfo" class="text-white">...</strong>
+                        </div>
+                        <div class="bg-slate-950/60 p-3.5 rounded-2xl border border-purple-900/30">
+                            <span class="text-slate-500 block">Тип инспекции:</span>
+                            <strong id="inspectionType" class="text-purple-400">...</strong>
+                        </div>
+                        <div class="bg-slate-950/60 p-3.5 rounded-2xl border border-purple-900/30">
+                            <span class="text-slate-500 block">Статус инспектора:</span>
+                            <strong id="inspectorName" class="text-cyan-400">...</strong>
+                        </div>
                     </div>
-                    <p id="roomSubtitle" class="text-xs text-slate-400 mt-1">Инициализация защищенного смарт-контракта...</p>
+
+                    <div class="bg-slate-950/60 p-4 rounded-2xl border border-purple-900/30 text-xs space-y-1">
+                        <span class="text-slate-500 block">Техническое задание:</span>
+                        <p id="requirementsNotes" class="text-slate-300 italic">...</p>
+                    </div>
                 </div>
-                
-                <!-- Таймер 48 часов -->
-                <div class="bg-amber-950/40 border border-amber-800/60 p-4 rounded-2xl text-right">
-                    <div class="text-[10px] text-amber-400 uppercase font-bold tracking-wider" data-ru="Окно арбитража (48ч)" data-en="Arbitration Window (48h)">Окно арбитража (48ч)</div>
-                    <div id="escrowTimer" class="text-lg font-mono font-black text-amber-300">47:59:12</div>
+
+                <!-- AQL Inspection Report Area -->
+                <div class="glass-panel p-6 rounded-3xl border border-purple-900/40 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">Отчет инспектора (AQL Standard)</h3>
+                        <span class="text-[10px] font-mono text-emerald-400">ISO 2859-1 PASSED</span>
+                    </div>
+                    <div id="reportBox" class="bg-slate-950/80 p-5 rounded-2xl border border-purple-900/30 text-xs text-slate-300 space-y-2">
+                        <p>✓ Визуальный контроль: дефектов не обнаружено.</p>
+                        <p>✓ Тест функционала: 100% пройден.</p>
+                        <p>✓ Проверка маркировки и упаковки соответствуют ТЗ.</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Детали контракта в три колонки -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
-                <div class="bg-slate-950/60 p-4 rounded-2xl border border-purple-900/30 space-y-1">
-                    <span class="text-slate-400 font-bold uppercase text-[10px]" data-ru="Фабрика / Поставщик" data-en="Factory / Supplier">Фабрика / Поставщик</span>
-                    <div id="infoFactory" class="font-bold text-white text-sm">-</div>
-                </div>
-                <div class="bg-slate-950/60 p-4 rounded-2xl border border-purple-900/30 space-y-1">
-                    <span class="text-slate-400 font-bold uppercase text-[10px]" data-ru="Тип инспекции" data-en="Inspection Type">Тип инспекции</span>
-                    <div id="infoType" class="font-bold text-cyan-400 text-sm">-</div>
-                </div>
-                <div class="bg-slate-950/60 p-4 rounded-2xl border border-purple-900/30 space-y-1">
-                    <span class="text-slate-400 font-bold uppercase text-[10px]" data-ru="Статус депозита" data-en="Deposit Status">Статус депозита</span>
-                    <div class="font-bold text-emerald-400 text-sm">🔒 Заморожено (Held)</div>
-                </div>
-            </div>
-        </div>
+            <!-- Escrow Actions Sidebar -->
+            <div class="space-y-6">
+                <div class="glass-panel p-6 rounded-3xl border border-purple-900/40 space-y-6">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">Управление Escrow</h3>
 
-        <!-- Отчет инспектора и фотогалерея -->
-        <div class="glass-panel p-6 md:p-8 rounded-3xl border border-purple-900/40 space-y-6 shadow-xl">
-            <div class="flex justify-between items-center">
-                <h3 class="font-black text-lg text-white" data-ru="Результаты инспекции в Китае (AQL 2.5)" data-en="China Inspection Results (AQL 2.5)">Результаты инспекции в Китае (AQL 2.5)</h3>
-                <span class="text-xs text-emerald-400 font-mono bg-emerald-950 border border-emerald-800 px-3 py-1 rounded-full">✓ Протокол ISO 2859-1</span>
-            </div>
+                    <div class="space-y-3 text-xs">
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Сумма в залоге:</span>
+                            <span class="font-bold text-white">$12,450.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Комиссия сервиса:</span>
+                            <span class="font-bold text-cyan-400">0% (Beta)</span>
+                        </div>
+                    </div>
 
-            <p class="text-xs text-slate-300" data-ru="Инспектор проверил качество сборки, штрихкоды, критические дефекты и параметры упаковки на фабрике. Ниже представлены фотоматериалы с места проверки." data-en="The inspector verified assembly quality, barcodes, critical defects, and packaging parameters at the factory. Below are photo materials from the audit.">
-                Инспектор проверил качество сборки, штрихкоды, критические дефекты и параметры упаковки на фабрике. Ниже представлены фотоматериалы с места проверки.
-            </p>
+                    <div class="space-y-3 pt-2">
+                        <button onclick="releaseEscrow()" id="btnRelease" class="w-full bg-gradient-to-r from-emerald-600 to-teal-500 hover:opacity-90 text-white font-bold py-3.5 rounded-2xl text-xs uppercase tracking-wider transition shadow-lg shadow-emerald-900/30 cursor-pointer">
+                            Подтвердить и разблокировать ($)
+                        </button>
+                        
+                        <button onclick="openDispute()" id="btnDispute" class="w-full bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-800/60 font-bold py-3.5 rounded-2xl text-xs uppercase tracking-wider transition cursor-pointer">
+                            Открыть спор / Арбитраж
+                        </button>
+                    </div>
 
-            <!-- Сетка фотографий инспекции (мокапы для наглядности) -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="bg-slate-900 border border-purple-900/50 rounded-2xl p-2 space-y-2">
-                    <div class="h-28 bg-purple-950/50 rounded-xl flex items-center justify-center text-purple-400 font-mono text-xs border border-purple-900/30">[ Фото: Упаковка ]</div>
-                    <div class="text-[11px] text-slate-300 font-bold px-1">Гофрокороб / Маркировка</div>
-                </div>
-                <div class="bg-slate-900 border border-purple-900/50 rounded-2xl p-2 space-y-2">
-                    <div class="h-28 bg-purple-950/50 rounded-xl flex items-center justify-center text-purple-400 font-mono text-xs border border-purple-900/30">[ Фото: Товар ]</div>
-                    <div class="text-[11px] text-slate-300 font-bold px-1">Проверка партии на брак</div>
-                </div>
-                <div class="bg-slate-900 border border-purple-900/50 rounded-2xl p-2 space-y-2">
-                    <div class="h-28 bg-purple-950/50 rounded-xl flex items-center justify-center text-purple-400 font-mono text-xs border border-purple-900/30">[ Фото: Штрихкод ]</div>
-                    <div class="text-[11px] text-slate-300 font-bold px-1">Сканирование штрихкодов</div>
-                </div>
-                <div class="bg-slate-900 border border-purple-900/50 rounded-2xl p-2 space-y-2">
-                    <div class="h-28 bg-purple-950/50 rounded-xl flex items-center justify-center text-purple-400 font-mono text-xs border border-purple-900/30">[ Фото: Склад ]</div>
-                    <div class="text-[11px] text-slate-300 font-bold px-1">Зона погрузки в контейнер</div>
+                    <div id="actionStatus" class="text-center text-xs font-mono"></div>
                 </div>
             </div>
         </div>
-
-        <!-- Панель управления Escrow (Действия импортера) -->
-        <div class="glass-panel p-6 md:p-8 rounded-3xl border border-purple-900/40 space-y-6 shadow-xl bg-gradient-to-r from-purple-950/30 to-cyan-950/30">
-            <h3 class="font-black text-lg text-white" data-ru="Управление смарт-контрактом & Арбитраж" data-en="Smart Contract Management & Arbitration">Управление смарт-контрактом & Арбитраж</h3>
-            <p class="text-xs text-slate-300" data-ru="Подтвердите приемку товара, если инспекция прошла успешно — средства будут разморожены для фабрики. Если обнаружен брак, откройте спор для подключения арбитража SourceJet." data-en="Confirm product acceptance if inspection passed successfully — funds will be released to the factory. If defects are found, open a dispute for SourceJet arbitration.">
-                Подтвердите приемку товара, если инспекция прошла успешно — средства будут разморожены для фабрики. Если обнаружен брак, откройте спор для подключения арбитража SourceJet.
-            </p>
-
-            <div class="flex flex-col md:flex-row gap-4 pt-2">
-                <button onclick="updateEscrowStatus('released')" class="flex-1 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white font-bold py-4 rounded-2xl text-xs uppercase tracking-wider transition hover:opacity-90 shadow-lg shadow-emerald-600/20">
-                    <span data-ru="✓ Принять партию и перевести средства" data-en="✓ Accept Shipment & Release Funds">✓ Принять партию и перевести средства</span>
-                </button>
-                <button onclick="updateEscrowStatus('dispute')" class="flex-1 bg-slate-900 hover:bg-rose-950 text-rose-400 border border-rose-900/60 font-bold py-4 rounded-2xl text-xs uppercase tracking-wider transition shadow-lg">
-                    <span data-ru="⚡ Открыть спор по браку (Dispute)" data-en="⚡ Open Defect Dispute">⚡ Открыть спор по браку (Dispute)</span>
-                </button>
-            </div>
-
-            <div id="actionStatus" class="text-center text-xs font-mono"></div>
-        </div>
-
     </main>
 
-    <footer class="border-t border-purple-900/30 bg-slate-900/80 py-6 text-center text-xs text-slate-500">
-        <p>© 2026 SourceJet AI. Secure Escrow & Dispute Room.</p>
+    <footer class="border-t border-purple-900/30 bg-slate-900/80 py-8 text-center text-xs text-slate-500">
+        <p>© 2026 SourceJet AI. Escrow Dispute & Verification System.</p>
     </footer>
 
     <script>
-        let currentLang = localStorage.getItem('sourcejet_lang') || 'ru';
         const SUPABASE_URL = 'https://ozpskokidbhqtoeykyzf.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_Zpkfm-iDWB7WuHrAp1jDtQ_1w_QU8s0';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentInspectionId = null;
+        let disputeDeadline = null;
 
-        function switchLanguage(lang) {
-            currentLang = lang;
-            localStorage.setItem('sourcejet_lang', lang);
-
-            document.getElementById('btn-ru').className = lang === 'ru' ? 'px-2.5 py-1 rounded-lg transition bg-purple-600 text-white font-bold' : 'px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white';
-            document.getElementById('btn-en').className = lang === 'en' ? 'px-2.5 py-1 rounded-lg transition bg-purple-600 text-white font-bold' : 'px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white';
-
-            document.querySelectorAll('[data-ru]').forEach(el => {
-                const text = el.getAttribute(`data-${lang}`);
-                if (text) el.innerText = text;
-            });
-        }
-
-        // Загрузка данных конкретной инспекции по ID из URL
         async function loadRoomData() {
             const urlParams = new URLSearchParams(window.location.search);
             currentInspectionId = urlParams.get('id');
 
             if (!currentInspectionId) {
-                document.getElementById('roomTitle').innerText = currentLang === 'ru' ? 'ID партии не указан' : 'Shipment ID not specified';
-                document.getElementById('roomSubtitle').innerText = currentLang === 'ru' ? 'Вернитесь в Портал импортера и выберите партию.' : 'Return to Importer Portal and select a shipment.';
+                document.getElementById('factoryTitle').innerText = 'Ошибка: Не указан ID партии';
                 return;
             }
 
@@ -177,55 +167,89 @@
                 .single();
 
             if (error || !data) {
-                document.getElementById('roomTitle').innerText = currentLang === 'ru' ? 'Партия не найдена в базе' : 'Shipment not found';
+                document.getElementById('factoryTitle').innerText = 'Заявка не найдена';
                 return;
             }
 
-            document.getElementById('roomTitle').innerText = data.factory_name || 'Фабрика';
-            document.getElementById('roomSubtitle').innerText = `📦 ${data.product_name || 'Товар'} • 📍 ${data.country || 'Китай'}, ${data.city || 'Город'}`;
-            document.getElementById('roomStatusBadge').innerText = data.status || 'ESCROW ACTIVE';
-            document.getElementById('infoFactory').innerText = data.factory_name || '-';
-            document.getElementById('infoType').innerText = data.inspection_type || 'PSI';
+            document.getElementById('factoryTitle').innerText = data.factory_name || 'Фабрика';
+            document.getElementById('clientName').innerText = data.client_name || '—';
+            document.getElementById('locationInfo').innerText = `${data.country || 'Китай'}, ${data.city || ''}`;
+            document.getElementById('inspectionType').innerText = data.inspection_type || 'PSI';
+            document.getElementById('inspectorName').innerText = data.inspector_name || 'Ожидает назначения';
+            document.getElementById('requirementsNotes').innerText = data.requirements?.notes || 'Стандартные требования ISO';
+
+            if (data.escrow_status === 'released') {
+                document.getElementById('escrowBadge').className = 'text-[10px] font-mono bg-emerald-950 text-emerald-400 border border-emerald-800 px-3 py-1 rounded-full uppercase font-bold';
+                document.getElementById('escrowBadge').innerText = 'RELEASED';
+            } else if (data.escrow_status === 'dispute') {
+                document.getElementById('escrowBadge').className = 'text-[10px] font-mono bg-rose-950 text-rose-400 border border-rose-800 px-3 py-1 rounded-full uppercase font-bold';
+                document.getElementById('escrowBadge').innerText = 'DISPUTE ACTIVE';
+            }
+
+            disputeDeadline = new Date(data.dispute_deadline || (Date.now() + 48*3600*1000));
+            startTimer();
         }
 
-        // Обновление статуса сделки (принятие или спор)
-        async function updateEscrowStatus(newStatus) {
-            if (!currentInspectionId) {
-                alert('ID партии не определен!');
-                return;
-            }
+        function startTimer() {
+            setInterval(() => {
+                const now = new Date();
+                const diff = disputeDeadline - now;
+                if (diff <= 0) {
+                    document.getElementById('disputeTimer').innerText = '00:00:00';
+                    return;
+                }
+                const hours = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2, '0');
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
+                document.getElementById('disputeTimer').innerText = `${hours}:${minutes}:${seconds}`;
+            }, 1000);
+        }
 
+        async function releaseEscrow() {
+            if (!confirm('Вы уверены, что хотите разблокировать средства фабрике?')) return;
+            
             const statusDiv = document.getElementById('actionStatus');
-            statusDiv.className = 'text-center text-xs font-mono text-purple-400';
-            statusDiv.innerText = currentLang === 'ru' ? 'Синхронизация смарт-контракта с блокчейном...' : 'Synchronizing smart contract...';
+            statusDiv.className = 'text-purple-400';
+            statusDiv.innerText = 'Разблокировка средств...';
 
             const { error } = await supabaseClient
                 .from('inspections')
-                .update({ status: newStatus })
+                .update({ escrow_status: 'released', status: 'completed' })
                 .eq('id', currentInspectionId);
 
             if (error) {
-                statusDiv.className = 'text-center text-xs font-mono text-rose-400';
+                statusDiv.className = 'text-rose-400';
                 statusDiv.innerText = 'Ошибка: ' + error.message;
-                return;
-            }
-
-            statusDiv.className = 'text-center text-xs font-mono text-emerald-400';
-            if (newStatus === 'released') {
-                statusDiv.innerText = currentLang === 'ru' ? '✓ Средства успешно разморожены и отправлены поставщику!' : '✓ Funds successfully released to supplier!';
             } else {
-                statusDiv.innerText = currentLang === 'ru' ? '⚡ Спор успешно открыт! Менеджер арбитража SourceJet подключен к сделке.' : '⚡ Dispute opened! SourceJet arbitration manager assigned.';
+                statusDiv.className = 'text-emerald-400';
+                statusDiv.innerText = '✓ Средства успешно переведены!';
+                setTimeout(() => location.reload(), 1000);
             }
-
-            setTimeout(() => {
-                window.location.href = 'importer_dashboard.html';
-            }, 2500);
         }
 
-        window.onload = () => {
-            switchLanguage(currentLang);
-            loadRoomData();
-        };
+        async function openDispute() {
+            if (!confirm('Открыть спор по этой партии? Наш арбитраж подключится к проверке.')) return;
+
+            const statusDiv = document.getElementById('actionStatus');
+            statusDiv.className = 'text-purple-400';
+            statusDiv.innerText = 'Открытие арбитража...';
+
+            const { error } = await supabaseClient
+                .from('inspections')
+                .update({ escrow_status: 'dispute', status: 'disputed' })
+                .eq('id', currentInspectionId);
+
+            if (error) {
+                statusDiv.className = 'text-rose-400';
+                statusDiv.innerText = 'Ошибка: ' + error.message;
+            } else {
+                statusDiv.className = 'text-amber-400';
+                statusDiv.innerText = '✓ Спор открыт. Арбитр свяжется с вами.';
+                setTimeout(() => location.reload(), 1000);
+            }
+        }
+
+        window.onload = loadRoomData;
     </script>
 </body>
 </html>
