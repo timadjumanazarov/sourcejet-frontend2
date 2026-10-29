@@ -32,8 +32,8 @@
                 </div>
             </div>
 
-            <!-- Языковой переключатель и навигация -->
             <div class="flex items-center gap-4">
+                <!-- Языковой переключатель -->
                 <div class="bg-slate-900 border border-purple-900/50 rounded-xl p-1 flex items-center gap-1 text-xs font-bold">
                     <button onclick="switchLanguage('ru')" id="btn-ru" class="px-2.5 py-1 rounded-lg transition bg-purple-600 text-white">RU</button>
                     <button onclick="switchLanguage('en')" id="btn-en" class="px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white">EN</button>
@@ -46,30 +46,39 @@
     <!-- Main Workspace -->
     <main class="max-w-7xl mx-auto px-6 py-10 flex-1 w-full space-y-10">
         
-        <!-- Верхняя аналитика -->
+        <!-- Верхние стат-карточки ("Горящие лампочки") -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="glass-panel p-6 rounded-3xl border border-purple-900/40">
-                <span class="text-xs text-slate-400 font-bold uppercase" data-ru="Всего инспекций" data-en="Total Inspections">Всего инспекций</span>
-                <div id="statTotal" class="text-3xl font-black text-white mt-2">0</div>
+            <div class="glass-panel p-6 rounded-3xl border border-purple-900/40 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-purple-950 border border-purple-800 flex items-center justify-center text-purple-400 font-black text-xl">📦</div>
+                <div>
+                    <span class="text-xs text-slate-400 font-bold uppercase" data-ru="Всего партий" data-en="Total Shipments">Всего партий</span>
+                    <div id="statTotal" class="text-3xl font-black text-white mt-0.5">0</div>
+                </div>
             </div>
-            <div class="glass-panel p-6 rounded-3xl border border-purple-900/40">
-                <span class="text-xs text-slate-400 font-bold uppercase" data-ru="Заморожено на Escrow" data-en="Held in Escrow">Заморожено на Escrow</span>
-                <div class="text-3xl font-black text-amber-400 mt-2">$12,450 USD</div>
+            <div class="glass-panel p-6 rounded-3xl border border-purple-900/40 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-amber-950 border border-amber-800 flex items-center justify-center text-amber-400 font-black text-xl">🛡️</div>
+                <div>
+                    <span class="text-xs text-slate-400 font-bold uppercase" data-ru="Заморожено на Escrow" data-en="Held in Escrow">Заморожено на Escrow</span>
+                    <div class="text-3xl font-black text-amber-400 mt-0.5">$12,450</div>
+                </div>
             </div>
-            <div class="glass-panel p-6 rounded-3xl border border-purple-900/40">
-                <span class="text-xs text-slate-400 font-bold uppercase" data-ru="Активные споры" data-en="Active Disputes">Активные споры</span>
-                <div class="text-3xl font-black text-cyan-400 mt-2">0</div>
+            <div class="glass-panel p-6 rounded-3xl border border-purple-900/40 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-cyan-950 border border-cyan-800 flex items-center justify-center text-cyan-400 font-black text-xl">⚡</div>
+                <div>
+                    <span class="text-xs text-slate-400 font-bold uppercase" data-ru="Активные споры" data-en="Active Disputes">Активные споры</span>
+                    <div class="text-3xl font-black text-cyan-400 mt-0.5">0</div>
+                </div>
             </div>
         </div>
 
-        <!-- Каталог Инспекторов в Китае -->
+        <!-- База инспекторов в Китае -->
         <section class="space-y-4">
             <div class="flex justify-between items-center">
                 <h2 class="text-xl font-black text-white" data-ru="База инспекторов и гидов в КНР" data-en="China Inspectors & Guides Network">База инспекторов и гидов в КНР</h2>
                 <span class="text-xs text-purple-400 font-mono" data-ru="Доступны для выезда" data-en="Ready for Audit">Доступны для выезда</span>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="glass-panel p-6 rounded-3xl space-y-4 border border-purple-900/40">
+                <div class="glass-panel p-6 rounded-3xl space-y-4 border border-purple-900/40 shadow-xl">
                     <div class="flex justify-between items-start">
                         <div>
                             <h3 class="font-bold text-white text-base">Ван Вэй (Wang Wei)</h3>
@@ -78,10 +87,10 @@
                         <span class="bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">★ 4.98</span>
                     </div>
                     <p class="text-xs text-slate-300" data-ru="Специализация: Электроника, Упаковка, Потребительские товары." data-en="Specs: Electronics, Packaging, Consumer Goods.">Специализация: Электроника, Упаковка, Потребительские товары.</p>
-                    <button onclick="alert('Инспектор выбран!')" class="w-full bg-purple-600/30 hover:bg-purple-600 text-purple-200 hover:text-white border border-purple-800 rounded-xl py-2 text-xs font-bold uppercase transition" data-ru="Назначить на фабрику" data-en="Assign to Factory">Назначить на фабрику</button>
+                    <button onclick="alert(currentLang === 'ru' ? 'Инспектор назначен на фабрику!' : 'Inspector assigned!')" class="w-full bg-purple-600/30 hover:bg-purple-600 text-purple-200 hover:text-white border border-purple-800 rounded-xl py-2 text-xs font-bold uppercase transition" data-ru="Назначить на фабрику" data-en="Assign to Factory">Назначить на фабрику</button>
                 </div>
 
-                <div class="glass-panel p-6 rounded-3xl space-y-4 border border-purple-900/40">
+                <div class="glass-panel p-6 rounded-3xl space-y-4 border border-purple-900/40 shadow-xl">
                     <div class="flex justify-between items-start">
                         <div>
                             <h3 class="font-bold text-white text-base">Ли Цзян (Li Jiang)</h3>
@@ -90,10 +99,10 @@
                         <span class="bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">★ 4.95</span>
                     </div>
                     <p class="text-xs text-slate-300" data-ru="Специализация: Сложная техника, Компоненты, AQL-тесты." data-en="Specs: Complex Hardware, Components, AQL Inspections.">Специализация: Сложная техника, Компоненты, AQL-тесты.</p>
-                    <button onclick="alert('Инспектор выбран!')" class="w-full bg-purple-600/30 hover:bg-purple-600 text-purple-200 hover:text-white border border-purple-800 rounded-xl py-2 text-xs font-bold uppercase transition" data-ru="Назначить на фабрику" data-en="Assign to Factory">Назначить на фабрику</button>
+                    <button onclick="alert(currentLang === 'ru' ? 'Инспектор назначен на фабрику!' : 'Inspector assigned!')" class="w-full bg-purple-600/30 hover:bg-purple-600 text-purple-200 hover:text-white border border-purple-800 rounded-xl py-2 text-xs font-bold uppercase transition" data-ru="Назначить на фабрику" data-en="Assign to Factory">Назначить на фабрику</button>
                 </div>
 
-                <div class="glass-panel p-6 rounded-3xl space-y-4 border border-purple-900/40">
+                <div class="glass-panel p-6 rounded-3xl space-y-4 border border-purple-900/40 shadow-xl">
                     <div class="flex justify-between items-start">
                         <div>
                             <h3 class="font-bold text-white text-base">Чэнь Мин (Chen Ming)</h3>
@@ -102,12 +111,12 @@
                         <span class="bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">★ 4.91</span>
                     </div>
                     <p class="text-xs text-slate-300" data-ru="Специализация: Текстиль, Одежда, Аудит фабрик перед оплатой." data-en="Specs: Textiles, Garments, Pre-shipment Factory Audits.">Специализация: Текстиль, Одежда, Аудит фабрик перед оплатой.</p>
-                    <button onclick="alert('Инспектор выбран!')" class="w-full bg-purple-600/30 hover:bg-purple-600 text-purple-200 hover:text-white border border-purple-800 rounded-xl py-2 text-xs font-bold uppercase transition" data-ru="Назначить на фабрику" data-en="Assign to Factory">Назначить на фабрику</button>
+                    <button onclick="alert(currentLang === 'ru' ? 'Инспектор назначен на фабрику!' : 'Inspector assigned!')" class="w-full bg-purple-600/30 hover:bg-purple-600 text-purple-200 hover:text-white border border-purple-800 rounded-xl py-2 text-xs font-bold uppercase transition" data-ru="Назначить на фабрику" data-en="Assign to Factory">Назначить на фабрику</button>
                 </div>
             </div>
         </section>
 
-        <!-- Мои Заявки с Интерактивной цепью поставок (Supply Chain Map) -->
+        <!-- Мониторинг цепочки поставок (Supply Chain Map) -->
         <section class="space-y-4">
             <h2 class="text-xl font-black text-white" data-ru="Мониторинг цепочки поставок и инспекций" data-en="Supply Chain & Inspections Tracking">Мониторинг цепочки поставок и инспекций</h2>
             <div id="shipmentsContainer" class="space-y-4">
@@ -167,7 +176,6 @@
 
             let html = '';
             data.forEach(item => {
-                // Имитируем шаги supply chain на основе статуса
                 const status = item.status || 'new';
                 let step1 = 'bg-purple-600 text-white';
                 let step2 = 'bg-slate-900 text-slate-500 border border-purple-900/50';
@@ -184,7 +192,7 @@
                 }
 
                 html += `
-                    <div class="glass-panel p-6 rounded-3xl border border-purple-900/40 space-y-6">
+                    <div class="glass-panel p-6 rounded-3xl border border-purple-900/40 space-y-6 shadow-xl">
                         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                             <div>
                                 <div class="flex items-center gap-2">
