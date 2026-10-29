@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Control Dashboard — SourceJet AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .ai-gradient-text {
+            background: linear-gradient(135deg, #c084fc 0%, #818cf8 50%, #22d3ee 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(168, 85, 247, 0.18);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-purple-500 selection:text-white">
+
+    <!-- Header -->
+    <header class="border-b border-purple-900/30 bg-slate-900/80 backdrop-blur-xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3.5">
+                <div class="w-11 h-11 bg-gradient-to-tr from-purple-600 via-indigo-600 to-cyan-400 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-xl shadow-purple-500/25">⚡</div>
+                <div>
+                    <span class="font-black text-xl tracking-wider text-white">SourceJet <span class="ai-gradient-text">AI</span></span>
+                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase" data-ru="Кабинет Селлера & Escrow" data-en="Seller Control & Escrow Hub">Кабинет Селлера & Escrow</p>
+                </div>
+            </div>
+
+            <!-- Языковой переключатель и навигация -->
+            <div class="flex items-center gap-4">
+                <div class="bg-slate-900 border border-purple-900/50 rounded-xl p-1 flex items-center gap-1 text-xs font-bold">
+                    <button onclick="switchLanguage('ru')" id="btn-ru" class="px-2.5 py-1 rounded-lg transition bg-purple-600 text-white">RU</button>
+                    <button onclick="switchLanguage('en')" id="btn-en" class="px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white">EN</button>
+                </div>
+                <a href="index.html" class="text-xs text-purple-400 hover:text-purple-300 font-bold transition" data-ru="← На главную" data-en="← Main Catalog">← На главную</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="max-w-7xl mx-auto px-6 py-10 flex-1 w-full space-y-10">
+        
+        <!-- Верхняя статистика -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="glass-panel p-6 rounded-3xl border border-purple-900/40">
+                <span class="text-xs text-slate-400 font-bold uppercase" data-ru="Всего инспекций" data-en="Total Inspections">Всего инспекций</span>
+                <div id="statTotal" class="text-3xl font-black text-white mt-2">0</div>
+            </div>
+            <div class="glass-panel p-6 rounded-3xl border border-purple-900/40">
+                <span class="text-xs text-slate-400 font-bold uppercase" data-ru="Заморожено на Escrow" data-en="Held in Escrow">Заморожено на Escrow</span>
+                <div class="text-3xl font-black text-amber-400 mt-2">$12,450 USD</div>
+            </div>
+            <div class="glass-panel p-6 rounded-3xl border border-purple-900/40">
+                <span class="text-xs text-slate-400 font-bold uppercase" data-ru="Активные споры" data-en="Active Disputes">Активные споры</span>
+                <div class="text-3xl font-black text-cyan-400 mt-2">0</div>
+            </div>
+        </div>
+
+        <!-- Каталог Инспекторов в Китае -->
+        <section class="space-y-4">
+            <div class="flex justify-between items-center">
+                <h2 class="text-xl font-black text-white" data-ru="База инспекторов и гидов в КНР" data-en="China Inspectors & Guides Network">База инспекторов и гидов в КНР</h2>
+                <span class="text-xs text-purple-400 font-mono" data-ru="Доступны для выезда" data-en="Ready for Audit">Доступны для выезда</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Инспектор 1 -->
+                <div class="glass-panel p-6 rounded-3xl space-y-4 border border-purple-900/40">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-bold text-white text-base">Ван Вэй (Wang Wei)</h3>
+                            <p class="text-xs text-slate-400">📍 Иу / Чжэцзян (Yiwu)</p>
+                        </div>
+                        <span class="bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">★ 4.98</span>
+                    </div>
+                    <p class="text-xs text-slate-300" data-ru="Специализация: Электроника, Упаковка, Потребительские товары." data-en="Specs: Electronics, Packaging, Consumer Goods.">Специализация: Электроника, Упаковка, Потребительские товары.</p>
+                    <button onclick="alert('Инспектор выбран!')" class="w-full bg-purple-600/30 hover:bg-purple-600 text-purple-200 hover:text-white border border-purple-800 rounded-xl py-2 text-xs font-bold uppercase transition" data-ru="Назначить на фабрику" data-en="Assign to Factory">Назначить на фабрику</button>
+                </div>
+
+                <!-- Инспектор 2 -->
+                <div class="glass-panel p-6 rounded-3xl space-y-4 border border-purple-900/40">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-bold text-white text-base">Ли Цзян (Li Jiang)</h3>
+                            <p class="text-xs text-slate-400">📍 Шэньчжэнь / Гуанчжоу</p>
+                        </div>
+                        <span class="bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">★ 4.95</span>
+                    </div>
+                    <p class="text-xs text-slate-300" data-ru="Специализация: Сложная техника, Сложные компоненты, AQL-тесты." data-en="Specs: Complex Hardware, Components, AQL Inspections.">Специализация: Сложная техника, Сложные компоненты, AQL-тесты.</p>
+                    <button onclick="alert('Инспектор выбран!')" class="w-full bg-purple-600/30 hover:bg-purple-600 text-purple-200 hover:text-white border border-purple-800 rounded-xl py-2 text-xs font-bold uppercase transition" data-ru="Назначить на фабрику" data-en="Assign to Factory">Назначить на фабрику</button>
+                </div>
+
+                <!-- Инспектор 3 -->
+                <div class="glass-panel p-6 rounded-3xl space-y-4 border border-purple-900/40">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-bold text-white text-base">Чэнь Мин (Chen Ming)</h3>
+                            <p class="text-xs text-slate-400">📍 Нинбо / Шанхай</p>
+                        </div>
+                        <span class="bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">★ 4.91</span>
+                    </div>
+                    <p class="text-xs text-slate-300" data-ru="Специализация: Текстиль, Одежда, Аудит фабрик перед оплатой." data-en="Specs: Textiles, Garments, Pre-shipment Factory Audits.">Специализация: Текстиль, Одежда, Аудит фабрик перед оплатой.</p>
+                    <button onclick="alert('Инспектор выбран!')" class="w-full bg-purple-600/30 hover:bg-purple-600 text-purple-200 hover:text-white border border-purple-800 rounded-xl py-2 text-xs font-bold uppercase transition" data-ru="Назначить на фабрику" data-en="Assign to Factory">Назначить на фабрику</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Мои Заявки и Партии -->
+        <section class="space-y-4">
+            <h2 class="text-xl font-black text-white" data-ru="Мои инспекции и партии товаров" data-en="My Active Inspections & Shipments">Мои инспекции и партии товаров</h2>
+            <div class="glass-panel rounded-3xl border border-purple-900/50 overflow-hidden shadow-2xl">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-slate-900/90 border-b border-purple-900/40 text-slate-400 font-bold uppercase">
+                        <tr>
+                            <th class="p-4" data-ru="Фабрика / Товар" data-en="Factory / Goods">Фабрика / Товар</th>
+                            <th class="p-4" data-ru="Локация" data-en="Location">Локация</th>
+                            <th class="p-4" data-ru="Инспектор" data-en="Inspector">Инспектор</th>
+                            <th class="p-4" data-ru="Статус" data-en="Status">Статус</th>
+                            <th class="p-4 text-right" data-ru="Комната управления" data-en="Control Room">Комната управления</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sellerInspectionsBody" class="divide-y divide-purple-900/20">
+                        <tr>
+                            <td colspan="5" class="p-8 text-center text-slate-500" data-ru="Загрузка списка заявок..." data-en="Loading requests...">Загрузка списка заявок...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="border-t border-purple-900/30 bg-slate-900/80 py-6 text-center text-xs text-slate-500">
+        <p>© 2026 SourceJet AI. Seller Control Dashboard.</p>
+    </footer>
+
+    <script>
+        let currentLang = localStorage.getItem('sourcejet_lang') || 'ru';
+        const SUPABASE_URL = 'https://ozpskokidbhqtoeykyzf.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_Zpkfm-iDWB7WuHrAp1jDtQ_1w_QU8s0';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        function switchLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('sourcejet_lang', lang);
+
+            document.getElementById('btn-ru').className = lang === 'ru' ? 'px-2.5 py-1 rounded-lg transition bg-purple-600 text-white font-bold' : 'px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white';
+            document.getElementById('btn-en').className = lang === 'en' ? 'px-2.5 py-1 rounded-lg transition bg-purple-600 text-white font-bold' : 'px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white';
+
+            document.querySelectorAll('[data-ru]').forEach(el => {
+                const text = el.getAttribute(`data-${lang}`);
+                if (text) el.innerText = text;
+            });
+        }
+
+        async function loadSellerInspections() {
+            const { data, error } = await supabaseClient
+                .from('inspections')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            const tbody = document.getElementById('sellerInspectionsBody');
+            if (error || !data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-500">${currentLang === 'ru' ? 'Нет активных заявок' : 'No active inspection requests'}</td></tr>`;
+                return;
+            }
+
+            document.getElementById('statTotal').innerText = data.length;
+
+            let html = '';
+            data.forEach(item => {
+                const status = (item.status || 'new').toUpperCase();
+                html += `
+                    <tr class="hover:bg-purple-950/20 transition">
+                        <td class="p-4">
+                            <div class="font-bold text-white">${item.factory_name || 'Фабрика'}</div>
+                            <div class="text-[10px] text-slate-400">${item.product_name || 'Товар'}</div>
+                        </td>
+                        <td class="p-4 text-slate-300">${item.country || 'Китай'}, ${item.city || 'Город'}</td>
+                        <td class="p-4 text-cyan-300 font-medium">${item.inspector_name || 'Инспектор КНР'}</td>
+                        <td class="p-4"><span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-950 text-purple-300 border border-purple-800">${status}</span></td>
+                        <td class="p-4 text-right">
+                            <a href="seller_room.html?id=${item.id}" class="inline-block bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-90 text-white font-bold px-4 py-2 rounded-xl transition text-xs shadow-lg">
+                                🛡️ Open Room
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        window.onload = () => {
+            switchLanguage(currentLang);
+            loadSellerInspections();
+        };
+    </script>
+</body>
+</html>
