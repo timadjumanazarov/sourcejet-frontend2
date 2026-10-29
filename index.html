@@ -51,13 +51,14 @@
                 <a href="cargo_tracker.html" class="hover:text-purple-400 transition" data-ru="Трекинг грузов" data-en="Cargo Tracking">Трекинг грузов</a>
                 <a href="#analytics" class="hover:text-purple-400 transition" data-ru="Аналитика цен" data-en="AI Analytics">Аналитика цен</a>
                 
-                <!-- База инспекторов с компактным бейджем GLOBAL -->
-<a href="inspector_dashboard.html" class="hover:text-purple-400 transition flex items-center gap-1">
-    <span data-ru="База инспекторов" data-en="Inspectors Network">База инспекторов</span>
-    <span class="text-[7px] bg-purple-950 text-purple-300 border border-purple-800 px-1.5 py-0.5 rounded-full font-bold -translate-y-1">GLOBAL</span>
-</a>
+                <!-- База инспекторов с прижатым бейджем GLOBAL -->
+                <a href="inspector_dashboard.html" class="hover:text-purple-400 transition flex items-center gap-1">
+                    <span data-ru="База инспекторов" data-en="Inspectors Network">База инспекторов</span>
+                    <span class="text-[7px] bg-purple-950 text-purple-300 border border-purple-800 px-1.5 py-0.5 rounded-full font-bold -translate-y-1">GLOBAL</span>
+                </a>
 
-                <a href="seller_dashboard.html" class="hover:text-purple-400 transition text-cyan-300 font-bold" data-ru="Кабинет селлера" data-en="Seller Dashboard">Кабинет селлера</a>
+                <!-- Importer Portal -->
+                <a href="seller_dashboard.html" class="hover:text-purple-400 transition text-cyan-300 font-bold" data-ru="Кабинет импортера" data-en="Importer Portal">Кабинет импортера</a>
             </nav>
 
             <div class="flex items-center gap-4">
@@ -374,7 +375,7 @@
                 details: leadDetails
             }]);
 
-            // 2. Создаем инспекцию в таблице inspections для селлера
+            // 2. Создаем инспекцию в таблице inspections для портала импортера
             await supabaseClient.from('inspections').insert([{
                 factory_name: targetName,
                 product_name: leadDetails || 'Заказ с витрины',
@@ -407,9 +408,9 @@
                 console.error('Telegram notification error:', err);
             }
 
-            alert(currentLang === 'ru' ? 'Заявка принята! Перенаправляем в ваш кабинет селлера...' : 'Request submitted! Redirecting to your seller dashboard...');
+            alert(currentLang === 'ru' ? 'Заявка принята! Перенаправляем в ваш кабинет импортера...' : 'Request submitted! Redirecting to your importer portal...');
             
-            // Переход в кабинет селлера
+            // Переход в кабинет импортера
             window.location.href = 'seller_dashboard.html';
         }
 
