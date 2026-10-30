@@ -278,18 +278,33 @@
             let html = '';
             data.forEach(item => {
                 const status = item.status || 'new';
+                
                 let step1 = 'bg-purple-600 text-white';
                 let step2 = 'bg-slate-900 text-slate-500 border border-purple-900/50';
                 let step3 = 'bg-slate-900 text-slate-500 border border-purple-900/50';
                 let step4 = 'bg-slate-900 text-slate-500 border border-purple-900/50';
 
-                if (status === 'inspected' || status === 'completed') {
+                let statusBadgeText = status;
+                let statusBadgeClass = 'bg-purple-950 text-purple-300 border border-purple-800';
+
+                if (status === 'new') {
+                    statusBadgeText = currentLang === 'ru' ? 'Ждет инспектора' : 'Waiting Inspector';
+                    statusBadgeClass = 'bg-amber-950 text-amber-300 border border-amber-800';
+                } else if (status === 'in_progress') {
+                    step2 = 'bg-amber-500 text-white font-bold animate-pulse';
+                    statusBadgeText = currentLang === 'ru' ? 'Инспектор на выезде' : 'Inspector on Site';
+                    statusBadgeClass = 'bg-amber-950 text-amber-300 border border-amber-800';
+                } else if (status === 'completed' || status === 'inspected') {
                     step2 = 'bg-purple-600 text-white';
-                }
-                if (status === 'released' || status === 'shipped') {
+                    step3 = 'bg-cyan-500 text-white';
+                    statusBadgeText = currentLang === 'ru' ? 'Проверка завершена' : 'Inspected / Pass';
+                    statusBadgeClass = 'bg-emerald-950 text-emerald-300 border border-emerald-800';
+                } else if (status === 'released' || status === 'shipped') {
                     step2 = 'bg-purple-600 text-white';
                     step3 = 'bg-cyan-500 text-white';
                     step4 = 'bg-emerald-500 text-white';
+                    statusBadgeText = currentLang === 'ru' ? 'Отгружено' : 'Shipped';
+                    statusBadgeClass = 'bg-cyan-950 text-cyan-300 border border-cyan-800';
                 }
 
                 html += `
@@ -298,11 +313,11 @@
                             <div>
                                 <div class="flex items-center gap-2">
                                     <h3 class="font-black text-lg text-white">${item.factory_name || 'Фабрика'}</h3>
-                                    <span class="text-[9px] font-mono bg-purple-950 text-purple-300 border border-purple-800 px-2.5 py-0.5 rounded-full uppercase">${status}</span>
+                                    <span class="text-[9px] font-mono ${statusBadgeClass} px-2.5 py-0.5 rounded-full uppercase font-bold">${statusBadgeText}</span>
                                 </div>
-                                <p class="text-xs text-slate-400 mt-0.5">📦 ${item.product_name || 'Товар'} • 📍 ${item.country || 'Китай'}, ${item.city || 'Город'} • 👤 ${item.inspector_name || (currentLang === 'ru' ? 'Инспектор' : 'Inspector')}</p>
+                                <p class="text-xs text-slate-400 mt-0.5">📦 ${item.product_name || 'Товар'} • 📍 ${item.country || 'Китай'}, ${item.city || 'Город'} • 👤 ${item.inspector_name || (currentLang === 'ru' ? 'Ожидает назначения' : 'Unassigned')}</p>
                             </div>
-                            <a href="importer_room.html?id=${item.id}" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition shadow-lg hover:opacity-90">
+                            <a href="importer_room.html?id=${item.id}" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition shadow-lg hover:opacity-90 cursor-pointer">
                                 ${currentLang === 'ru' ? 'Открыть комнату (Escrow)' : 'Open Escrow Room'} →
                             </a>
                         </div>
