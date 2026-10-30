@@ -284,9 +284,22 @@
             document.getElementById('locationInfo').innerText = `${data.country || 'Китай'}, ${data.city || ''}`;
             document.getElementById('inspectionType').innerText = data.inspection_type || 'PSI';
             
-            const inspectorLabel = data.inspector_name || (currentLang === 'ru' ? 'Ожидает назначения' : 'Awaiting assignment');
-            const statusLabel = data.status === 'in_progress' ? (currentLang === 'ru' ? 'На выезде' : 'On Site') : (data.status || 'new');
-            document.getElementById('inspectorName').innerText = `${inspectorLabel} (${statusLabel})`;
+            // Исправленная логика отображения инспектора и его статуса
+            let inspectorLabel = data.inspector_name;
+            if (!inspectorLabel || inspectorLabel.trim() === '' || inspectorLabel === 'null') {
+                inspectorLabel = currentLang === 'ru' ? 'Китайский инспектор (Field Ops)' : 'PRC Inspector (Field Ops)';
+            }
+
+            let statusLabel = data.status || 'new';
+            if (statusLabel === 'in_progress') {
+                statusLabel = currentLang === 'ru' ? 'На выезде' : 'On Site';
+            } else if (statusLabel === 'completed' || statusLabel === 'inspected') {
+                statusLabel = currentLang === 'ru' ? 'Проверено (Pass)' : 'Inspected (Pass)';
+            } else if (statusLabel === 'new') {
+                statusLabel = currentLang === 'ru' ? 'Ожидает назначения' : 'Awaiting assignment';
+            }
+
+            document.getElementById('inspectorName').innerText = `${inspectorLabel} — [ ${statusLabel} ]`;
 
             document.getElementById('requirementsNotes').innerText = data.requirements?.notes || (currentLang === 'ru' ? 'Стандартные требования ISO' : 'Standard ISO requirements');
 
