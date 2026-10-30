@@ -1,4 +1,3 @@
-HTML
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -137,10 +136,10 @@ HTML
             </a>
 
             <div class="flex items-center gap-4">
-                <a href="importer_dashboard.html" class="text-xs text-purple-400 hover:text-purple-300 font-bold transition">← В кабинет импортера</a>
-                <div class="flex items-center gap-1">
-                    <button onclick="switchLang('ru')" id="btn-ru" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-600 text-white cursor-pointer">RU</button>
-                    <button onclick="switchLang('en')" id="btn-en" class="px-2.5 py-1 rounded-lg text-xs font-bold text-slate-400 cursor-pointer">EN</button>
+                <a href="importer_dashboard.html" class="text-xs text-purple-400 hover:text-purple-300 font-bold transition" data-ru="← В кабинет импортера" data-en="← Importer Dashboard">← В кабинет импортера</a>
+                <div class="bg-slate-900 border border-purple-900/50 rounded-xl p-1 flex items-center gap-1 text-xs font-bold">
+                    <button onclick="switchLang('ru')" id="btn-ru" class="px-2.5 py-1 rounded-lg transition bg-purple-600 text-white cursor-pointer">RU</button>
+                    <button onclick="switchLang('en')" id="btn-en" class="px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white cursor-pointer">EN</button>
                 </div>
             </div>
         </div>
@@ -153,15 +152,15 @@ HTML
         <div class="glass-panel p-6 md:p-8 rounded-3xl border border-purple-900/50 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-2xl">
             <div class="space-y-1">
                 <div class="flex items-center gap-3">
-                    <h1 id="factoryTitle" class="text-2xl font-black text-white">Загрузка данных...</h1>
+                    <h1 id="factoryTitle" class="text-2xl font-black text-white" data-ru="Загрузка данных..." data-en="Loading data...">Загрузка данных...</h1>
                     <span id="escrowBadge" class="text-[10px] font-mono bg-amber-950 text-amber-300 border border-amber-800 px-3 py-1 rounded-full uppercase font-bold">HELD IN ESCROW</span>
                 </div>
-                <p id="inspectionSub" class="text-xs text-slate-400">Партия под защитой AI Escrow смарт-контракта</p>
+                <p id="inspectionSub" class="text-xs text-slate-400" data-ru="Партия под защитой AI Escrow смарт-контракта" data-en="Shipment protected by AI Escrow smart contract">Партия под защитой AI Escrow смарт-контракта</p>
             </div>
 
             <!-- Countdown Timer -->
             <div class="bg-slate-950/80 border border-purple-900/60 p-4 rounded-2xl text-center min-w-[200px]">
-                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Окно подачи спора (48ч)</div>
+                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider" data-ru="Окно подачи спора (48ч)" data-en="Dispute Window (48h)">Окно подачи спора (48ч)</div>
                 <div id="disputeTimer" class="text-2xl font-black text-cyan-400 font-mono mt-1">47:59:59</div>
             </div>
         </div>
@@ -170,29 +169,29 @@ HTML
             <!-- Inspection & Contract Details -->
             <div class="md:col-span-2 space-y-6">
                 <div class="glass-panel p-6 rounded-3xl border border-purple-900/40 space-y-4">
-                    <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">Детали контракта и инспекции</h3>
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300" data-ru="Детали контракта и инспекции" data-en="Contract & Inspection Details">Детали контракта и инспекции</h3>
                     
                     <div class="grid grid-cols-2 gap-4 text-xs">
                         <div class="bg-slate-950/60 p-3.5 rounded-2xl border border-purple-900/30">
-                            <span class="text-slate-500 block">Заказчик / Компания:</span>
+                            <span class="text-slate-500 block" data-ru="Заказчик / Компания:" data-en="Client / Company:">Заказчик / Компания:</span>
                             <strong id="clientName" class="text-white">...</strong>
                         </div>
                         <div class="bg-slate-950/60 p-3.5 rounded-2xl border border-purple-900/30">
-                            <span class="text-slate-500 block">Локация / Город:</span>
+                            <span class="text-slate-500 block" data-ru="Локация / Город:" data-en="Location / City:">Локация / Город:</span>
                             <strong id="locationInfo" class="text-white">...</strong>
                         </div>
                         <div class="bg-slate-950/60 p-3.5 rounded-2xl border border-purple-900/30">
-                            <span class="text-slate-500 block">Тип инспекции:</span>
+                            <span class="text-slate-500 block" data-ru="Тип инспекции:" data-en="Inspection Type:">Тип инспекции:</span>
                             <strong id="inspectionType" class="text-purple-400">...</strong>
                         </div>
                         <div class="bg-slate-950/60 p-3.5 rounded-2xl border border-purple-900/30">
-                            <span class="text-slate-500 block">Статус инспектора:</span>
+                            <span class="text-slate-500 block" data-ru="Статус инспектора:" data-en="Inspector Status:">Статус инспектора:</span>
                             <strong id="inspectorName" class="text-cyan-400">...</strong>
                         </div>
                     </div>
 
                     <div class="bg-slate-950/60 p-4 rounded-2xl border border-purple-900/30 text-xs space-y-1">
-                        <span class="text-slate-500 block">Техническое задание:</span>
+                        <span class="text-slate-500 block" data-ru="Техническое задание:" data-en="Requirements Notes:">Техническое задание:</span>
                         <p id="requirementsNotes" class="text-slate-300 italic">...</p>
                     </div>
                 </div>
@@ -200,13 +199,13 @@ HTML
                 <!-- AQL Inspection Report Area -->
                 <div class="glass-panel p-6 rounded-3xl border border-purple-900/40 space-y-4">
                     <div class="flex justify-between items-center">
-                        <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">Отчет инспектора (AQL Standard)</h3>
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300" data-ru="Отчет инспектора (AQL Standard)" data-en="Inspector Report (AQL Standard)">Отчет инспектора (AQL Standard)</h3>
                         <span class="text-[10px] font-mono text-emerald-400">ISO 2859-1 PASSED</span>
                     </div>
                     <div id="reportBox" class="bg-slate-950/80 p-5 rounded-2xl border border-purple-900/30 text-xs text-slate-300 space-y-2">
-                        <p>✓ Визуальный контроль: дефектов не обнаружено.</p>
-                        <p>✓ Тест функционала: 100% пройден.</p>
-                        <p>✓ Проверка маркировки и упаковки соответствуют ТЗ.</p>
+                        <p data-ru="✓ Визуальный контроль: дефектов не обнаружено." data-en="✓ Visual inspection: no defects found.">✓ Визуальный контроль: дефектов не обнаружено.</p>
+                        <p data-ru="✓ Тест функционала: 100% пройден." data-en="✓ Functional test: 100% passed.">✓ Тест функционала: 100% пройден.</p>
+                        <p data-ru="✓ Проверка маркировки и упаковки соответствуют ТЗ." data-en="✓ Marking and packaging comply with requirements.">✓ Проверка маркировки и упаковки соответствуют ТЗ.</p>
                     </div>
                 </div>
             </div>
@@ -214,25 +213,25 @@ HTML
             <!-- Escrow Actions Sidebar -->
             <div class="space-y-6">
                 <div class="glass-panel p-6 rounded-3xl border border-purple-900/40 space-y-6">
-                    <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">Управление Escrow</h3>
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300" data-ru="Управление Escrow" data-en="Escrow Management">Управление Escrow</h3>
 
                     <div class="space-y-3 text-xs">
                         <div class="flex justify-between">
-                            <span class="text-slate-400">Сумма в залоге:</span>
+                            <span class="text-slate-400" data-ru="Сумма в залоге:" data-en="Held Amount:">Сумма в залоге:</span>
                             <span class="font-bold text-white">$12,450.00</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-slate-400">Комиссия сервиса:</span>
+                            <span class="text-slate-400" data-ru="Комиссия сервиса:" data-en="Service Fee:">Комиссия сервиса:</span>
                             <span class="font-bold text-cyan-400">0% (Beta)</span>
                         </div>
                     </div>
 
                     <div class="space-y-3 pt-2">
-                        <button onclick="releaseEscrow()" id="btnRelease" class="w-full bg-gradient-to-r from-emerald-600 to-teal-500 hover:opacity-90 text-white font-bold py-3.5 rounded-2xl text-xs uppercase tracking-wider transition shadow-lg shadow-emerald-900/30 cursor-pointer">
+                        <button onclick="releaseEscrow()" id="btnRelease" class="w-full bg-gradient-to-r from-emerald-600 to-teal-500 hover:opacity-90 text-white font-bold py-3.5 rounded-2xl text-xs uppercase tracking-wider transition shadow-lg shadow-emerald-900/30 cursor-pointer" data-ru="Подтвердить и разблокировать ($)" data-en="Release Escrow ($)">
                             Подтвердить и разблокировать ($)
                         </button>
                         
-                        <button onclick="openDispute()" id="btnDispute" class="w-full bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-800/60 font-bold py-3.5 rounded-2xl text-xs uppercase tracking-wider transition cursor-pointer">
+                        <button onclick="openDispute()" id="btnDispute" class="w-full bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-800/60 font-bold py-3.5 rounded-2xl text-xs uppercase tracking-wider transition cursor-pointer" data-ru="Открыть спор / Арбитраж" data-en="Open Dispute / Arbitration">
                             Открыть спор / Арбитраж
                         </button>
                     </div>
@@ -252,15 +251,29 @@ HTML
         const SUPABASE_ANON_KEY = 'sb_publishable_Zpkfm-iDWB7WuHrAp1jDtQ_1w_QU8s0';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+        let currentLang = localStorage.getItem('sourcejet_lang') || 'ru';
         let currentInspectionId = null;
         let disputeDeadline = null;
+
+        function switchLang(lang) {
+            currentLang = lang;
+            localStorage.setItem('sourcejet_lang', lang);
+
+            document.getElementById('btn-ru').className = lang === 'ru' ? 'px-2.5 py-1 rounded-lg transition bg-purple-600 text-white font-bold cursor-pointer' : 'px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white cursor-pointer';
+            document.getElementById('btn-en').className = lang === 'en' ? 'px-2.5 py-1 rounded-lg transition bg-purple-600 text-white font-bold cursor-pointer' : 'px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white cursor-pointer';
+
+            document.querySelectorAll('[data-ru]').forEach(el => {
+                const text = el.getAttribute(`data-${lang}`);
+                if (text) el.innerText = text;
+            });
+        }
 
         async function loadRoomData() {
             const urlParams = new URLSearchParams(window.location.search);
             currentInspectionId = urlParams.get('id');
 
             if (!currentInspectionId) {
-                document.getElementById('factoryTitle').innerText = 'Ошибка: Не указан ID партии';
+                document.getElementById('factoryTitle').innerText = currentLang === 'ru' ? 'Ошибка: Не указан ID партии' : 'Error: Shipment ID not specified';
                 return;
             }
 
@@ -271,7 +284,7 @@ HTML
                 .single();
 
             if (error || !data) {
-                document.getElementById('factoryTitle').innerText = 'Заявка не найдена';
+                document.getElementById('factoryTitle').innerText = currentLang === 'ru' ? 'Заявка не найдена' : 'Request not found';
                 return;
             }
 
@@ -279,8 +292,8 @@ HTML
             document.getElementById('clientName').innerText = data.client_name || '—';
             document.getElementById('locationInfo').innerText = `${data.country || 'Китай'}, ${data.city || ''}`;
             document.getElementById('inspectionType').innerText = data.inspection_type || 'PSI';
-            document.getElementById('inspectorName').innerText = data.inspector_name || 'Ожидает назначения';
-            document.getElementById('requirementsNotes').innerText = data.requirements?.notes || 'Стандартные требования ISO';
+            document.getElementById('inspectorName').innerText = data.inspector_name || (currentLang === 'ru' ? 'Ожидает назначения' : 'Awaiting assignment');
+            document.getElementById('requirementsNotes').innerText = data.requirements?.notes || (currentLang === 'ru' ? 'Стандартные требования ISO' : 'Standard ISO requirements');
 
             if (data.escrow_status === 'released') {
                 document.getElementById('escrowBadge').className = 'text-[10px] font-mono bg-emerald-950 text-emerald-400 border border-emerald-800 px-3 py-1 rounded-full uppercase font-bold';
@@ -310,11 +323,12 @@ HTML
         }
 
         async function releaseEscrow() {
-            if (!confirm('Вы уверены, что хотите разблокировать средства фабрике?')) return;
+            const msg = currentLang === 'ru' ? 'Вы уверены, что хотите разблокировать средства фабрике?' : 'Are you sure you want to release funds to the factory?';
+            if (!confirm(msg)) return;
             
             const statusDiv = document.getElementById('actionStatus');
             statusDiv.className = 'text-purple-400';
-            statusDiv.innerText = 'Разблокировка средств...';
+            statusDiv.innerText = currentLang === 'ru' ? 'Разблокировка средств...' : 'Releasing funds...';
 
             const { error } = await supabaseClient
                 .from('inspections')
@@ -326,17 +340,18 @@ HTML
                 statusDiv.innerText = 'Ошибка: ' + error.message;
             } else {
                 statusDiv.className = 'text-emerald-400';
-                statusDiv.innerText = '✓ Средства успешно переведены!';
+                statusDiv.innerText = currentLang === 'ru' ? '✓ Средства успешно переведены!' : '✓ Funds successfully released!';
                 setTimeout(() => location.reload(), 1000);
             }
         }
 
         async function openDispute() {
-            if (!confirm('Открыть спор по этой партии? Наш арбитраж подключится к проверке.')) return;
+            const msg = currentLang === 'ru' ? 'Открыть спор по этой партии? Наш арбитраж подключится к проверке.' : 'Open a dispute for this shipment? Our arbitration will review.';
+            if (!confirm(msg)) return;
 
             const statusDiv = document.getElementById('actionStatus');
             statusDiv.className = 'text-purple-400';
-            statusDiv.innerText = 'Открытие арбитража...';
+            statusDiv.innerText = currentLang === 'ru' ? 'Открытие арбитража...' : 'Opening arbitration...';
 
             const { error } = await supabaseClient
                 .from('inspections')
@@ -348,12 +363,15 @@ HTML
                 statusDiv.innerText = 'Ошибка: ' + error.message;
             } else {
                 statusDiv.className = 'text-amber-400';
-                statusDiv.innerText = '✓ Спор открыт. Арбитр свяжется с вами.';
+                statusDiv.innerText = currentLang === 'ru' ? '✓ Спор открыт. Арбитр свяжется с вами.' : '✓ Dispute opened. Arbitrator will contact you.';
                 setTimeout(() => location.reload(), 1000);
             }
         }
 
-        window.onload = loadRoomData;
+        window.onload = () => {
+            switchLang(currentLang);
+            loadRoomData();
+        };
     </script>
 </body>
 </html>
