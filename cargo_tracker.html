@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cargo Tracking & Freight Live — SourceJet AI</title>
+    <!-- Фавиконка на вкладку браузера в виде векторного SVG-логотипа -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='sj-bg' x1='0' y1='1' x2='1' y2='0'%3E%3Cstop stop-color='%236D28D9'/%3E%3Cstop offset='.55' stop-color='%234338CA'/%3E%3Cstop offset='1' stop-color='%230EA5E9'/%3E%3C/linearGradient%3E%3ClinearGradient id='sj-ribbon' x1='0' y1='1' x2='1' y2='0'%3E%3Cstop stop-color='%23818CF8'/%3E%3Cstop offset='.5' stop-color='%233B82F6'/%3E%3Cstop offset='1' stop-color='%2367E8F9'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='19' fill='url(%23sj-bg)'/%3E%3Cpath d='M13 34C13 23 32 16 51 13 L35 27C29 31 21 32 13 34Z' fill='url(%23sj-ribbon)'/%3E%3Cpath d='M13 34C19 29 29 29 38 31 C47 33 51 37 48 42 C40 37 26 41 18 38 C15 37 13 36 13 34Z' fill='%2360A5FA'/%3E%3Cpath d='M48 40C47 47 29 53 12 56 L29 43C35 39 43 39 48 40Z' fill='url(%23sj-ribbon)'/%3E%3Cpath d='M46 15C49 12 53 12 54 14 C54 17 49 21 46 21 C43 21 43 18 46 15Z' fill='%2310B981'/%3E%3C/svg%3E">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -17,6 +19,51 @@
             backdrop-filter: blur(16px);
             border: 1px solid rgba(168, 85, 247, 0.18);
         }
+
+        /* Стили фирменного логотипа бренда */
+        .sj-brand {
+          display: inline-flex;
+          align-items: center;
+          gap: 16px;
+          color: #fff;
+          text-decoration: none;
+        }
+
+        .sj-brand__icon {
+          display: block;
+          width: 54px;
+          height: 54px;
+          flex-shrink: 0;
+        }
+
+        .sj-brand__copy {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+
+        .sj-brand__name {
+          font-weight: 900;
+          font-size: 1.25rem;
+          letter-spacing: 0.05em;
+          color: #fff;
+          line-height: 1;
+        }
+
+        .sj-brand__name span {
+          background: linear-gradient(135deg, #c084fc 0%, #818cf8 50%, #22d3ee 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+
+        .sj-brand__tagline {
+          font-size: 8px;
+          font-weight: 700;
+          letter-spacing: 0.15em;
+          color: #a855f7;
+          line-height: 1.2;
+          text-transform: uppercase;
+        }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-purple-500 selection:text-white">
@@ -25,16 +72,71 @@
     <header class="border-b border-purple-900/30 bg-slate-900/80 backdrop-blur-xl sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             
-            <a href="index.html" class="flex items-center gap-3.5">
-                <div class="w-11 h-11 bg-gradient-to-tr from-purple-600 via-indigo-600 to-cyan-400 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-xl shadow-purple-500/25">
-                    ⚡
-                </div>
-                <div>
-                    <div class="flex items-center gap-2">
-                        <span class="font-black text-xl tracking-wider text-white">SourceJet <span class="ai-gradient-text">AI</span></span>
-                    </div>
-                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase">Global Sourcing & Logistics</p>
-                </div>
+            <!-- Новый бренд-блок с вектором логотипа и текстом -->
+            <a class="sj-brand" href="index.html" aria-label="SourceJet AI — главная">
+              <svg
+                class="sj-brand__icon"
+                viewBox="0 0 64 64"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <defs>
+                  <linearGradient id="sj-bg" x1="0" y1="1" x2="1" y2="0">
+                    <stop stop-color="#6D28D9"/>
+                    <stop offset=".55" stop-color="#4338CA"/>
+                    <stop offset="1" stop-color="#0EA5E9"/>
+                  </linearGradient>
+
+                  <linearGradient id="sj-ribbon" x1="0" y1="1" x2="1" y2="0">
+                    <stop stop-color="#818CF8"/>
+                    <stop offset=".5" stop-color="#3B82F6"/>
+                    <stop offset="1" stop-color="#67E8F9"/>
+                  </linearGradient>
+                </defs>
+
+                <rect width="64" height="64" rx="19" fill="url(#sj-bg)"/>
+
+                <!-- Верхний реактивный поток -->
+                <path
+                  d="M13 34C13 23 32 16 51 13
+                     L35 27C29 31 21 32 13 34Z"
+                  fill="url(#sj-ribbon)"
+                />
+
+                <!-- Поворот ленты -->
+                <path
+                  d="M13 34C19 29 29 29 38 31
+                     C47 33 51 37 48 42
+                     C40 37 26 41 18 38
+                     C15 37 13 36 13 34Z"
+                  fill="#60A5FA"
+                />
+
+                <!-- Нижний поток -->
+                <path
+                  d="M48 40C47 47 29 53 12 56
+                     L29 43C35 39 43 39 48 40Z"
+                  fill="url(#sj-ribbon)"
+                />
+
+                <!-- Изумрудный акцент -->
+                <path
+                  d="M46 15C49 12 53 12 54 14
+                     C54 17 49 21 46 21
+                     C43 21 43 18 46 15Z"
+                  fill="#10B981"
+                />
+              </svg>
+
+              <span class="sj-brand__copy">
+                <span class="sj-brand__name">
+                  SourceJet <span>AI</span>
+                </span>
+
+                <span class="sj-brand__tagline">
+                  Global Sourcing &amp; Logistics
+                </span>
+              </span>
             </a>
 
             <nav class="hidden md:flex items-center gap-6 text-xs font-semibold uppercase tracking-wider text-slate-300">
@@ -74,16 +176,16 @@
                     placeholder="Введите трек-код (например: SJ-88902-CN)..." 
                     class="w-full bg-slate-950/90 border border-purple-900/60 rounded-2xl px-5 py-4 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-sm font-mono">
                 
-                <button type="submit" id="searchBtn" class="bg-gradient-to-r from-purple-600 to-cyan-500 text-white font-bold px-8 py-4 rounded-2xl text-xs uppercase tracking-wider transition hover:opacity-90 shadow-lg shadow-purple-600/30 whitespace-nowrap">
+                <button type="submit" id="searchBtn" class="bg-gradient-to-r from-purple-600 to-cyan-500 text-white font-bold px-8 py-4 rounded-2xl text-xs uppercase tracking-wider transition hover:opacity-90 shadow-lg shadow-purple-600/30 whitespace-nowrap cursor-pointer">
                     <span data-ru="Найти груз" data-en="Track Shipment">Найти груз</span>
                 </button>
             </form>
 
             <div class="flex items-center gap-2 text-xs text-slate-400 px-2 flex-wrap">
                 <span data-ru="Демо трек-коды для проверки:" data-en="Quick Test Codes:">Демо трек-коды для проверки:</span>
-                <button type="button" class="quick-btn text-purple-400 font-mono hover:underline font-bold" data-code="SJ-88902-CN">SJ-88902-CN</button>
+                <button type="button" class="quick-btn text-purple-400 font-mono hover:underline font-bold cursor-pointer" data-code="SJ-88902-CN">SJ-88902-CN</button>
                 <span>•</span>
-                <button type="button" class="quick-btn text-purple-400 font-mono hover:underline font-bold" data-code="SJ-44120-TR">SJ-44120-TR</button>
+                <button type="button" class="quick-btn text-purple-400 font-mono hover:underline font-bold cursor-pointer" data-code="SJ-44120-TR">SJ-44120-TR</button>
             </div>
         </div>
 
@@ -268,7 +370,6 @@
             `;
         }
 
-        // Привязываем обработчики при загрузке страницы
         document.addEventListener('DOMContentLoaded', () => {
             switchLanguage(currentLang);
 
