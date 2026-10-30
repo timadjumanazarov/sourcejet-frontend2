@@ -236,8 +236,8 @@
             currentLang = lang;
             localStorage.setItem('sourcejet_lang', lang);
 
-            document.getElementById('btn-ru').className = lang === 'ru' ? 'px-2.5 py-1 rounded-lg transition bg-purple-600 text-white font-bold' : 'px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white';
-            document.getElementById('btn-en').className = lang === 'en' ? 'px-2.5 py-1 rounded-lg transition bg-purple-600 text-white font-bold' : 'px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white';
+            document.getElementById('btn-ru').className = lang === 'ru' ? 'px-2.5 py-1 rounded-lg transition bg-purple-600 text-white font-bold cursor-pointer' : 'px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white cursor-pointer';
+            document.getElementById('btn-en').className = lang === 'en' ? 'px-2.5 py-1 rounded-lg transition bg-purple-600 text-white font-bold cursor-pointer' : 'px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white cursor-pointer';
 
             document.querySelectorAll('[data-ru]').forEach(el => {
                 const text = el.getAttribute(`data-${lang}`);
@@ -300,7 +300,7 @@
                                     <h3 class="font-black text-lg text-white">${item.factory_name || 'Фабрика'}</h3>
                                     <span class="text-[9px] font-mono bg-purple-950 text-purple-300 border border-purple-800 px-2.5 py-0.5 rounded-full uppercase">${status}</span>
                                 </div>
-                                <p class="text-xs text-slate-400 mt-0.5">📦 ${item.product_name || 'Товар'} • 📍 ${item.country || 'Китай'}, ${item.city || 'Город'} • 👤 ${item.inspector_name || 'Инспектор'}</p>
+                                <p class="text-xs text-slate-400 mt-0.5">📦 ${item.product_name || 'Товар'} • 📍 ${item.country || 'Китай'}, ${item.city || 'Город'} • 👤 ${item.inspector_name || (currentLang === 'ru' ? 'Инспектор' : 'Inspector')}</p>
                             </div>
                             <a href="importer_room.html?id=${item.id}" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition shadow-lg hover:opacity-90">
                                 ${currentLang === 'ru' ? 'Открыть комнату (Escrow)' : 'Open Escrow Room'} →
@@ -326,7 +326,7 @@
                                 <div class="w-7 h-7 rounded-xl flex items-center justify-center font-bold ${step3}">3</div>
                                 <div>
                                     <div class="text-[10px] text-slate-400 uppercase font-bold" data-ru="Этап 3" data-en="Step 3">Этап 3</div>
-                                    <div class="font-semibold text-slate-200" data-ru="Escrow & Окно 48ч" data-en="Escrow & Dispute">Escrow & Окно 48ч</div>
+                                    <div class="font-semibold text-slate-200" data-ru="Escrow & Окно 48ч" data-en="Escrow & Dispute">Escrow &amp; Окно 48ч</div>
                                 </div>
                             </div>
                             <div class="flex items-center gap-3 bg-slate-950/60 p-3 rounded-2xl border border-purple-900/30">
@@ -353,7 +353,7 @@
             chatBox.innerHTML += `
                 <div class="flex items-start gap-2.5 justify-end">
                     <div class="bg-purple-900/50 border border-purple-700/50 p-3 rounded-2xl text-slate-100 max-w-xl">${text}</div>
-                    <div class="w-6 h-6 rounded-lg bg-cyan-600 flex items-center justify-center text-white text-[10px] font-bold shrink-0">Вы</div>
+                    <div class="w-6 h-6 rounded-lg bg-cyan-600 flex items-center justify-center text-white text-[10px] font-bold shrink-0">${currentLang === 'ru' ? 'Вы' : 'You'}</div>
                 </div>
             `;
             input.value = '';
@@ -364,11 +364,11 @@
                     ? "Анализирую базу данных фабрик и логистический трек... Рисков по текущим контрактам не обнаружено. Рекомендуем проверить уровень брака по стандарту AQL 2.5 перед подписанием акта приема-передачи на Escrow."
                     : "Analyzing factory database and logistics track... No active risks detected on your shipments. We recommend verifying defect rates under AQL 2.5 before releasing Escrow funds.";
 
-                if (text.toLowerCase().includes('логистик') || text.toLowerCase().includes('фрахт') || text.toLowerCase().includes('доставк')) {
+                if (text.toLowerCase().includes('логистик') || text.toLowerCase().includes('фрахт') || text.toLowerCase().includes('доставк') || text.toLowerCase().includes('logistic') || text.toLowerCase().includes('freight')) {
                     aiReply = currentLang === 'ru' 
                         ? "📦 По маршруту Нинбо/Гуанчжоу — Бишкек текущий срок контейнерной доставки составляет 18–25 дней. Ставки фрахта стабильны (-4.2% за последний месяц)."
-                        : "📦 For Ningbo/Guangzhou — Bishkek route, container transit time is 18–25 days. Freight rates are currently stable (-4.2% MoM).";
-                } else if (text.toLowerCase().includes('инспекц') || text.toLowerCase().includes('брак') || text.toLowerCase().includes('aql')) {
+                        : "📦 For Ningbo/Guangzhou route, container transit time is 18–25 days. Freight rates are currently stable (-4.2% MoM).";
+                } else if (text.toLowerCase().includes('инспекц') || text.toLowerCase().includes('брак') || text.toLowerCase().includes('aql') || text.toLowerCase().includes('audit') || text.toLowerCase().includes('defect')) {
                     aiReply = currentLang === 'ru'
                         ? "🛡️ Инспекторы в КНР проводят аудит строго по протоколу ISO 2859-1. При обнаружении критических дефектов средства автоматически замораживаются в Escrow-комнате."
                         : "🛡️ Inspectors in China follow ISO 2859-1 protocol. If critical defects are found, funds remain locked in the Escrow dispute room.";
