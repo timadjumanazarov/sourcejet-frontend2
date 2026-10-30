@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inspection Room & Field Ops — SourceJet AI</title>
+    <!-- Фавиконка на вкладку браузера в виде векторного SVG-логотипа -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='sj-bg' x1='0' y1='1' x2='1' y2='0'%3E%3Cstop stop-color='%236D28D9'/%3E%3Cstop offset='.55' stop-color='%234338CA'/%3E%3Cstop offset='1' stop-color='%230EA5E9'/%3E%3C/linearGradient%3E%3ClinearGradient id='sj-ribbon' x1='0' y1='1' x2='1' y2='0'%3E%3Cstop stop-color='%23818CF8'/%3E%3Cstop offset='.5' stop-color='%233B82F6'/%3E%3Cstop offset='1' stop-color='%2367E8F9'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='19' fill='url(%23sj-bg)'/%3E%3Cpath d='M13 34C13 23 32 16 51 13 L35 27C29 31 21 32 13 34Z' fill='url(%23sj-ribbon)'/%3E%3Cpath d='M13 34C19 29 29 29 38 31 C47 33 51 37 48 42 C40 37 26 41 18 38 C15 37 13 36 13 34Z' fill='%2360A5FA'/%3E%3Cpath d='M48 40C47 47 29 53 12 56 L29 43C35 39 43 39 48 40Z' fill='url(%23sj-ribbon)'/%3E%3Cpath d='M46 15C49 12 53 12 54 14 C54 17 49 21 46 21 C43 21 43 18 46 15Z' fill='%2310B981'/%3E%3C/svg%3E">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
@@ -22,6 +24,51 @@
             backdrop-filter: blur(16px);
             border: 1px solid rgba(168, 85, 247, 0.18);
         }
+
+        /* Стили фирменного логотипа бренда */
+        .sj-brand {
+          display: inline-flex;
+          align-items: center;
+          gap: 16px;
+          color: #fff;
+          text-decoration: none;
+        }
+
+        .sj-brand__icon {
+          display: block;
+          width: 54px;
+          height: 54px;
+          flex-shrink: 0;
+        }
+
+        .sj-brand__copy {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+
+        .sj-brand__name {
+          font-weight: 900;
+          font-size: 1.25rem;
+          letter-spacing: 0.05em;
+          color: #fff;
+          line-height: 1;
+        }
+
+        .sj-brand__name span {
+          background: linear-gradient(135deg, #c084fc 0%, #818cf8 50%, #22d3ee 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+
+        .sj-brand__tagline {
+          font-size: 8px;
+          font-weight: 700;
+          letter-spacing: 0.15em;
+          color: #a855f7;
+          line-height: 1.2;
+          text-transform: uppercase;
+        }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-purple-500 selection:text-white">
@@ -29,19 +76,82 @@
     <!-- Header -->
     <header class="border-b border-purple-900/30 bg-slate-900/80 backdrop-blur-xl sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="inspector_dashboard.html" class="flex items-center gap-3.5">
-                <div class="w-11 h-11 bg-gradient-to-tr from-purple-600 via-indigo-600 to-cyan-400 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-xl shadow-purple-500/25">⚡</div>
-                <div>
-                    <span class="font-black text-xl tracking-wider text-white">SourceJet <span class="ai-gradient-text">AI</span></span>
-                    <p class="text-[9px] text-purple-400/90 font-bold tracking-widest uppercase">Inspection Control Room</p>
-                </div>
+            
+            <!-- Бренд-блок с вектором логотипа -->
+            <a class="sj-brand" href="inspector_dashboard.html" aria-label="SourceJet AI — Inspection Control Room">
+              <svg
+                class="sj-brand__icon"
+                viewBox="0 0 64 64"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <defs>
+                  <linearGradient id="sj-bg" x1="0" y1="1" x2="1" y2="0">
+                    <stop stop-color="#6D28D9"/>
+                    <stop offset=".55" stop-color="#4338CA"/>
+                    <stop offset="1" stop-color="#0EA5E9"/>
+                  </linearGradient>
+
+                  <linearGradient id="sj-ribbon" x1="0" y1="1" x2="1" y2="0">
+                    <stop stop-color="#818CF8"/>
+                    <stop offset=".5" stop-color="#3B82F6"/>
+                    <stop offset="1" stop-color="#67E8F9"/>
+                  </linearGradient>
+                </defs>
+
+                <rect width="64" height="64" rx="19" fill="url(#sj-bg)"/>
+
+                <path
+                  d="M13 34C13 23 32 16 51 13
+                     L35 27C29 31 21 32 13 34Z"
+                  fill="url(#sj-ribbon)"
+                />
+
+                <path
+                  d="M13 34C19 29 29 29 38 31
+                     C47 33 51 37 48 42
+                     C40 37 26 41 18 38
+                     C15 37 13 36 13 34Z"
+                  fill="#60A5FA"
+                />
+
+                <path
+                  d="M48 40C47 47 29 53 12 56
+                     L29 43C35 39 43 39 48 40Z"
+                  fill="url(#sj-ribbon)"
+                />
+
+                <path
+                  d="M46 15C49 12 53 12 54 14
+                     C54 17 49 21 46 21
+                     C43 21 43 18 46 15Z"
+                  fill="#10B981"
+                />
+              </svg>
+
+              <span class="sj-brand__copy">
+                <span class="sj-brand__name">
+                  SourceJet <span>AI</span>
+                </span>
+
+                <span class="sj-brand__tagline" data-ru="Inspection Control Room" data-en="Inspection Control Room">
+                  Inspection Control Room
+                </span>
+              </span>
             </a>
             
             <div class="flex items-center gap-4">
-                <button onclick="generateEnterprisePDF()" class="bg-gradient-to-r from-purple-600 to-cyan-500 hover:opacity-90 text-white font-bold px-4 py-2 rounded-xl text-xs uppercase tracking-wider transition flex items-center gap-2 shadow-lg shadow-purple-500/20">
-                    🛡️ <span>Скачать защищенный PDF-отчет</span>
+                <button onclick="generateEnterprisePDF()" class="bg-gradient-to-r from-purple-600 to-cyan-500 hover:opacity-90 text-white font-bold px-4 py-2 rounded-xl text-xs uppercase tracking-wider transition flex items-center gap-2 shadow-lg shadow-purple-500/20 cursor-pointer">
+                    🛡️ <span data-ru="Скачать защищенный PDF-отчет" data-en="Download Secured PDF Report">Скачать защищенный PDF-отчет</span>
                 </button>
-                <a href="inspector_dashboard.html" class="text-xs text-purple-400 hover:text-purple-300 font-bold transition">← Назад</a>
+
+                <!-- Переключатель языков -->
+                <div class="bg-slate-900 border border-purple-900/50 rounded-xl p-1 flex items-center gap-1 text-xs font-bold">
+                    <button onclick="switchLang('ru')" id="lang-ru" class="px-2.5 py-1 rounded-lg transition bg-purple-600 text-white cursor-pointer">RU</button>
+                    <button onclick="switchLang('en')" id="lang-en" class="px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white cursor-pointer">EN</button>
+                </div>
+
+                <a href="inspector_dashboard.html" class="text-xs text-purple-400 hover:text-purple-300 font-bold transition" data-ru="← Назад" data-en="← Back">← Назад</a>
             </div>
         </div>
     </header>
@@ -60,57 +170,57 @@
                 <div class="flex justify-between items-start">
                     <div>
                         <span id="inspectionCountryCity" class="text-xs font-mono text-purple-400 uppercase font-bold">Китай • Загрузка...</span>
-                        <h1 id="factoryTitle" class="text-2xl font-black text-white mt-1">Загрузка данных фабрики...</h1>
+                        <h1 id="factoryTitle" class="text-2xl font-black text-white mt-1" data-ru="Загрузка данных фабрики..." data-en="Loading factory data...">Загрузка данных фабрики...</h1>
                     </div>
                     <span id="inspectionStatusBadge" class="bg-amber-950 text-amber-300 border border-amber-800 text-xs font-bold px-3 py-1 rounded-full uppercase">NEW</span>
                 </div>
 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2 border-t border-purple-900/30 text-xs">
                     <div>
-                        <span class="text-slate-500 block">Клиент</span>
+                        <span class="text-slate-500 block" data-ru="Клиент" data-en="Client">Клиент</span>
                         <span id="clientName" class="font-bold text-slate-200">—</span>
                     </div>
                     <div>
-                        <span class="text-slate-500 block">Инспектор</span>
+                        <span class="text-slate-500 block" data-ru="Инспектор" data-en="Inspector">Инспектор</span>
                         <span id="inspectorName" class="font-bold text-cyan-300">—</span>
                     </div>
                     <div>
-                        <span class="text-slate-500 block">Дата проверки</span>
+                        <span class="text-slate-500 block" data-ru="Дата проверки" data-en="Inspection Date">Дата проверки</span>
                         <span id="scheduledDate" class="font-bold text-slate-200">—</span>
                     </div>
                     <div>
-                        <span class="text-slate-500 block">Адрес в Китае</span>
+                        <span class="text-slate-500 block" data-ru="Адрес в Китае" data-en="Address in China">Адрес в Китае</span>
                         <span id="factoryAddress" class="font-bold text-slate-200 truncate block">—</span>
                     </div>
                 </div>
 
                 <div class="bg-slate-950/80 p-4 rounded-2xl border border-purple-900/30 text-xs space-y-1">
-                    <span class="text-purple-400 font-bold uppercase tracking-wider text-[10px]">Техническое задание (ТЗ):</span>
-                    <p id="requirementsText" class="text-slate-300">Загрузка требований...</p>
+                    <span class="text-purple-400 font-bold uppercase tracking-wider text-[10px]" data-ru="Техническое задание (ТЗ):" data-en="Technical Requirements (TR):">Техническое задание (ТЗ):</span>
+                    <p id="requirementsText" class="text-slate-300" data-ru="Загрузка требований..." data-en="Loading requirements...">Загрузка требований...</p>
                 </div>
             </div>
 
             <!-- Блок дополнительных параметров и метрик инспекции -->
             <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 space-y-4">
-                <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">Параметры и метрики партии (Inspection Metrics)</h3>
+                <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300" data-ru="Параметры и метрики партии (Inspection Metrics)" data-en="Inspection Metrics & Parameters">Параметры и метрики партии (Inspection Metrics)</h3>
                 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
                     <div>
-                        <label class="block text-slate-400 mb-1">Проверено единиц (Sampled Qty)</label>
+                        <label class="block text-slate-400 mb-1" data-ru="Проверено единиц (Sampled Qty)" data-en="Sampled Qty">Проверено единиц (Sampled Qty)</label>
                         <input type="number" id="paramSampledQty" placeholder="Напр. 500" class="w-full bg-slate-950 border border-purple-900/60 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500">
                     </div>
                     <div>
-                        <label class="block text-slate-400 mb-1">Брак / Дефекты (Defects Found)</label>
+                        <label class="block text-slate-400 mb-1" data-ru="Брак / Дефекты (Defects Found)" data-en="Defects Found">Брак / Дефекты (Defects Found)</label>
                         <input type="number" id="paramDefectsQty" placeholder="Напр. 3" class="w-full bg-slate-950 border border-purple-900/60 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500">
                     </div>
                     <div>
-                        <label class="block text-slate-400 mb-1">Номер контейнера / Лот</label>
+                        <label class="block text-slate-400 mb-1" data-ru="Номер контейнера / Лот" data-en="Container / Lot Number">Номер контейнера / Лот</label>
                         <input type="text" id="paramContainerNum" placeholder="Напр. TGHU1234567" class="w-full bg-slate-950 border border-purple-900/60 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500">
                     </div>
                 </div>
 
                 <div class="pt-2">
-                    <button onclick="saveInspectionParameters()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-4 py-2 rounded-xl text-xs uppercase tracking-wider transition">
+                    <button onclick="saveInspectionParameters()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-4 py-2 rounded-xl text-xs uppercase tracking-wider transition cursor-pointer" data-ru="💾 Сохранить параметры в отчет" data-en="💾 Save Parameters to Report">
                         💾 Сохранить параметры в отчет
                     </button>
                     <span id="paramSaveStatus" class="ml-3 text-[10px] font-mono"></span>
@@ -120,25 +230,25 @@
             <!-- Калькулятор выборочного контроля AQL (ISO 2859-1) -->
             <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 space-y-4">
                 <div class="flex justify-between items-center">
-                    <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">Калькулятор выборки AQL (ISO 2859-1)</h3>
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300" data-ru="Калькулятор выборки AQL (ISO 2859-1)" data-en="AQL Sampling Calculator (ISO 2859-1)">Калькулятор выборки AQL (ISO 2859-1)</h3>
                     <span class="text-[10px] bg-purple-950 text-purple-300 px-2.5 py-1 rounded-lg border border-purple-800">Normal Level II</span>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
                     <div>
-                        <label class="block text-slate-400 mb-1">Общий размер партии (Lot Size)</label>
+                        <label class="block text-slate-400 mb-1" data-ru="Общий размер партии (Lot Size)" data-en="Lot Size">Общий размер партии (Lot Size)</label>
                         <input type="number" id="calcLotSize" placeholder="Напр. 3000" class="w-full bg-slate-950 border border-purple-900/60 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500">
                     </div>
                     <div>
-                        <label class="block text-slate-400 mb-1">Уровень AQL (Defects)</label>
+                        <label class="block text-slate-400 mb-1" data-ru="Уровень AQL (Defects)" data-en="AQL Level">Уровень AQL (Defects)</label>
                         <select id="calcAqlLevel" class="w-full bg-slate-950 border border-purple-900/60 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500">
-                            <option value="1.0">AQL 1.0 (Строгий)</option>
-                            <option value="2.5" selected>AQL 2.5 (Стандарт)</option>
-                            <option value="4.0">AQL 4.0 (Лояльный)</option>
+                            <option value="1.0" data-ru="AQL 1.0 (Строгий)" data-en="AQL 1.0 (Strict)">AQL 1.0 (Строгий)</option>
+                            <option value="2.5" selected data-ru="AQL 2.5 (Стандарт)" data-en="AQL 2.5 (Standard)">AQL 2.5 (Стандарт)</option>
+                            <option value="4.0" data-ru="AQL 4.0 (Лояльный)" data-en="AQL 4.0 (Relaxed)">AQL 4.0 (Лояльный)</option>
                         </select>
                     </div>
                     <div class="flex items-end">
-                        <button onclick="calculateAqlSampling()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 rounded-xl text-xs uppercase tracking-wider transition">
+                        <button onclick="calculateAqlSampling()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 rounded-xl text-xs uppercase tracking-wider transition cursor-pointer" data-ru="Рассчитать выборку" data-en="Calculate Sample">
                             Рассчитать выборку
                         </button>
                     </div>
@@ -146,51 +256,51 @@
 
                 <div id="aqlResultBox" class="hidden bg-slate-950/80 p-3 rounded-xl border border-purple-900/30 text-xs flex justify-between items-center">
                     <span id="aqlOutputText" class="text-slate-300">Выборка: — | Допустимо брака: —</span>
-                    <button onclick="applyAqlToMetrics()" class="text-purple-400 hover:text-purple-300 font-bold underline text-[11px]">Вставить в метрики</button>
+                    <button onclick="applyAqlToMetrics()" class="text-purple-400 hover:text-purple-300 font-bold underline text-[11px] cursor-pointer" data-ru="Вставить в метрики" data-en="Apply to Metrics">Вставить в метрики</button>
                 </div>
             </div>
 
             <!-- Панель быстрых тегов дефектов для чата -->
             <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 space-y-3">
-                <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">Быстрые замечания / Теги брака</h3>
+                <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300" data-ru="Быстрые замечания / Теги брака" data-en="Quick Defect Tags & Notes">Быстрые замечания / Теги брака</h3>
                 <div class="flex flex-wrap gap-2 text-xs">
-                    <button onclick="insertQuickTag('⚠️ [Замечание]: Нарушена внешняя упаковка / сырость паллет')" class="bg-slate-900 hover:bg-purple-950/80 border border-purple-900/40 px-3 py-1.5 rounded-xl text-slate-300 transition">📦 Повреждение упаковки</button>
-                    <button onclick="insertQuickTag('⚠️ [Замечание]: Обнаружены потертости и царапины на корпусе изделия')" class="bg-slate-900 hover:bg-purple-950/80 border border-purple-900/40 px-3 py-1.5 rounded-xl text-slate-300 transition">🔍 Царапины / Дефекты покрытия</button>
-                    <button onclick="insertQuickTag('⚠️ [Замечание]: Штрихкод поврежден или не соответствует требованиям FBA')" class="bg-slate-900 hover:bg-purple-950/80 border border-purple-900/40 px-3 py-1.5 rounded-xl text-slate-300 transition">🏷️ Проблемы с маркировкой</button>
-                    <button onclick="insertQuickTag('⚠️ [Замечание]: Несоответствие цвета или размеров по спецификации ТЗ')" class="bg-slate-900 hover:bg-purple-950/80 border border-purple-900/40 px-3 py-1.5 rounded-xl text-slate-300 transition">🎨 Отклонение по цвету/размеру</button>
-                    <button onclick="insertQuickTag('✅ [Статус]: Проверка партии завершена успешно, товар готов к отгрузке')" class="bg-emerald-950/50 hover:bg-emerald-900/60 border border-emerald-800/50 px-3 py-1.5 rounded-xl text-emerald-300 transition">✨ Партия Одобрена (Pass)</button>
+                    <button onclick="insertQuickTag('⚠️ [Замечание]: Нарушена внешняя упаковка / сырость паллет')" class="bg-slate-900 hover:bg-purple-950/80 border border-purple-900/40 px-3 py-1.5 rounded-xl text-slate-300 transition cursor-pointer" data-ru="📦 Повреждение упаковки" data-en="📦 Packaging Damage">📦 Повреждение упаковки</button>
+                    <button onclick="insertQuickTag('⚠️ [Замечание]: Обнаружены потертости и царапины на корпусе изделия')" class="bg-slate-900 hover:bg-purple-950/80 border border-purple-900/40 px-3 py-1.5 rounded-xl text-slate-300 transition cursor-pointer" data-ru="🔍 Царапины / Дефекты покрытия" data-en="🔍 Scratches / Finish Defects">🔍 Царапины / Дефекты покрытия</button>
+                    <button onclick="insertQuickTag('⚠️ [Замечание]: Штрихкод поврежден или не соответствует требованиям FBA')" class="bg-slate-900 hover:bg-purple-950/80 border border-purple-900/40 px-3 py-1.5 rounded-xl text-slate-300 transition cursor-pointer" data-ru="🏷️ Проблемы с маркировкой" data-en="🏷️ Labeling Issues">🏷️ Проблемы с маркировкой</button>
+                    <button onclick="insertQuickTag('⚠️ [Замечание]: Несоответствие цвета или размеров по спецификации ТЗ')" class="bg-slate-900 hover:bg-purple-950/80 border border-purple-900/40 px-3 py-1.5 rounded-xl text-slate-300 transition cursor-pointer" data-ru="🎨 Отклонение по цвету/размеру" data-en="🎨 Color/Size Deviation">🎨 Отклонение по цвету/размеру</button>
+                    <button onclick="insertQuickTag('✅ [Статус]: Проверка партии завершена успешно, товар готов к отгрузке')" class="bg-emerald-950/50 hover:bg-emerald-900/60 border border-emerald-800/50 px-3 py-1.5 rounded-xl text-emerald-300 transition cursor-pointer" data-ru="✨ Партия Одобрена (Pass)" data-en="✨ Batch Approved (Pass)">✨ Партия Одобрена (Pass)</button>
                 </div>
             </div>
 
             <!-- Чек-лист проверки -->
             <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 space-y-4">
-                <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">Инспекторский чек-лист (ISO 2859-1)</h3>
+                <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300" data-ru="Инспекторский чек-лист (ISO 2859-1)" data-en="Inspector Checklist (ISO 2859-1)">Инспекторский чек-лист (ISO 2859-1)</h3>
                 
                 <div class="space-y-3 text-xs">
                     <label class="flex items-center gap-3 p-3 bg-slate-950/50 rounded-xl border border-purple-900/20 cursor-pointer">
                         <input type="checkbox" checked class="w-4 h-4 accent-purple-600 rounded">
-                        <span>Проверка наружной и транспортной упаковки (картон, паллеты, влагозащита)</span>
+                        <span data-ru="Проверка наружной и транспортной упаковки (картон, паллеты, влагозащита)" data-en="Outer and transport packaging check (cartons, pallets, moisture protection)">Проверка наружной и транспортной упаковки (картон, паллеты, влагозащита)</span>
                     </label>
                     <label class="flex items-center gap-3 p-3 bg-slate-950/50 rounded-xl border border-purple-900/20 cursor-pointer">
                         <input type="checkbox" checked class="w-4 h-4 accent-purple-600 rounded">
-                        <span>Сверка общего количества товара с накладной (Quantity Check)</span>
+                        <span data-ru="Сверка общего количества товара с накладной (Quantity Check)" data-en="Total quantity reconciliation with commercial invoice (Quantity Check)">Сверка общего количества товара с накладной (Quantity Check)</span>
                     </label>
                     <label class="flex items-center gap-3 p-3 bg-slate-950/50 rounded-xl border border-purple-900/20 cursor-pointer">
                         <input type="checkbox" checked class="w-4 h-4 accent-purple-600 rounded">
-                        <span>Проверка качества изделий / выборочный контроль (AQL 2.5 Defect Check)</span>
+                        <span data-ru="Проверка качества изделий / выборочный контроль (AQL 2.5 Defect Check)" data-en="Product quality inspection / selective control (AQL 2.5 Defect Check)">Проверка качества изделий / выборочный контроль (AQL 2.5 Defect Check)</span>
                     </label>
                     <label class="flex items-center gap-3 p-3 bg-slate-950/50 rounded-xl border border-purple-900/20 cursor-pointer">
                         <input type="checkbox" checked class="w-4 h-4 accent-purple-600 rounded">
-                        <span>Маркировка, штрихкоды и стикеры (FBA / Экспортные требования)</span>
+                        <span data-ru="Маркировка, штрихкоды и стикеры (FBA / Экспортные требования)" data-en="Marking, barcodes and stickers (FBA / Export requirements)">Маркировка, штрихкоды и стикеры (FBA / Экспортные требования)</span>
                     </label>
                 </div>
 
                 <!-- Кнопки вердикта проверки -->
                 <div class="grid grid-cols-2 gap-4 pt-4 border-t border-purple-900/30">
-                    <button onclick="setVerdict('completed')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition">
+                    <button onclick="setVerdict('completed')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition cursor-pointer" data-ru="✓ Pass (Одобрено / Отгрузка)" data-en="✓ Pass (Approved / Ship)">
                         ✓ Pass (Одобрено / Отгрузка)
                     </button>
-                    <button onclick="setVerdict('issues_found')" class="bg-rose-600 hover:bg-rose-500 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition">
+                    <button onclick="setVerdict('issues_found')" class="bg-rose-600 hover:bg-rose-500 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition cursor-pointer" data-ru="✕ Fail (Найден брак / Замечания)" data-en="✕ Fail (Defects / Issues Found)">
                         ✕ Fail (Найден брак / Замечания)
                     </button>
                 </div>
@@ -198,16 +308,16 @@
 
             <!-- Фото-фиксация и отчет с фабрики -->
             <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 space-y-4">
-                <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300">Фото-фиксация и отчёты инспектора</h3>
+                <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300" data-ru="Фото-фиксация и отчёты инспектора" data-en="Photo Capture & Inspector Reports">Фото-фиксация и отчёты инспектора</h3>
                 
                 <div class="space-y-3">
-                    <label class="block text-xs text-slate-400">
+                    <label class="block text-xs text-slate-400" data-ru="Загрузить фото/видео с проверки (брак, упаковка, маркировка):" data-en="Upload photos/videos from inspection (defects, packaging, labeling):">
                         Загрузить фото/видео с проверки (брак, упаковка, маркировка):
                     </label>
                     
                     <div class="flex gap-2">
                         <input type="file" id="mediaFile" multiple accept="image/*,video/*" class="w-full bg-slate-950/90 border border-purple-900/60 rounded-xl px-4 py-2 text-xs text-slate-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-purple-600 file:text-white hover:file:bg-purple-500">
-                        <button onclick="uploadInspectionMedia()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 py-2 rounded-xl text-xs uppercase tracking-wider transition whitespace-nowrap">
+                        <button onclick="uploadInspectionMedia()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 py-2 rounded-xl text-xs uppercase tracking-wider transition whitespace-nowrap cursor-pointer" data-ru="Загрузить" data-en="Upload">
                             Загрузить
                         </button>
                     </div>
@@ -220,18 +330,18 @@
         <!-- Правая колонка: Живой чат с клиентом -->
         <div class="glass-panel p-6 rounded-3xl border border-purple-900/50 flex flex-col h-[700px]">
             <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300 mb-4 flex items-center gap-2">
-                <span>💬 Живой чат с клиентом</span>
+                <span data-ru="💬 Живой чат с клиентом" data-en="💬 Live Chat with Client">💬 Живой чат с клиентом</span>
             </h3>
 
             <!-- Лента сообщений -->
             <div id="chatMessages" class="flex-1 overflow-y-auto space-y-3 pr-2 text-xs mb-4">
-                <div class="text-center text-slate-500 py-10">Загрузка сообщений чата...</div>
+                <div class="text-center text-slate-500 py-10" data-ru="Загрузка сообщений чата..." data-en="Loading chat messages...">Загрузка сообщений чата...</div>
             </div>
 
             <!-- Поле ввода сообщения -->
             <div class="flex gap-2 pt-2 border-t border-purple-900/30">
-                <input type="text" id="messageInput" placeholder="Введите сообщение или замечание..." class="flex-1 bg-slate-950 border border-purple-900/60 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-purple-500" onkeydown="if(event.key === 'Enter') sendMessage()">
-                <button onclick="sendMessage()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 rounded-xl text-xs uppercase tracking-wider transition">
+                <input type="text" id="messageInput" placeholder="Введите сообщение или замечание..." data-ru-placeholder="Введите сообщение или замечание..." data-en-placeholder="Type a message or note..." class="flex-1 bg-slate-950 border border-purple-900/60 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-purple-500" onkeydown="if(event.key === 'Enter') sendMessage()">
+                <button onclick="sendMessage()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 rounded-xl text-xs uppercase tracking-wider transition cursor-pointer" data-ru="Отправить" data-en="Send">
                     Отправить
                 </button>
             </div>
@@ -252,9 +362,30 @@
         const inspectionId = urlParams.get('id');
         const accessToken = urlParams.get('token');
 
+        let currentLang = localStorage.getItem('sourcejet_lang') || 'ru';
+
+        function switchLang(lang) {
+            currentLang = lang;
+            localStorage.setItem('sourcejet_lang', lang);
+
+            document.getElementById('lang-ru').className = lang === 'ru' ? 'px-2.5 py-1 rounded-lg transition bg-purple-600 text-white font-bold cursor-pointer' : 'px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white cursor-pointer';
+            document.getElementById('lang-en').className = lang === 'en' ? 'px-2.5 py-1 rounded-lg transition bg-purple-600 text-white font-bold cursor-pointer' : 'px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white cursor-pointer';
+
+            document.querySelectorAll('[data-ru]').forEach(el => {
+                const text = el.getAttribute(`data-${lang}`);
+                if (text) el.innerText = text;
+            });
+
+            document.querySelectorAll('[data-ru-placeholder]').forEach(el => {
+                const text = el.getAttribute(`data-${lang}-placeholder`);
+                if (text) el.placeholder = text;
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
+            switchLang(currentLang);
             if (!inspectionId) {
-                showAccessDenied('Ошибка: ID инспекции не найден в ссылке!');
+                showAccessDenied(currentLang === 'ru' ? 'Ошибка: ID инспекции не найден в ссылке!' : 'Error: Inspection ID not found in URL!');
                 return;
             }
             validateAndLoadInspection();
@@ -268,12 +399,12 @@
                 .single();
 
             if (error || !data) {
-                showAccessDenied('Инспекция не найдена или была удалена.');
+                showAccessDenied(currentLang === 'ru' ? 'Инспекция не найдена или была удалена.' : 'Inspection not found or deleted.');
                 return;
             }
 
             if (data.access_token && accessToken && data.access_token !== accessToken) {
-                showAccessDenied('Ошибка безопасности: Недействительный токен доступа к комнате!');
+                showAccessDenied(currentLang === 'ru' ? 'Ошибка безопасности: Недействительный токен доступа к комнате!' : 'Security error: Invalid room access token!');
                 return;
             }
 
@@ -287,10 +418,10 @@
                 <div class="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 text-center font-sans">
                     <div class="glass-panel p-8 rounded-3xl border border-rose-900/50 max-w-md space-y-4">
                         <div class="w-16 h-16 bg-rose-950/80 border border-rose-800 rounded-2xl flex items-center justify-center text-rose-400 font-bold text-2xl mx-auto">🚫</div>
-                        <h1 class="text-xl font-black text-white">Доступ ограничен</h1>
+                        <h1 class="text-xl font-black text-white">${currentLang === 'ru' ? 'Доступ ограничен' : 'Access Restricted'}</h1>
                         <p class="text-xs text-slate-400">${message}</p>
                         <a href="inspector_dashboard.html" class="inline-block bg-purple-600 hover:bg-purple-500 text-white font-bold px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider transition">
-                            ← Вернуться в дашборд
+                            ${currentLang === 'ru' ? '← Вернуться в дашборд' : '← Return to Dashboard'}
                         </a>
                     </div>
                 </div>
@@ -298,14 +429,14 @@
         }
 
         function fillInspectionData(data) {
-            document.getElementById('inspectionCountryCity').innerText = `${data.country || 'Китай'} • ${data.city || 'Не указан'} • ${data.inspection_type || 'Стандарт'}`;
-            document.getElementById('factoryTitle').innerText = data.factory_name || 'Фабрика';
-            document.getElementById('clientName').innerText = data.client_name || 'Клиент';
-            document.getElementById('inspectorName').innerText = data.inspector_name || 'Инспектор КНР';
-            document.getElementById('scheduledDate').innerText = data.scheduled_date || 'По договоренности';
-            document.getElementById('factoryAddress').innerText = data.address_chinese || data.address || 'Адрес не указан';
+            document.getElementById('inspectionCountryCity').innerText = `${data.country || 'Китай'} • ${data.city || (currentLang === 'ru' ? 'Не указан' : 'Not specified')} • ${data.inspection_type || 'Стандарт'}`;
+            document.getElementById('factoryTitle').innerText = data.factory_name || (currentLang === 'ru' ? 'Фабрика' : 'Factory');
+            document.getElementById('clientName').innerText = data.client_name || (currentLang === 'ru' ? 'Клиент' : 'Client');
+            document.getElementById('inspectorName').innerText = data.inspector_name || (currentLang === 'ru' ? 'Инспектор КНР' : 'PRC Inspector');
+            document.getElementById('scheduledDate').innerText = data.scheduled_date || (currentLang === 'ru' ? 'По договоренности' : 'As agreed');
+            document.getElementById('factoryAddress').innerText = data.address_chinese || data.address || (currentLang === 'ru' ? 'Адрес не указан' : 'Address not specified');
             
-            const reqNotes = data.requirements?.notes || data.requirements || 'Спецификации отсутствуют.';
+            const reqNotes = data.requirements?.notes || data.requirements || (currentLang === 'ru' ? 'Спецификации отсутствуют.' : 'No specifications available.');
             document.getElementById('requirementsText').innerText = reqNotes;
 
             if (data.requirements && data.requirements.metrics) {
@@ -358,7 +489,7 @@
             const statusSpan = document.getElementById('paramSaveStatus');
 
             statusSpan.className = 'text-[10px] font-mono text-purple-400';
-            statusSpan.innerText = 'Сохранение...';
+            statusSpan.innerText = currentLang === 'ru' ? 'Сохранение...' : 'Saving...';
 
             const extraMetrics = {
                 sampled_qty: sampledQty,
@@ -379,10 +510,10 @@
 
             if (error) {
                 statusSpan.className = 'text-[10px] font-mono text-rose-400';
-                statusSpan.innerText = 'Ошибка: ' + error.message;
+                statusSpan.innerText = (currentLang === 'ru' ? 'Ошибка: ' : 'Error: ') + error.message;
             } else {
                 statusSpan.className = 'text-[10px] font-mono text-emerald-400';
-                statusSpan.innerText = '✓ Параметры успешно сохранены!';
+                statusSpan.innerText = currentLang === 'ru' ? '✓ Параметры успешно сохранены!' : '✓ Parameters successfully saved!';
                 setTimeout(() => { statusSpan.innerText = ''; }, 3000);
             }
         }
@@ -390,7 +521,7 @@
         function calculateAqlSampling() {
             const lotSize = parseInt(document.getElementById('calcLotSize').value);
             if (!lotSize || lotSize <= 0) {
-                alert('Введите корректный размер партии!');
+                alert(currentLang === 'ru' ? 'Введите корректный размер партии!' : 'Enter valid lot size!');
                 return;
             }
 
@@ -410,7 +541,11 @@
             const outputText = document.getElementById('aqlOutputText');
             
             resultBox.classList.remove('hidden');
-            outputText.innerText = `Выборка: ${sampleSize} шт. | Допустимо брака (Ac): до ${acceptLimit} шт. (Re ≥ ${rejectLimit})`;
+            if (currentLang === 'ru') {
+                outputText.innerText = `Выборка: ${sampleSize} шт. | Допустимо брака (Ac): до ${acceptLimit} шт. (Re ≥ ${rejectLimit})`;
+            } else {
+                outputText.innerText = `Sample: ${sampleSize} pcs. | Allowed defects (Ac): up to ${acceptLimit} pcs. (Re ≥ ${rejectLimit})`;
+            }
             
             window.lastCalculatedSample = sampleSize;
         }
@@ -418,7 +553,7 @@
         function applyAqlToMetrics() {
             if (window.lastCalculatedSample) {
                 document.getElementById('paramSampledQty').value = window.lastCalculatedSample;
-                alert('Объем выборки успешно подставлен в поле "Проверено единиц"!');
+                alert(currentLang === 'ru' ? 'Объем выборки успешно подставлен в поле "Проверено единиц"!' : 'Sample size successfully applied to "Sampled Qty"!');
             }
         }
 
@@ -439,7 +574,7 @@
 
             const chatContainer = document.getElementById('chatMessages');
             if (!data || data.length === 0) {
-                chatContainer.innerHTML = '<div class="text-center text-slate-500 py-6">Нет сообщений. Напишите первое сообщение или отчет!</div>';
+                chatContainer.innerHTML = `<div class="text-center text-slate-500 py-6">${currentLang === 'ru' ? 'Нет сообщений. Напишите первое сообщение или отчет!' : 'No messages yet. Send the first message or report!'}</div>`;
                 return;
             }
 
@@ -449,7 +584,7 @@
                 html += `
                     <div class="p-3 rounded-2xl ${isInspector ? 'bg-purple-950/60 border border-purple-900/40 ml-4' : 'bg-slate-900 border border-slate-800 mr-4'}">
                         <div class="flex justify-between text-[10px] text-slate-400 mb-1">
-                            <span class="font-bold text-purple-300">${msg.sender_name || 'Участник'}</span>
+                            <span class="font-bold text-purple-300">${msg.sender_name || (currentLang === 'ru' ? 'Участник' : 'Participant')}</span>
                             <span>${new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                         </div>
                         <div class="text-slate-200">${msg.message}</div>
@@ -470,12 +605,12 @@
                 .insert([{
                     inspection_id: inspectionId,
                     sender_role: 'inspector',
-                    sender_name: 'Инспектор (Field Ops)',
+                    sender_name: currentLang === 'ru' ? 'Инспектор (Field Ops)' : 'Inspector (Field Ops)',
                     message: text
                 }]);
 
             if (error) {
-                alert('Ошибка отправки: ' + error.message);
+                alert((currentLang === 'ru' ? 'Ошибка отправки: ' : 'Send error: ') + error.message);
             } else {
                 input.value = '';
             }
@@ -529,17 +664,17 @@
             const statusDiv = document.getElementById('uploadStatus');
             
             if (!fileInput.files || fileInput.files.length === 0) {
-                alert('Выберите файлы для загрузки!');
+                alert(currentLang === 'ru' ? 'Выберите файлы для загрузки!' : 'Please select files to upload!');
                 return;
             }
 
             statusDiv.className = 'text-xs font-mono text-purple-400';
-            statusDiv.innerText = `Подготовка файлов (${fileInput.files.length})...`;
+            statusDiv.innerText = currentLang === 'ru' ? `Подготовка файлов (${fileInput.files.length})...` : `Preparing files (${fileInput.files.length})...`;
 
             try {
                 for (let i = 0; i < fileInput.files.length; i++) {
                     let file = fileInput.files[i];
-                    statusDiv.innerText = `Сжатие файла ${i + 1} из ${fileInput.files.length}...`;
+                    statusDiv.innerText = currentLang === 'ru' ? `Сжатие файла ${i + 1} из ${fileInput.files.length}...` : `Compressing file ${i + 1} of ${fileInput.files.length}...`;
 
                     if (file.type.startsWith('image/')) {
                         file = await compressImage(file);
@@ -549,14 +684,14 @@
                     const fileName = `${inspectionId}_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
                     const filePath = `uploads/${fileName}`;
 
-                    statusDiv.innerText = `Загрузка в облако (${i + 1}/${fileInput.files.length})...`;
+                    statusDiv.innerText = currentLang === 'ru' ? `Загрузка в облако (${i + 1}/${fileInput.files.length})...` : `Uploading to cloud (${i + 1}/${fileInput.files.length})...`;
 
                     const { error: uploadError } = await supabaseClient.storage
                         .from('inspection-media')
                         .upload(filePath, file);
 
                     if (uploadError) {
-                        throw new Error('Ошибка Storage: ' + uploadError.message);
+                        throw new Error('Storage error: ' + uploadError.message);
                     }
 
                     const { data: publicURLData } = supabaseClient.storage
@@ -570,17 +705,17 @@
                         .insert([{
                             inspection_id: inspectionId,
                             sender_role: 'inspector',
-                            sender_name: 'Инспектор (Фото-отчет)',
-                            message: `📸 [Фото-отчет с фабрики]: <a href="${fileUrl}" target="_blank" class="text-cyan-400 underline font-bold">${file.name}</a><br><img src="${fileUrl}" class="mt-2 rounded-xl max-h-48 object-cover border border-purple-900/40">`
+                            sender_name: currentLang === 'ru' ? 'Инспектор (Фото-отчет)' : 'Inspector (Photo Report)',
+                            message: `📸 [${currentLang === 'ru' ? 'Фото-отчет с фабрики' : 'Factory Photo Report'}]: <a href="${fileUrl}" target="_blank" class="text-cyan-400 underline font-bold">${file.name}</a><br><img src="${fileUrl}" class="mt-2 rounded-xl max-h-48 object-cover border border-purple-900/40">`
                         }]);
 
                     if (msgError) {
-                        throw new Error('Ошибка записи сообщения: ' + msgError.message);
+                        throw new Error('Message insert error: ' + msgError.message);
                     }
                 }
 
                 statusDiv.className = 'text-xs font-mono text-emerald-400';
-                statusDiv.innerText = '✓ Все файлы успешно сжаты и загружены!';
+                statusDiv.innerText = currentLang === 'ru' ? '✓ Все файлы успешно сжаты и загружены!' : '✓ All files successfully compressed and uploaded!';
                 fileInput.value = '';
                 setTimeout(() => { statusDiv.innerText = ''; }, 4000);
 
@@ -592,8 +727,9 @@
         }
 
         async function setVerdict(status) {
-            const verdictText = status === 'completed' ? 'PASS (Одобрено)' : 'FAIL (Найден брак)';
-            if (!confirm(`Подтвердить вердикт проверки: ${verdictText}?`)) return;
+            const verdictText = status === 'completed' ? (currentLang === 'ru' ? 'PASS (Одобрено)' : 'PASS (Approved)') : (currentLang === 'ru' ? 'FAIL (Найден брак)' : 'FAIL (Issues Found)');
+            const confirmMsg = currentLang === 'ru' ? `Подтвердить вердикт проверки: ${verdictText}?` : `Confirm inspection verdict: ${verdictText}?`;
+            if (!confirm(confirmMsg)) return;
 
             const { error } = await supabaseClient
                 .from('inspections')
@@ -601,9 +737,9 @@
                 .eq('id', inspectionId);
 
             if (error) {
-                alert('Ошибка сохранения вердикта: ' + error.message);
+                alert((currentLang === 'ru' ? 'Ошибка сохранения вердикта: ' : 'Error saving verdict: ') + error.message);
             } else {
-                alert('Вердикт успешно сохранен и отправлен клиенту!');
+                alert(currentLang === 'ru' ? 'Вердикт успешно сохранен и отправлен клиенту!' : 'Verdict successfully saved and sent to client!');
             }
         }
 
@@ -620,13 +756,13 @@
             const requirements = document.getElementById('requirementsText').innerText;
             const statusBadge = document.getElementById('inspectionStatusBadge').innerText;
 
-            const sampledQty = document.getElementById('paramSampledQty').value || 'Не указано';
+            const sampledQty = document.getElementById('paramSampledQty').value || (currentLang === 'ru' ? 'Не указано' : 'Not specified');
             const defectsQty = document.getElementById('paramDefectsQty').value || '0';
-            const containerNum = document.getElementById('paramContainerNum').value || 'Не указан';
+            const containerNum = document.getElementById('paramContainerNum').value || (currentLang === 'ru' ? 'Не указан' : 'Not specified');
 
             const btn = event.currentTarget;
             const originalText = btn.innerHTML;
-            btn.innerHTML = '🛡️ Формирование документа...';
+            btn.innerHTML = currentLang === 'ru' ? '🛡️ Формирование документа...' : '🛡️ Generating document...';
             btn.disabled = true;
 
             try {
@@ -634,7 +770,7 @@
                     .from('inspection_messages')
                     .select('*')
                     .eq('inspection_id', inspectionId)
-                    .ilike('message', '%[Фото-отчет с фабрики]%');
+                    .ilike('message', '%[Фото-отчет с фабрики%');
 
                 const qrContainer = document.getElementById('qrcode');
                 qrContainer.innerHTML = '';
@@ -700,7 +836,7 @@
                 doc.setFont('helvetica', 'bold');
                 doc.setFontSize(10);
                 doc.setTextColor(15, 23, 42);
-                doc.text('1. INSPECTION SPECIFICATIONS & REQS (TZ)', 15, y);
+                doc.text('1. INSPECTION SPECIFICATIONS & REQS (TR)', 15, y);
 
                 y += 6;
                 doc.setFont('helvetica', 'normal');
@@ -805,7 +941,7 @@
                 doc.save(`SourceJet-Report-${inspectionId.slice(0, 8)}.pdf`);
             } catch (err) {
                 console.error("Enterprise PDF Error:", err);
-                alert('Ошибка генерации защищенного PDF.');
+                alert(currentLang === 'ru' ? 'Ошибка генерации защищенного PDF.' : 'Error generating secured PDF.');
             } finally {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
